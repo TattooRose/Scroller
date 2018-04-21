@@ -13,16 +13,36 @@
 ;	
 ;**************************************************************************************************
 ;
+;*****	Memory Map
+;
+;	Atari XL 64K
+;
+;	Computer's Hardware Stack												($0100 to $01FF)
+;	IOCB's (input/output control blocks) and miscellaneous OS variables		($0200 to $03BF)
+;	Printer buffer															($03C0 to $03E7)   
+;	Reserved for OS															($03E8 to $03FC)
+;	Cassette buffer															($03FD to $047F)	 83 bytes available  
+;	Reserved for use by BASIC cartridge										($0480 to $057D) 	254 bytes available 
+;	OS floating point package.												($057E to $05FF)	 82 bytes available 
+;	Page 6																	($0600 to $06FF)
+;	DOS Dedicated RAM														($0700 to MEMLO)
+;	Free Ram																(MEMLO to MEMTOP)
+;	Screen Memory															(Above MEMTOP) 	 
+;   Cartrige A & B Slots													($8000 to $BFFF)	16K available
+;   Os Rom in newer models													($C000 to $CFFF)	 
+;	Hardware Registers														($D000 to $D7FF)
+;	Floating Point Rom														($D800 to $DFFF)	 2K available
+;	Operating system														($E000 to $FFFF)
 
 ;*****	Include Files
 ;
 		icl "Lib/Atari_Equates.Asm"
 		icl "Lib/sys_macros.asm"	
 
-;*****	Memory Map
-;
+;***** Memory Allocation
+; 				
 ZeroPageAddr				= $80				; Address for the zero page variables
-CodeAddr					= $2000				; Address for the main code
+CodeAddr					= $0700				; Address for the main code
 
 GameDispListAddr			= $0600				; Address for the custom display list
 HUDAddress					= $06B0				; Address for the heads up display (HUD)
@@ -336,7 +356,7 @@ StartSystem
 		
 		ClearSystem								; initialize all registers
 		DisableBasic							; disable basic
-		DisableOperatingSystem					; disable the operating system
+		DisableOperatingSystem					; disable the operating system 
 
 		SetRamTop 16							; drop ramtop by 16 pages
 	
@@ -377,14 +397,19 @@ StartSystem
 		jsr InitVars							; initialize the game variables
 		jsr InitLevelTable						; initialize the screen address tables
 
+		lda #$10
+		sta m_activeEnemies
+
 ;***** GameLoop 
 ;
 GameLoop
+	
+		jsr UpdateInfoLine						; Update the HUD area
 
 		lda #0									; Value to clear any hits 
 		sta HITCLR								; Clear them
 
-		jsr WaitFrame							; wait for the RTCLOCK to change
+		VcountWait 120							; wait for the RTCLOCK to change
 
 		jmp GameLoop							; Do it all over again
 
@@ -659,6 +684,119 @@ Addr_Check_Loop
 	
 		rts
 		
+.endp	
+
+;
+;**************************************************************************************************
+; UpdateInfoLine
+;**************************************************************************************************
+;
+.proc UpdateInfoLine
+	
+		lda m_goldCounter						; assuming 99 or less
+		ldy #4
+		jsr DisplayDebugInfoBinary99
+
+		lda m_activeEnemies
+		ldy #12
+		jsr DisplayDebugInfoBinary99
+
+		lda m_goldCounter
+		bne UIL_update_timer
+		
+		lda m_activeEnemies
+		bne UIL_update_timer
+	
+		lda m_disableGameTimer					; update the time here also
+		bne UIL_exit
+	
+		lda #1
+		sta m_disableGameTimer					; my record? 1:16.1 (NTSC, lost one life)
+
+;************************************************
+; allow the final update..
+;
+UIL_update_timer
+	
+		inc m_gameTSFrameCounter
+		lda m_gameTSFrameCounter
+		cmp #TENTH_OF_SECOND_FRAMES
+		bne UIL_draw_timer
+	
+		lda #0
+		sta m_gameTSFrameCounter
+		inc m_gameTimerTSeconds
+		
+		lda m_gameTimerTSeconds
+		cmp #10
+		bne UIL_draw_timer
+	
+		lda #0
+		sta m_gameTimerTSeconds
+		inc m_gameTimerSeconds
+	
+		lda m_gameTimerSeconds
+		cmp #60
+		bne UIL_draw_timer
+	
+		lda #0
+		sta m_gameTimerSeconds
+		inc m_gameTimerMinutes
+
+		lda m_gameTimerMinutes
+		cmp #100
+		bne UIL_draw_timer
+	
+		lda #1
+		sta m_disableGameTimer
+		jmp UIL_exit							; final timer would be 99:99.9 in this case
+
+;************************************************
+;
+UIL_draw_timer
+	
+		lda m_gameTimerMinutes
+		ldy #20
+		jsr DisplayDebugInfoBinary99
+	
+		lda m_gameTimerSeconds
+		ldy #23
+		jsr DisplayDebugInfoBinary99
+	
+		lda m_gameTimerTSeconds
+		ldy #26
+		jsr DisplayDebugInfoBinary9
+
+;************************************************
+;
+UIL_exit
+		
+;		lda m_playerScreenLeftX
+;		ldy #40
+;		jsr DisplayDebugInfoHexFF
+;
+;		lda m_playerScreenTopY
+;		ldy #43
+;		jsr DisplayDebugInfoHexFF
+;
+;		lda m_playerState
+;		ldy #46
+;		jsr DisplayDebugInfoHexFF
+;
+;		lda m_lastPlayerSideDirection
+;		ldy #49
+;		jsr DisplayDebugInfoHexFF
+;
+;		lda m_animFrame
+;		ldy #52
+;		jsr DisplayDebugInfoHexFF
+;
+;		lda m_animIndex
+;		ldy #55
+;		jsr DisplayDebugInfoHexFF
+				
+		rts
+	
 .endp				
 
 ;	
@@ -674,9 +812,7 @@ Addr_Check_Loop
 ; Data definition
 ;**************************************************************************************************
 ;
-TabLevelLineAddressLSB			:256 .byte $00
-TabLevelLineAddressMSB			:256 .byte $00
-
+		icl "ScrollerData.Asm"
 ;	
 ;**************************************************************************************************
 ; Player Missle Address  
