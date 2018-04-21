@@ -48,6 +48,8 @@ TabBinaryToBCD
 		
 		lda RTCLOK60							; get frame/jiffy counter
 
+;*****	Wait Tick 60
+;
 WaitTick60
 
 		cmp RTCLOK60							; Loop until the clock changes
@@ -67,7 +69,7 @@ WaitTick60
 		sta _productLo 
 		ldx #8 
 
-;*************************************************
+;*****	Loop
 ;		
 Loop
 	 	lsr _multiplier 
@@ -75,7 +77,7 @@ Loop
 		clc 
 		adc _multiplicand 
 
-;*************************************************
+;*****	No Add
 ;
 NoAdd
 	 	ror 
@@ -102,9 +104,9 @@ NoAdd
 		sec 
 		sbc _divisor 
 
-;************************************************
+;*****	Loop
 ;
-DLOOP 	php										; THE LOOP THAT DIVIDES 
+LOOP 	php										; THE LOOP THAT DIVIDES 
 		rol _quitient 
 		asl _dividenLo 
 		rol  
@@ -113,21 +115,22 @@ DLOOP 	php										; THE LOOP THAT DIVIDES
 		sbc _divisor 
 		jmp NEXT 
 
-;************************************************
+;***** 	Add It
 ;
 ADDIT 	adc _divisor 
 
-;************************************************
+;***** 	Next
 ;
 NEXT 	dex 
-		bne	DLOOP 
-		bcs FINI 
+		bne	LOOP 
+		bcs Finish 
 		ADC _divisor 
 		clc 
 
-;************************************************
+;*****	Finish
 ;		
-FINI 	rol _quitient 
+Finish
+	rol _quitient 
 		sta _remainder 
 		rts 									; ENDIT
 
@@ -155,6 +158,8 @@ FINI 	rol _quitient
 		lda TabHexNibbleToScreenDigit,x
 		sta HudAddress,y
 
+;*****	Save Value
+;
 Save_Value
 
 		lda #$FF								; will hold the value in A on entry
@@ -183,6 +188,8 @@ Save_Value
 		bcc NoOverflow
 		ldx #99
 
+;*****	No Overflow
+;
 NoOverflow
 		lda TabBinaryToBCD,x
 		tax
@@ -211,12 +218,12 @@ NoOverflow
 .proc DisplayDebugInfoBinary9
 
 		cmp #10
-		bcc NoOverflow2
+		bcc NoOverflow
 		lda #9
 
-;*************************************************
+;*****	No Overflow 
 ;
-NoOverflow2
+NoOverflow
 	
 		ora #16									; display 1 digit (from 0 to 9) add the "0" character value
 		sta HudAddress,y
@@ -236,12 +243,14 @@ NoOverflow2
 		lda #0
 		tax
 
-CDI_loop
+;*****	Clear Loop
+;
+Loop
 
 		sta HudAddress,x
 		inx
-		cpx #40
-		bne CDI_loop
+		cpx #$30
+		bne Loop
 		ldx _saveRegX
 		
 		rts

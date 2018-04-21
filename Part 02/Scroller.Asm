@@ -42,11 +42,12 @@
 ;***** Memory Allocation
 ; 				
 ZeroPageAddr				= $80				; Address for the zero page variables
-CodeAddr					= $0700				; Address for the main code
+CodeAddr					= $2000				; Address for the main code
 
 GameDispListAddr			= $0600				; Address for the custom display list
 HUDAddress					= $06B0				; Address for the heads up display (HUD)
 
+DataAddr					= $8800				; 2K data area
 PmgAddr						= $9000				; 40K (2K size - 768 bytes)
 GameFontAddr				= $9800				; 42K (1K size)
 TextFontAddr				= $9C00				; 39K (1K size)
@@ -771,30 +772,6 @@ UIL_draw_timer
 ;
 UIL_exit
 		
-;		lda m_playerScreenLeftX
-;		ldy #40
-;		jsr DisplayDebugInfoHexFF
-;
-;		lda m_playerScreenTopY
-;		ldy #43
-;		jsr DisplayDebugInfoHexFF
-;
-;		lda m_playerState
-;		ldy #46
-;		jsr DisplayDebugInfoHexFF
-;
-;		lda m_lastPlayerSideDirection
-;		ldy #49
-;		jsr DisplayDebugInfoHexFF
-;
-;		lda m_animFrame
-;		ldy #52
-;		jsr DisplayDebugInfoHexFF
-;
-;		lda m_animIndex
-;		ldy #55
-;		jsr DisplayDebugInfoHexFF
-				
 		rts
 	
 .endp				
@@ -812,29 +789,8 @@ UIL_exit
 ; Data definition
 ;**************************************************************************************************
 ;
+		org DataAddr
 		icl "ScrollerData.Asm"
-;	
-;**************************************************************************************************
-; Player Missle Address  
-;**************************************************************************************************
-;
-		org PmgAddr
-		
-		; clear the 2K area for player/missiles
-		.rept $0800
-			.byte $00
-		.endr		
-
-;	
-;**************************************************************************************************
-; Font Include 
-;**************************************************************************************************
-;
-		org GameFontAddr
-		ins "Data/scroller.fnt"
-		
-		org TextFontAddr
-		ins "Data/atari.fnt"		
 
 ;	
 ;**************************************************************************************************
@@ -884,6 +840,29 @@ DL1_LMS1
 		.sb "  G 00    E 00    T 00:00.0        PAL  "
 .endif
 		.sb "                                        "
+
+;	
+;**************************************************************************************************
+; Player Missle Address  
+;**************************************************************************************************
+;
+		org PmgAddr
+		
+		; clear the 2K area for player/missiles
+		.rept $0800
+			.byte $00
+		.endr		
+
+;	
+;**************************************************************************************************
+; Font Include 
+;**************************************************************************************************
+;
+		org GameFontAddr
+		ins "Data/scroller.fnt"
+		
+		org TextFontAddr
+		ins "Data/atari.fnt"		
 
 ;	
 ;**************************************************************************************************
