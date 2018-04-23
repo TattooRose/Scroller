@@ -376,9 +376,8 @@ StartSystem
 		lda #0									; 0 to 16 color clocks
 		sta VSCROL
 
-		SetPMBaseAddress PmgAddr				; Set the player missile address
-		SetFontAddress GameFontAddr				; Set the initial font
-		
+		SetPMBaseAddress PmgAddr				; Set the player missile address		
+		SetFontAddress GameFontAddr				; Set the initial font		
 		SetDisplayListAddress GameDispListAddr	; Set the games display list	
 
 		lda #$80								; enable DLI's (but no VBI's)
@@ -401,6 +400,10 @@ StartSystem
 		lda #$10
 		sta m_activeEnemies
 
+		lda #$00								; set up for level 1 (zero based)
+		sta _param01							; store it off
+		jsr LoadLevel							; call the method to draw the screen
+		
 ;***** GameLoop 
 ;
 GameLoop
@@ -783,7 +786,7 @@ UIL_exit
 ;
 		icl "Lib/sys_procs.asm"
 		icl "DispListInterrupts.Asm"
-
+		icl "LevelLoader.Asm"
 ;
 ;**************************************************************************************************
 ; Data definition
@@ -791,7 +794,7 @@ UIL_exit
 ;
 		org DataAddr
 		icl "ScrollerData.Asm"
-
+		icl "Data/Level01.Asm"	
 ;	
 ;**************************************************************************************************
 ; Display List for the game

@@ -37,9 +37,9 @@ GameDli_01
     	sta WSYNC   							; Wait off-screen
 
 .ifndef PAL_VERSION
-		SetColor $00, $02, $08
-		SetColor $01, $00, $0F
-		SetColor $02, $08, $06
+		SetColor $00, $04, $04
+		SetColor $01, $03, $0B
+		SetColor $02, $0d, $06
 		SetColor $03, $07, $0D		
 .else
 		SetColor 1, 15, 14						; yellow (collectables)
