@@ -44,7 +44,7 @@
 ZeroPageAddr				= $80				; Address for the zero page variables
 CodeAddr					= $2000				; Address for the main code
 
-GameDispListAddr			= $0600				; Address for the custom display list
+GameDispList			= $0600				; Address for the custom display list
 HUDAddress					= $06B0				; Address for the heads up display (HUD)
 
 DataAddr					= $8800				; 2K data area
@@ -59,13 +59,13 @@ GameScreenAddr				= $A000				; Address for the game screen data
 		org ZeroPageAddr
 
 ;*****	Byte variables		
-_saveRegA					org *+$01
-_saveRegX					org *+$01
-_saveRegY					org *+$01
+m_saveRegA					org *+$01
+m_saveRegX					org *+$01
+m_saveRegY					org *+$01
 
-_dliSaveA					org *+$01
-_dliSaveX					org *+$01
-_dliSaveY					org *+$01
+m_dliSaveA					org *+$01
+m_dliSaveX					org *+$01
+m_dliSaveY					org *+$01
 
 _param01					org *+$01
 _param02					org *+$01
@@ -76,121 +76,117 @@ _param06					org *+$01
 _param07					org *+$01
 
 _missleBaseColor0			org *+$01
-_playerBaseColor			org *+$01
-_playerBaseColor1A			org *+$01
-_playerBaseColor1B			org *+$01
+mm_playerBaseColor			org *+$01
+mm_playerBaseColor1A			org *+$01
+mm_playerBaseColor1B			org *+$01
 
-_playerLevelLeftX_H2		org *+$01			; left side coordinate
-_playerLevelLeftX_H1		org *+$01
-_playerLevelLeftX_L1		org *+$01
+m_playerLevelLeftX_H2		org *+$01			; left side coordinate
+m_playerLevelLeftX_H1		org *+$01
+m_playerLevelLeftX_L1		org *+$01
 
-_playerLevelRightX_H2		org *+$01			; right side coordinate
-_playerLevelRightX_H1		org *+$01
-_playerLevelRightX_L1		org *+$01
+m_playerLevelRightX_H2		org *+$01			; right side coordinate
+m_playerLevelRightX_H1		org *+$01
+m_playerLevelRightX_L1		org *+$01
 
-_playerLevelTopY_H2			org *+$01			; top line coordinate
-_playerLevelTopY_H1			org *+$01
-_playerLevelTopY_L1			org *+$01
+m_playerLevelTopY_H2			org *+$01			; top line coordinate
+m_playerLevelTopY_H1			org *+$01
+m_playerLevelTopY_L1			org *+$01
 
-_playerLevelBottomY_H2		org *+$01			; bottom line coordinate
-_playerLevelBottomY_H1		org *+$01
-_playerLevelBottomY_L1		org *+$01
+m_playerLevelBottomY_H2		org *+$01			; bottom line coordinate
+m_playerLevelBottomY_H1		org *+$01
+m_playerLevelBottomY_L1		org *+$01
 
-_redrawPlayerCounter		org *+$01
+m_redrawPlayerCounter		org *+$01
 
-_playerScreenLeftX			org *+$01
-_playerScreenTopY			org *+$01
+m_playerScreenLeftX			org *+$01
+m_playerScreenTopY			org *+$01
 
-_oldPlayerScreenLeftX		org *+$01
-_oldPlayerScreenTopY		org *+$01
+m_oldPlayerScreenLeftX		org *+$01
+m_oldPlayerScreenTopY		org *+$01
 
-_playerSizeX				org *+$01
-_playerSizeY				org *+$01
+m_playerSizeX				org *+$01
+m_playerSizeY				org *+$01
 
-_playerSizeXMinusOne		org *+$01
-_playerSizeYMinusOne		org *+$01
+m_playerSizeXMinusOne		org *+$01
+m_playerSizeYMinusOne		org *+$01
 
-_playerSideSpeed_H1			org *+$01
-_playerSideSpeed_L1			org *+$01
+m_playerSideSpeed_H1			org *+$01
+m_playerSideSpeed_L1			org *+$01
 
-_playerMaxSideSpeed_H1		org *+$01
-_playerMaxSideSpeed_L1		org *+$01
+m_playerMaxSideSpeed_H1		org *+$01
+m_playerMaxSideSpeed_L1		org *+$01
 
-_playerSideAccel_H1			org *+$01
-_playerSideAccel_L1			org *+$01
+m_playerSideAccel_H1			org *+$01
+m_playerSideAccel_L1			org *+$01
 
-_playerSideDeaccel_H1		org *+$01
-_playerSideDeaccel_L1		org *+$01
+m_playerSideDeaccel_H1		org *+$01
+m_playerSideDeaccel_L1		org *+$01
 
-_playerSpeedY_H1			org *+$01
-_playerSpeedY_L1			org *+$01
+m_playerSpeedY_H1			org *+$01
+m_playerSpeedY_L1			org *+$01
 
-_playerJumpSpeed_H1			org *+$01
-_playerJumpSpeed_L1			org *+$01
+m_playerJumpSpeed_H1			org *+$01
+m_playerJumpSpeed_L1			org *+$01
 
-_playerMaxFallSpeed_H1		org *+$01
-_playerMaxFallSpeed_L1		org *+$01
+m_playerMaxFallSpeed_H1		org *+$01
+m_playerMaxFallSpeed_L1		org *+$01
 
-_playerGravityAccel_H1		org *+$01
-_playerGravityAccel_L1		org *+$01
+m_playerGravityAccel_H1		org *+$01
+m_playerGravityAccel_L1		org *+$01
 
-_playerWaterAccelY_H1		org *+$01
-_playerWaterAccelY_L1		org *+$01
+m_playerWaterAccelY_H1		org *+$01
+m_playerWaterAccelY_L1		org *+$01
 
-_playerMaxWaterSpeedY_H1	org *+$01
-_playerMaxWaterSpeedY_L1	org *+$01
+m_playerMaxWaterSpeedY_H1	org *+$01
+m_playerMaxWaterSpeedY_L1	org *+$01
 
-_playerMoveWaterSpeedY_H1	org *+$01
-_playerMoveWaterSpeedY_L1	org *+$01
+m_playerMoveWaterSpeedY_H1	org *+$01
+m_playerMoveWaterSpeedY_L1	org *+$01
 
-_playerNoJumpTimer			org *+$01			; for now this is used to disable the jump for some frames, after entering the water
-_playerHoldJumpCounter		org *+$01
+m_playerNoJumpTimer			org *+$01			; for now this is used to disable the jump for some frames, after entering the water
+m_playerHoldJumpCounter		org *+$01
 
-_lastPlayerSideDirection	org *+$01			; 0 - none, 1 - right, 2 - left
-_lastPlayerShootDirection	org *+$01
+m_lastPlayerSideDirection	org *+$01			; 0 - none, 1 - right, 2 - left
+m_lastPlayerShootDirection	org *+$01
 
-_playerOverPlatformFlag		org *+$01			; is player over platform
-_playerTopCollisionFlag		org *+$01			; did player hit top
-_playerSideCollisionFlag	org *+$01			; did player hit side
+m_playerOverPlatformFlag		org *+$01			; is player over platform
+m_playerTopCollisionFlag		org *+$01			; did player hit top
+m_playerSideCollisionFlag	org *+$01			; did player hit side
 
-_playerState				org *+$01			; 0-static, 1-over platform, 2-jumping up, 3-falling, 4-climbing, 5-in water, 6-gravity test
+m_playerState				org *+$01			; 0-static, 1-over platform, 2-jumping up, 3-falling, 4-climbing, 5-in water, 6-gravity test
 
-_pageZeroTempValue			org *+$01
+m_pageZeroTempValue			org *+$01
 
-_levelCharSizeX				org *+$01			; char size X goes from 1 to 255 characters, 0 = 256 characters
-_levelCharSizeY				org *+$01			; char size Y goes from 1 to 255 characters, 0 = 256 characters
+m_levelCharSizeX				org *+$01			; char size X goes from 1 to 255 characters, 0 = 256 characters
+m_levelCharSizeY				org *+$01			; char size Y goes from 1 to 255 characters, 0 = 256 characters
 
-_levelSizeX_H2				org *+$01
-_levelSizeX_H1				org *+$01
+m_levelSizeX_H2				org *+$01
+m_levelSizeX_H1				org *+$01
 
-_levelSizeY_H2				org *+$01
-_levelSizeY_H1				org *+$01
+m_levelSizeY_H2				org *+$01
+m_levelSizeY_H1				org *+$01
 
-_levelWindowX_H2			org *+$01
-_levelWindowX_H1			org *+$01
+m_levelWindowX_H2			org *+$01
+m_levelWindowX_H1			org *+$01
 
-_levelWindowY_H2			org *+$01
-_levelWindowY_H1			org *+$01
+m_levelWindowY_H2			org *+$01
+m_levelWindowY_H1			org *+$01
 
-_stick0						org *+$01
-_oldStick0					org *+$01
-_oldTrigger0				org *+$01
-_triggerState				org *+$01			; 0 - not pressed, 1 - just released, 2 - just pressed, 3 - pressed
-_currentTrigger0			org *+$01
+m_stick0						org *+$01
+m_oldStick0					org *+$01
+m_oldTrigger0				org *+$01
+m_triggerState				org *+$01			; 0 - not pressed, 1 - just released, 2 - just pressed, 3 - pressed
+m_currentTrigger0			org *+$01
 
 ;***** 	Word variables
-_ptrLevelAddr				org *+$02
-_ptrLevelLine				org *+$02
-_currentLineAddress			org *+$02
-_pageZeroTempPointer		org *+$02
-_playerMethodPointer		org *+$02
+m_ptrLevelAddr				org *+$02
+m_ptrLevelLine				org *+$02
+m_currentLineAddress			org *+$02
+m_pageZeroTempPointer		org *+$02
+m_playerMethodPointer		org *+$02
 
 .PRINT "Zero Page Start : ", ZeroPageAddr, " Zero Page Length : ", * - ZeroPageAddr
 		
-;*****	Constants
-;
-;PAL_VERSION				= 1
-
 ;***** 	Set the constant values for the registers below
 ;
 GRACTL_OPTIONS				= ENABLE_MISSILES | ENABLE_PLAYERS
@@ -207,8 +203,8 @@ PLR_HEIGHT					= 21
 CHAR_PIXELS_X				= 4
 CHAR_PIXELS_Y				= 8
 				
-LEVEL_CHAR_SIZE_X			= 82				; Tiles X - 82 of them horizontal
-LEVEL_CHAR_SIZE_Y			= 48				; Lines Y - 48 of them vertical
+LEVEL_CHAR_SIZE_X			= 42				; Tiles X - 82 of them horizontal
+LEVEL_CHAR_SIZE_Y			= 24				; Lines Y - 48 of them vertical
 
 WINDOW_CHAR_SIZE_X			= 40				; Chars X - 40 of them horizontal
 WINDOW_CHAR_SIZE_Y			= 24				; Chars Y - 24 of them vertical
@@ -244,7 +240,7 @@ TS_JUST_PRESSED				= 0
 
 ENEMY_SHOOT_DELTA_Y			= 32
 
-.ifndef PAL_VERSION
+.if PAL_VERSION = 0
 
 	TENTH_OF_SECOND_FRAMES	= 6
 	MINIMUM_CAMERA_STEP		= 1
@@ -379,7 +375,7 @@ StartSystem
 		SetPMBaseAddress PmgAddr				; Set the player missile address
 		SetFontAddress GameFontAddr				; Set the initial font
 		
-		SetDisplayListAddress GameDispListAddr	; Set the games display list	
+		SetDisplayListAddress GameDispList	; Set the games display list	
 
 		lda #$80								; enable DLI's (but no VBI's)
 		sta NMIEN
@@ -399,7 +395,7 @@ StartSystem
 		jsr InitLevelTable						; initialize the screen address tables
 
 		lda #$10
-		sta m_activeEnemies
+		sta _activeEnemies
 
 ;***** GameLoop 
 ;
@@ -422,51 +418,51 @@ GameLoop
 .proc InitVars
 	
 		lda #1									; input info
-		sta _oldTrigger0
-		sta _currentTrigger0
+		sta m_oldTrigger0
+		sta m_currentTrigger0
 
 		lda #0
-		sta _triggerState
+		sta m_triggerState
 
 		lda #15
-		sta _stick0
-		sta _oldStick0
+		sta m_stick0
+		sta m_oldStick0
 		
 		lda #>[CHAR_PIXELS_X]					; level info
-		sta _levelWindowX_H2
+		sta m_levelWindowX_H2
 		
 		lda #<[CHAR_PIXELS_X]
-		sta _levelWindowX_H1
+		sta m_levelWindowX_H1
 		
 		lda #0
-		sta _levelWindowY_H2
+		sta m_levelWindowY_H2
 		
 		lda #0
-		sta _levelWindowY_H1
+		sta m_levelWindowY_H1
 
 		lda #LEVEL_CHAR_SIZE_X
-		sta _levelCharSizeX
+		sta m_levelCharSizeX
 		
 		lda #LEVEL_CHAR_SIZE_Y
-		sta _levelCharSizeY
+		sta m_levelCharSizeY
 
 		lda #>[LEVEL_CHAR_SIZE_X*CHAR_PIXELS_X]
-		sta _levelSizeX_H2
+		sta m_levelSizeX_H2
 		
 		lda #<[LEVEL_CHAR_SIZE_X*CHAR_PIXELS_X]
-		sta _levelSizeX_H1
+		sta m_levelSizeX_H1
 
 		lda #>[LEVEL_CHAR_SIZE_Y*CHAR_PIXELS_Y]
-		sta _levelSizeY_H2
+		sta m_levelSizeY_H2
 		
 		lda #<[LEVEL_CHAR_SIZE_Y*CHAR_PIXELS_Y]
-		sta _levelSizeY_H1
+		sta m_levelSizeY_H1
 
 		lda #<GameScreenAddr
-		sta _currentLineAddress
+		sta m_currentLineAddress
 		
 		lda #>GameScreenAddr
-		sta _currentLineAddress+1
+		sta m_currentLineAddress+1
 		
 		;	
 		;************************************************
@@ -480,94 +476,94 @@ GameLoop
 		;************************************************
 		;
 
-.ifndef PAL_VERSION
+.if PAL_VERSION = 0
 	
 		lda #3									; air vertical movement 240 pixels per second (at 60 fps only!)
-		sta _playerJumpSpeed_H1
+		sta m_playerJumpSpeed_H1
 		
 		lda #128
-		sta _playerJumpSpeed_L1
+		sta m_playerJumpSpeed_L1
 
 		lda #6									; near 400 pixels per second (1 character per frame at 50 fps, PAL friendly)
-		sta _playerMaxFallSpeed_H1
+		sta m_playerMaxFallSpeed_H1
 	
 		lda #170
-		sta _playerMaxFallSpeed_L1
+		sta m_playerMaxFallSpeed_L1
 
 		lda #0									; 12.8 frames (at 60 fps only!) to reach max speed (from zero)
-		sta _playerGravityAccel_H1
+		sta m_playerGravityAccel_H1
 	
 		lda #112
-		sta _playerGravityAccel_L1
+		sta m_playerGravityAccel_L1
 
 		
 		lda #0									; water vertical movement
-		sta _playerWaterAccelY_H1
+		sta m_playerWaterAccelY_H1
 		
 		lda #32
-		sta _playerWaterAccelY_L1
+		sta m_playerWaterAccelY_L1
 
 		lda #0
-		sta _playerMaxWaterSpeedY_H1
+		sta m_playerMaxWaterSpeedY_H1
 	
 		lda #128
-		sta _playerMaxWaterSpeedY_L1
+		sta m_playerMaxWaterSpeedY_L1
 
 		lda #1
-		sta _playerMoveWaterSpeedY_H1
+		sta m_playerMoveWaterSpeedY_H1
 	
 		lda #0
-		sta _playerMoveWaterSpeedY_L1
+		sta m_playerMoveWaterSpeedY_L1
 
 .else
 
 		lda #4									; air vertical movement pixels per second (at 50 fps only!)
-		sta _playerJumpSpeed_H1
+		sta m_playerJumpSpeed_H1
 	
 		lda #51
-		sta _playerJumpSpeed_L1
+		sta m_playerJumpSpeed_L1
 
 		lda #7									; near 400 pixels per second (1 character per frame at 50 fps, PAL friendly)
-		sta _playerMaxFallSpeed_H1
+		sta m_playerMaxFallSpeed_H1
 	
 		lda #255
-		sta _playerMaxFallSpeed_L1
+		sta m_playerMaxFallSpeed_L1
 
 		lda #0									;  frames (at 50 fps only!) to reach max speed (from zero)
-		sta _playerGravityAccel_H1
+		sta m_playerGravityAccel_H1
 		
 		lda #134
-		sta _playerGravityAccel_L1
+		sta m_playerGravityAccel_L1
 
 		lda #0									; water vertical movement
-		sta _playerWaterAccelY_H1
+		sta m_playerWaterAccelY_H1
 		
 		lda #38
-		sta _playerWaterAccelY_L1
+		sta m_playerWaterAccelY_L1
 
 		lda #0
-		sta _playerMaxWaterSpeedY_H1
+		sta m_playerMaxWaterSpeedY_H1
 	
 		lda #154
-		sta _playerMaxWaterSpeedY_L1
+		sta m_playerMaxWaterSpeedY_L1
 
 		lda #1
-		sta _playerMoveWaterSpeedY_H1
+		sta m_playerMoveWaterSpeedY_H1
 	
 		lda #51
-		sta _playerMoveWaterSpeedY_L1
+		sta m_playerMoveWaterSpeedY_L1
 
 .endif
 	
 		ldx #PLR_WIDTH							; set width of player
-		stx _playerSizeX
+		stx m_playerSizeX
 		dex
-		stx _playerSizeXMinusOne				; used in detection methods
+		stx m_playerSizeXMinusOne				; used in detection methods
 	
 		ldx #PLR_HEIGHT							; set height of player
-		stx _playerSizeY
+		stx m_playerSizeY
 		dex
-		stx _playerSizeYMinusOne				; used in detection methods
+		stx m_playerSizeYMinusOne				; used in detection methods
 	
 		jsr InitPlayerInfo
 		
@@ -583,48 +579,48 @@ GameLoop
 .proc InitPlayerInfo
 
 		lda #0
-		sta _playerOverPlatformFlag
-		sta _playerTopCollisionFlag
-		sta _playerSideCollisionFlag
-		sta _playerHoldJumpCounter
-		sta _playerNoJumpTimer
+		sta m_playerOverPlatformFlag
+		sta m_playerTopCollisionFlag
+		sta m_playerSideCollisionFlag
+		sta m_playerHoldJumpCounter
+		sta m_playerNoJumpTimer
 
 ;		ldx #PS_OVER_PLATFORM					; (TBO) turn this back on when player base is implemented
 ;		jsr SetPlayerMethod						; (TBO) turn this back on when player base is implemented
 
 		lda #0
-		sta _redrawPlayerCounter
+		sta m_redrawPlayerCounter
 
 		lda #0
-		sta _playerSideSpeed_H1
-		sta _playerSideSpeed_L1
+		sta m_playerSideSpeed_H1
+		sta m_playerSideSpeed_L1
 
 		lda #PSD_RIGHT	
-		sta _lastPlayerSideDirection
-		sta _lastPlayerShootDirection
+		sta m_lastPlayerSideDirection
+		sta m_lastPlayerShootDirection
 
 		; set spawn position
 		lda #0
-		sta _playerLevelLeftX_H2
+		sta m_playerLevelLeftX_H2
 		
 		lda #16
-		sta _playerLevelLeftX_H1
+		sta m_playerLevelLeftX_H1
 		
 		lda #0
-		sta _playerLevelLeftX_L1				; fractional part
+		sta m_playerLevelLeftX_L1				; fractional part
 
 		lda #0
-		sta _playerLevelBottomY_H2
+		sta m_playerLevelBottomY_H2
 		
 		lda #$4F
-		sta _playerLevelBottomY_H1
+		sta m_playerLevelBottomY_H1
 		
 		lda #0
-		sta _playerLevelBottomY_L1				; fractional part
+		sta m_playerLevelBottomY_L1				; fractional part
 
 		lda #0
-		sta _playerLevelTopY_L1					; fractional part (not used)
-		sta _playerLevelRightX_L1				; fractional part (not used)
+		sta m_playerLevelTopY_L1					; fractional part (not used)
+		sta m_playerLevelRightX_L1				; fractional part (not used)
 
 ;		jsr SetPlayerInfo						; (TBO) turn this back on when player base is implemented	
 		
@@ -645,16 +641,16 @@ GameLoop
 ;
 Addr_Loop
 
-		lda _currentLineAddress							
+		lda m_currentLineAddress							
 		sta TabLevelLineAddressLSB,y
 		
-		lda _currentLineAddress+1
+		lda m_currentLineAddress+1
 		sta TabLevelLineAddressMSB,y
 
-		lda _levelCharSizeX
+		lda m_levelCharSizeX
 		bne Char_Below_256
 
-		inc _currentLineAddress+1				; if m_levelCharSizeX = 0, then add 256 chars
+		inc m_currentLineAddress+1				; if m_levelCharSizeX = 0, then add 256 chars
 		jmp Addr_Check_Loop
 
 ;************************************************
@@ -662,25 +658,25 @@ Addr_Loop
 Char_Below_256
 
 		clc
-		adc _currentLineAddress					; from 1 to 255 chars
-		sta _currentLineAddress
+		adc m_currentLineAddress					; from 1 to 255 chars
+		sta m_currentLineAddress
 
-		lda _currentLineAddress+1
+		lda m_currentLineAddress+1
 		adc #0
-		sta _currentLineAddress+1
+		sta m_currentLineAddress+1
 
 ;************************************************
 ;
 Addr_Check_Loop
 
 		iny
-		cpy _levelCharSizeY						; from 1 to 255 lines, 0 = 256 lines in this case
+		cpy m_levelCharSizeY						; from 1 to 255 lines, 0 = 256 lines in this case
 		bne Addr_Loop
 	
-		lda _currentLineAddress					; add one more line definition to fix problem of ladders in the last line
+		lda m_currentLineAddress					; add one more line definition to fix problem of ladders in the last line
 		sta TabLevelLineAddressLSB,y			; but this is not going to work if there are 256 lines!
 	
-		lda _currentLineAddress+1				
+		lda m_currentLineAddress+1				
 		sta TabLevelLineAddressMSB,y
 	
 		rts
@@ -694,77 +690,77 @@ Addr_Check_Loop
 ;
 .proc UpdateInfoLine
 	
-		lda m_goldCounter						; assuming 99 or less
+		lda _goldCounter						; assuming 99 or less
 		ldy #4
 		jsr DisplayDebugInfoBinary99
 
-		lda m_activeEnemies
+		lda _activeEnemies
 		ldy #12
 		jsr DisplayDebugInfoBinary99
 
-		lda m_goldCounter
+		lda _goldCounter
 		bne UIL_update_timer
 		
-		lda m_activeEnemies
+		lda _activeEnemies
 		bne UIL_update_timer
 	
-		lda m_disableGameTimer					; update the time here also
+		lda _disableGameTimer					; update the time here also
 		bne UIL_exit
 	
 		lda #1
-		sta m_disableGameTimer					; my record? 1:16.1 (NTSC, lost one life)
+		sta _disableGameTimer					; my record? 1:16.1 (NTSC, lost one life)
 
 ;************************************************
 ; allow the final update..
 ;
 UIL_update_timer
 	
-		inc m_gameTSFrameCounter
-		lda m_gameTSFrameCounter
+		inc _gameTSFrameCounter
+		lda _gameTSFrameCounter
 		cmp #TENTH_OF_SECOND_FRAMES
 		bne UIL_draw_timer
 	
 		lda #0
-		sta m_gameTSFrameCounter
-		inc m_gameTimerTSeconds
+		sta _gameTSFrameCounter
+		inc _gameTimerTSeconds
 		
-		lda m_gameTimerTSeconds
+		lda _gameTimerTSeconds
 		cmp #10
 		bne UIL_draw_timer
 	
 		lda #0
-		sta m_gameTimerTSeconds
-		inc m_gameTimerSeconds
+		sta _gameTimerTSeconds
+		inc _gameTimerSeconds
 	
-		lda m_gameTimerSeconds
+		lda _gameTimerSeconds
 		cmp #60
 		bne UIL_draw_timer
 	
 		lda #0
-		sta m_gameTimerSeconds
-		inc m_gameTimerMinutes
+		sta _gameTimerSeconds
+		inc _gameTimerMinutes
 
-		lda m_gameTimerMinutes
+		lda _gameTimerMinutes
 		cmp #100
 		bne UIL_draw_timer
 	
 		lda #1
-		sta m_disableGameTimer
+		sta _disableGameTimer
 		jmp UIL_exit							; final timer would be 99:99.9 in this case
 
 ;************************************************
 ;
 UIL_draw_timer
 	
-		lda m_gameTimerMinutes
+		lda _gameTimerMinutes
 		ldy #20
 		jsr DisplayDebugInfoBinary99
 	
-		lda m_gameTimerSeconds
+		lda _gameTimerSeconds
 		ldy #23
 		jsr DisplayDebugInfoBinary99
 	
-		lda m_gameTimerTSeconds
+		lda _gameTimerTSeconds
 		ldy #26
 		jsr DisplayDebugInfoBinary9
 
@@ -797,7 +793,7 @@ UIL_exit
 ; Display List for the game
 ;**************************************************************************************************
 ;
-		org GameDispListAddr
+		org GameDispList
 
 		.byte DL_BLANK_8
 		.byte DL_BLANK_8
@@ -824,7 +820,7 @@ DL1_LMS1
 			?dldata += WINDOW_CHAR_SIZE_X
 		.endr	
 	
-		.byte DL_JUMP_VB, <GameDispListAddr, >GameDispListAddr
+		.byte DL_JUMP_VB, <GameDispList, >GameDispList
 
 ;	
 ;**************************************************************************************************
@@ -834,7 +830,7 @@ DL1_LMS1
 		org HudAddress							
 
 		; two rows of 40 characters for text mode
-.ifndef PAL_VERSION
+.if PAL_VERSION = 0
 		.sb "  G 00    E 00    T 00:00.0       NTSC  "
 .else
 		.sb "  G 00    E 00    T 00:00.0        PAL  "

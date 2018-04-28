@@ -36,7 +36,7 @@ GameDli_01
 				
     	sta WSYNC   							; Wait off-screen
 
-.ifndef PAL_VERSION
+.if PAL_VERSION = 0
 		SetColor $00, $02, $08
 		SetColor $01, $00, $0F
 		SetColor $02, $08, $06
@@ -67,7 +67,7 @@ TextDli
 			
 		STA WSYNC 								;Wait off-screen
 
-.ifndef PAL_VERSION
+.if PAL_VERSION = 0
 		SetColor 1, $03, $0A
 		SetColor 2, $04, $01			
 .else

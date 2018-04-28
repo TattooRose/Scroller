@@ -147,7 +147,7 @@ Finish
 ;
 .proc DisplayDebugInfoHexFF
 
-		stx _saveRegX
+		stx m_saveRegX
 		sta Save_Value+1						; place the value in A 1 location pasted the lda.   
 	
 		lsr										; display 2 digits (from 0 to F)
@@ -167,7 +167,7 @@ Save_Value
 		tax
 		lda TabHexNibbleToScreenDigit,x
 		sta HudAddress+1,y
-		ldx _saveRegX
+		ldx m_saveRegX
 		rts
 .endp	
 
@@ -182,7 +182,7 @@ Save_Value
 ;
 .proc DisplayDebugInfoBinary99
 
-		stx _saveRegX
+		stx m_saveRegX
 		tax
 		cpx #100
 		bcc NoOverflow
@@ -206,7 +206,7 @@ NoOverflow
 		ora #16									; add the "0" character value
 		sta HudAddress+1,y
 
-		ldx _saveRegX
+		ldx m_saveRegX
 		rts
 .endp		
 
@@ -239,7 +239,7 @@ NoOverflow
 ;
 .proc ClearDebugLineInfo
 
-		stx _saveRegX
+		stx m_saveRegX
 		lda #0
 		tax
 
@@ -251,7 +251,7 @@ Loop
 		inx
 		cpx #$30
 		bne Loop
-		ldx _saveRegX
+		ldx m_saveRegX
 		
 		rts
 

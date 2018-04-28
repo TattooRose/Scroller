@@ -16,15 +16,15 @@
 
 ;***** System Data members
 ;
-m_goldCounter 					.byte $00		; current gold counter
-m_activeEnemies					.byte $00		; active enemies counter
-m_disableGameTimer				.byte $00		; disable game flag
+_goldCounter 					.byte $00		; current gold counter
+_activeEnemies					.byte $00		; active enemies counter
+_disableGameTimer				.byte $00		; disable game flag
 
-m_gameTimerSeconds				.byte $00		; seconds timer
-m_gameTimerMinutes				.byte $00		; minutes timer
+_gameTimerSeconds				.byte $00		; seconds timer
+_gameTimerMinutes				.byte $00		; minutes timer
 
-m_gameTimerTSeconds				.byte $00		; seconds timer total
-m_gameTSFrameCounter			.byte $00		; frame counter total
+_gameTimerTSeconds				.byte $00		; seconds timer total
+_gameTSFrameCounter			.byte $00		; frame counter total
 
 
 TabLevelLineAddressLSB			:256 .byte $00
