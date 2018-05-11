@@ -1,0 +1,18 @@
+
+; SPRITE ANIMATION DATA : 3 animations : total size is 12 ($c) bytes.
+
+spr_anims_from
+
+.byte $00,$03,$06
+
+spr_anims_to
+
+.byte $02,$05,$08
+
+spr_anims_reload
+
+.byte $03,$0d,$03
+
+spr_anims_attrib
+
+.byte $20,$20,$20
