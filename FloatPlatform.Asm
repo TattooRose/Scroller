@@ -14,64 +14,168 @@
 ; Local Storage
 ;**************************************************************************************************
 ;
-.struct PlatformStruct
-	on		.byte 
-	dir		.byte
-	len		.byte
-	xpos	.byte 
-	ypos	.byte
-	sxpos	.byte
-	sypos	.byte
-	dxpos	.byte
-	dypos	.byte	
-	timer	.byte
-.ends`
+FLOAT_PLATFORM_CHR_X    = 6
 
-FLOAT_PLATFORM_COUNT	= 0
-FLOAT_PLATFORM_TIMER	= 6
+FLOAT_PLATFORM_MAX_X	= 15
 
-TabPlatformMap dta PlatformStruct[2]	($00, $01, $04, $28, $21, $28, $21, $30, $21, $00) 
+FLOAT_PLATFORM_MAX_Y	= 5
+
+FLOAT_PLATFORM_TIMER	= 8
+
+PlatformCharX			.byte $00, $26, $27, $28, $29, $00
+
+PlatformLSB				.byte $00, $00, $00, $00, $00, $00, $00, $00 
+
+PlatformMSB				.byte $00, $00, $00, $00, $00, $00, $00, $00 
+
+PlatformTime 			.byte $00, $00, $00, $00, $00, $00, $00, $00 
+
+PlatformType 			.byte $00, $00, $00, $00, $00, $00, $00, $00 
+
+PlatformDirX			.byte $00, $00, $00, $00, $00, $00, $00, $00
+
+PlatformStepX			.byte $00, $00, $00, $00, $00, $00, $00, $00
+
+PlatformStepY			.byte $00, $00, $00, $00, $00, $00, $00, $00
+
+PlatformCharH			.byte $26, $A6
+
+PlatformCharY			.byte $00, $00
+
 ;
 ;**************************************************************************************************
-; PlatformControl
+; PlatformControlH
 ;**************************************************************************************************
-.proc PlatformControl
+.proc PlatformControlH
 
-	lda #FLOAT_PLATFORM_COUNT
-	beq CTL_Exit
+	sta m_SaveRegA
+	stx m_SaveRegX
+	sty m_SaveRegY
 	
-	tay
-	ldx #$00
-
-;************************************************
-;
-CTL_Loop	
-	lda TabPlatformMap[0].on,x
-	cmp #$01
-	beq CTL_CheckTime
-	inx
-	cpx #FLOAT_PLATFORM_COUNT
-	beq CTL_Exit
-	jmp CTL_Loop
+	lda m_floatPlatformH
+	bne IndexCheck
+	jmp Exit 
 	
-;************************************************
-;
-CTL_CheckTime
-	lda TabPlatformMap[0].timer,x
-	cmp FLOAT_PLATFORM_TIMER
-	beq CTL_Move
+IndexCheck
+	
+	
+LoadIndex
+ 
+	ldx m_floatPlatformIdx
+	dex 
+	stx m_param00
+	
+	lda PlatformTime, x
+	cmp #FLOAT_PLATFORM_TIMER
+	beq PerformAnimation
+	
 	clc
-	adc $01
-	sta TabPlatformMap[0].timer,x
-	jmp CTL_Loop
+	adc #01
+	sta PlatformTime, x
+
+	jmp Exit
 	
-;************************************************
-;
-CTL_Move
+PerformAnimation
+	
+	lda PlatformLSB,x
+	sta m_platformLevelPointer
 		
+	lda PlatformMSB,x
+	sta m_platformLevelPointer+1
+
+	lda PlatformDirX, x
+	cmp #$00
+	beq MoveForward
+	
+	cmp $01
+	beq MoveBack 		
+	
+	jmp Exit
+		
+MoveForward
+	
+	ldy #$00	
+	ldx #$00	
+
+moveF
+	
+	lda PlatformCharX, x
+	sta (m_platformLevelPointer), y
+	iny
+	inx
+	cpx #FLOAT_PLATFORM_CHR_X
+	bne moveF
+
+	ldx m_param00		
+
+	clc
+	lda PlatformStepX, x
+	adc #$01		
+	sta PlatformStepX, x
+	cmp #FLOAT_PLATFORM_MAX_X	
+	beq SetBackDir	
+	
+	clc
+	lda PlatformLSB,x
+	adc #$01
+	sta PlatformLSB,x
+	
+	jmp ResetTime
+				 	
+MoveBack
+	
+	ldy #FLOAT_PLATFORM_CHR_X - 1	
+	ldx #FLOAT_PLATFORM_CHR_X - 1
+	
+moveB
+	
+	lda PlatformCharX, x
+	sta (m_platformLevelPointer), y
+	dey
+	dex
+	cpx #$00
+	bne moveB
+	
+	ldx m_param00	
+	
+	sec
+	lda PlatformStepX, x
+	sbc #$01
+	sta PlatformStepX, x
+	cmp #$00
+	beq SetForwardDir	
+		
+	sec
+	lda PlatformLSB,x
+	sbc #$01
+	sta PlatformLSB,x
+	
+	jmp ResetTime
+
+SetBackDir
+	
+	lda #$01
+	sta PlatformDirX, x
+	jmp ResetTime
+
+SetForwardDir
+	
+	lda #$00
+	sta PlatformDirX, x
+	
+ResetTime
+
+	lda #00
+	sta PlatformTime, x
+
 ;************************************************
 ;
-CTL_Exit
+Exit
+
+	lda m_SaveRegA
+	ldx m_SaveRegX
+	ldy m_SaveRegY
+	
 	rts
 
 .endp	

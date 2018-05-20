@@ -369,6 +369,111 @@ IGC_check_loop_Y
 ; UpdateInfoLine
 ;**************************************************************************************************
 ;
+.proc InitPlatforms
+
+		ldx #$00
+		stx m_floatPlatformV
+		stx m_floatPlatformH
+		stx m_floatPlatformIdx		
+		
+;*****	Beging loop
+;
+loop
+		ldy #0									; column index
+	
+		lda TabLevelLineAddressLSB,x
+		sta m_ptrLevelLine
+		
+		lda TabLevelLineAddressMSB,x
+		sta m_ptrLevelLine+1
+
+;*****	Middle loop
+;
+loop1
+
+		lda (m_ptrLevelLine),y
+		sta m_currChar	
+		stx m_pageZeroTempValue
+		tax
+		lda TabCharDefinition,x
+		ldx m_pageZeroTempValue
+
+		and #15
+		cmp #CT_FLOATPLATFORMH
+		beq loopH
+		
+		cmp #CT_FLOATPLATFORMV
+		beq loopV		
+		jmp loop2	
+
+loopH
+		lda PlatformCharH
+		cmp m_currChar
+		beq StartH
+
+		lda PlatformCharH+1
+		cmp m_currChar
+		beq StartH
+		jmp loop2
+					
+StartH						 
+		txa										; move x to a
+		pha										; store a
+
+		tya										; move y to a
+		pha										; store a
+		
+		ldy m_floatPlatformIdx					; put the current index in y
+		
+		clc										; clear the carry
+		adc TabLevelLineAddressLSB,x			; add the lsb screen address
+		sta PlatformLSB,y						; store it by index
+		
+		lda TabLevelLineAddressMSB,x			; get the msb screen address
+		adc #00									; account for carry
+		sta PlatformMSB,y						; store it by index
+		
+		lda #01									; type 01 is horizontal
+		sta PlatformType,y						; store it by index
+		
+		lda #$00								; initialize the step
+		sta PlatformStepX,y						; store it by index
+				
+		inc m_floatPlatformIdx					; increment the index
+		inc m_floatPlatformH
+		
+		pla										; pull y
+		tay										; restore y
+
+		pla										; pull x
+		tax										; restore x
+
+		jmp loop2
+		
+loopV	
+		lda TabCharDefinition,x	
+		inc m_floatPlatformV
+		
+;*****	Loop on X 
+;		
+loop2	
+		iny
+		cpy m_levelCharSizeX
+		bne loop1
+		
+		inx
+		cpx m_levelCharSizeY
+		bne loop
+		
+		rts
+
+.endp
+
+;
+;**************************************************************************************************
+; UpdateInfoLine
+;**************************************************************************************************
+;
 .proc UpdateInfoLine
 	
 		lda m_goldCounter						; assuming 99 or less

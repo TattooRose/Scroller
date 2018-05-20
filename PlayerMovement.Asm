@@ -598,7 +598,7 @@ CHBP_get_char_line
 	
 		; fast collision check
 		lda m_leftBottomChar
-		and #15
+		and #01
 		cmp #CT_BLOCK
 		bne CHBP_check_next_char
 
@@ -611,7 +611,7 @@ CHBP_get_char_line
 CHBP_check_next_char
 		
 		lda m_rightBottomChar
-		and #15
+		and #01
 		cmp #CT_BLOCK
 		bne CHBP_hole
 
@@ -702,7 +702,7 @@ CHBP_no_hole
 
 		; fast collision check
 		lda m_leftBottomChar
-		and #15
+		and #01
 		cmp #CT_BLOCK
 		bne CPBC_check_next_char
 
@@ -715,7 +715,7 @@ CHBP_no_hole
 CPBC_check_next_char
 
 		lda m_rightBottomChar
-		and #15
+		and #01
 		cmp #CT_BLOCK
 		bne CPBC_exit
 
@@ -824,7 +824,7 @@ CPBC_exit
 		sta m_rightTopChar
 
 		lda m_leftTopChar						; fast collision check	
-		and #15
+		and #01
 		cmp #CT_BLOCK
 		bne CPTC_check_next_char
 
@@ -837,7 +837,7 @@ CPBC_exit
 CPTC_check_next_char
 		
 		lda m_rightTopChar
-		and #15
+		and #01
 		cmp #CT_BLOCK
 		bne CPTC_exit
 
@@ -966,7 +966,7 @@ CPTC_exit
 CPLC_check_next_char
 
 		lda m_leftBottomChar
-		and #15
+		and #01
 		cmp #CT_BLOCK
 		bne CPLC_exit
 
@@ -1083,7 +1083,7 @@ CPLC_exit
 		sta m_rightBottomChar
 
 		lda m_rightTopChar						; fast collision check
-		and #15
+		and #01
 		cmp #CT_BLOCK
 		bne CPRC_check_next_char
 
@@ -1096,7 +1096,7 @@ CPLC_exit
 CPRC_check_next_char
 		
 		lda m_rightBottomChar
-		and #15
+		and #01
 		cmp #CT_BLOCK
 		bne CPRC_exit
 

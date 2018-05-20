@@ -116,7 +116,7 @@ PMC_check_down
 		jsr CheckPlayerBottomDownPos
 
 		lda m_middleBottomChar
-		and #15
+		and #01
 		cmp #CT_BLOCK
 		bne PMC_exit
 

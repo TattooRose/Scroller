@@ -1,7 +1,7 @@
 ;
 ;***************************************************************************************************
 ;
-;	Filename:		PlunkerData.Asm
+;	Filename:		ScrollerData.Asm
 ;
 ;	Modified On:	Thur Apr 26, 2018 01:12 PM
 ;
@@ -16,12 +16,19 @@ m_sfxData						.byte $00
 m_sfxValue						.byte $00
 m_sfxLength						.byte $00
 
+m_floatAnimModV					.byte $00		; used for modulus operation on vertical animation
+m_floatAnimModH					.byte $00		; used for modulus operation on horizontal animation
+m_floatPlatformV				.byte $00		; is there vertical floating platforms
+m_floatPlatformH				.byte $00		; is there horizontal floating platforms
+m_floatPlatformIdx				.byte $00		; index to platform screen array
+
 m_verticalLaserOn				.byte $00		; is vertical laser available
 m_horizontalLaserOn				.byte $00		; is horizontal laser available
 
 m_goldCounter 					.byte $00		; current gold counter
 m_healthCounter					.byte $00		; current health counter
 m_waterAvailable				.byte $00		; is water available
+
 
 m_disableGameTimer				.byte $00		; disable game flag
 
@@ -221,10 +228,10 @@ TabCharDefinition
 	.byte %11110000+CT_BLOCK								; vertical dither 1 LT  base		[23]
 	.byte %11110000+CT_BLOCK								; vertical dither 2 MT  base		[24]
 	.byte %11110000+CT_BLOCK								; vertical dither 3 RT  base		[25]
-	.byte %00010000+CT_FLOATPLATFORM						; Floating Platform					[26]
-	.byte %00010000+CT_FLOATPLATFORM						; Floating Platform					[27]
-	.byte %00010000+CT_FLOATPLATFORM						; Floating Platform					[28]
-	.byte %00010000+CT_FLOATPLATFORM						; Floating Platform					[29]
+	.byte %00010000+CT_FLOATPLATFORMH						; Floating Platform					[26]
+	.byte %00010000+CT_FLOATPLATFORMH						; Floating Platform					[27]
+	.byte %00010000+CT_FLOATPLATFORMH						; Floating Platform					[28]
+	.byte %00010000+CT_FLOATPLATFORMH						; Floating Platform					[29]
 	.byte %00000000+CT_BLANK								; blank								[2A]
 	.byte %00000000+CT_BLANK								; blank								[2B]
 	.byte %00000000+CT_BLANK								; blank								[2C]
@@ -356,10 +363,10 @@ TabCharDefinition
 	.byte %11110000+CT_BLOCK								; vertical dither 1 LT  base		[A3]
 	.byte %11110000+CT_BLOCK								; vertical dither 2 MT  base		[A4]
 	.byte %11110000+CT_BLOCK								; vertical dither 3 RT  base		[A5]
-	.byte %00010000+CT_FLOATPLATFORM						; Floating Platform					[A6]
-	.byte %00010000+CT_FLOATPLATFORM						; Floating Platform					[A7]
-	.byte %00010000+CT_FLOATPLATFORM						; Floating Platform					[A8]
-	.byte %00010000+CT_FLOATPLATFORM						; Floating Platform					[A9]
+	.byte %00010000+CT_FLOATPLATFORMH						; Floating Platform					[A6]
+	.byte %00010000+CT_FLOATPLATFORMH						; Floating Platform					[A7]
+	.byte %00010000+CT_FLOATPLATFORMH						; Floating Platform					[A8]
+	.byte %00010000+CT_FLOATPLATFORMH						; Floating Platform					[A9]
 	.byte %00000000+CT_BLANK								; blank								[AA]
 	.byte %00000000+CT_BLANK								; blank								[AB]
 	.byte %00000000+CT_BLANK								; blank								[AC]

@@ -1,7 +1,7 @@
 ;
 ;***************************************************************************************************
 ;
-;	Filename:		Plunker.Asm
+;	Filename:		Scroller.Asm
 ;
 ;	Modified On:	Thur Apr 26, 2018 01:12 PM
 ;
@@ -157,6 +157,7 @@ InitHardware
 ;*****	Initialize Level
 ;
 		jsr SfxOff
+		jsr InitPlatforms						; initialize floating platforms if any
 		jsr InitGoldCounter						; gold initialization
 		jsr InitEnemyManager					; enemy manager initialization
 		jsr InitMissileSystem					; missile system initialization
@@ -202,6 +203,10 @@ CheckUserInput
 		ldy #40
 		jsr DisplayDebugInfoHexFF		
 			
+		lda m_playerState
+		ldy #43
+		jsr DisplayDebugInfoHexFF		
+			
 		jsr CheckInput
 		jsr UpdateTimers
 		jmp (m_playerMethodPointer)
@@ -235,7 +240,6 @@ MissilesStep
 ;
 GameAnimations
 		jsr DoFontAnimations
-		jsr PlatformControl
 		jsr UpdateCoinAnimations
 		jsr UpdateInfoLine
 		jsr SfxUpdate
@@ -303,7 +307,7 @@ END_CODE_WARNING
 		org DataAddress
 		
 		icl "Data/Levels.Asm"
-		icl "PlunkerData.Asm"
+		icl "ScrollerData.Asm"
 		icl "PlayerData.Asm"
 		
 .PRINT "Data Size : ", * - DataAddress		

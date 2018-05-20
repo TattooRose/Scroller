@@ -395,7 +395,7 @@ UMS_check_collision
 UMS_enemy_owner									
 	
 		lda m_charDef
-		and #15
+		and #01
 		cmp #CT_BLOCK
 		bne UMS_update_position
 		jmp UMS_destroy
@@ -405,7 +405,7 @@ UMS_enemy_owner
 UMS_player_owner
 		
 		lda m_charDef
-		and #$0F
+		and #$01
 
 ;************************************************
 ;

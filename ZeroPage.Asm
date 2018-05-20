@@ -34,9 +34,9 @@ m_param01					org *+$01
 m_param02					org *+$01
 m_param03					org *+$01
 
-;m_saveRegA					org *+$01
+m_saveRegA					org *+$01
 m_saveRegX					org *+$01
-;m_saveRegY					org *+$01
+m_saveRegY					org *+$01
 
 ;m_sfxBusy					org *+$01	
 ;m_sfxLeft					org *+$01
@@ -156,6 +156,7 @@ m_ptrLevelAddr				org *+$02
 m_ptrLevelLine				org *+$02
 m_pageZeroTempPointer		org *+$02
 m_playerMethodPointer		org *+$02
+m_platformLevelPointer		org *+$02
 
 m_currChar					org *+$01
 m_currLevelNum				org *+$01
