@@ -52,6 +52,7 @@ GameDspLstAddr				= $0E00				; 176 bytes for display list
 
 HudMemoryAddr				= $06B0				; Heads up display are (80 bytes)
 
+SoundPlayerAddress			= $2400
 CodeAddress					= $4400				; 20K (22K zone)
 DataAddress					= $3000				;  4K (size for data)
 
