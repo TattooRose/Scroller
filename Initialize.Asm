@@ -381,7 +381,7 @@ IGC_check_loop_Y
 loop
 		ldy #0									; column index
 	
-		lda TabLevelLineAddressLSB,x
+		lda TabLevelLineAddressLSB,x		
 		sta m_ptrLevelLine
 		
 		lda TabLevelLineAddressMSB,x
@@ -416,7 +416,8 @@ loopH
 		beq StartH
 		jmp loop2
 					
-StartH						 
+StartH	
+							 
 		txa										; move x to a
 		pha										; store a
 
@@ -424,10 +425,17 @@ StartH
 		pha										; store a
 		
 		ldy m_floatPlatformIdx					; put the current index in y
+
+		pha
+		lda TabLevelLineAddressLSB,x
+		sta PlatformBaseLSB,y
+		lda TabLevelLineAddressMSB,x
+		sta PlatformBaseMSB,y
 		
+		pla		
 		clc										; clear the carry
-		adc TabLevelLineAddressLSB,x			; add the lsb screen address
-		sta PlatformLSB,y						; store it by index
+		adc TabLevelLineAddressLSB,x			; add the lsb screen address		
+		sta PlatformLSB,y						; store it by index		
 		
 		lda TabLevelLineAddressMSB,x			; get the msb screen address
 		adc #00									; account for carry
@@ -451,7 +459,7 @@ StartH
 		jmp loop2
 		
 loopV	
-		lda TabCharDefinition,x	
+		lda TabCharDefinition,x			
 		inc m_floatPlatformV
 		
 ;*****	Loop on X 
@@ -463,8 +471,10 @@ loop2
 		
 		inx
 		cpx m_levelCharSizeY
-		bne loop
+		beq Exit
+		jmp loop
 		
+Exit		
 		rts
 
 .endp

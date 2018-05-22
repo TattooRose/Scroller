@@ -42,6 +42,10 @@ PlatformCharH			.byte $26, $A6
 
 PlatformCharY			.byte $00, $00
 
+PlatformBaseLSB			.byte $00, $00, $00, $00, $00, $00, $00, $00 
+
+PlatformBaseMSB			.byte $00, $00, $00, $00, $00, $00, $00, $00 
+
 ;
 ;**************************************************************************************************
 ; PlatformControlH
@@ -119,6 +123,9 @@ moveF
 	lda PlatformLSB,x
 	adc #$01
 	sta PlatformLSB,x
+	lda PlatformMSB,x
+	adc #$00
+	sta PlatformMSB,x
 	
 	jmp ResetTime
 				 	
@@ -149,6 +156,10 @@ moveB
 	lda PlatformLSB,x
 	sbc #$01
 	sta PlatformLSB,x
+	lda PlatformMSB,x	
+	sbc #0
+	sta PlatformMSB,x
+	
 	
 	jmp ResetTime
 

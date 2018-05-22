@@ -38,9 +38,6 @@ m_saveRegA					org *+$01
 m_saveRegX					org *+$01
 m_saveRegY					org *+$01
 
-;m_sfxBusy					org *+$01	
-;m_sfxLeft					org *+$01
-;m_sfxRight					org *+$01
 m_sfxEffect					org *+$01
 
 m_animMiscWidth				org *+$01

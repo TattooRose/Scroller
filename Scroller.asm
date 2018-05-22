@@ -53,10 +53,10 @@ GameDspLstAddr				= $0E00				; 176 bytes for display list
 HudMemoryAddr				= $06B0				; Heads up display are (80 bytes)
 
 SoundPlayerAddress			= $2400
-CodeAddress					= $4400				; 20K (22K zone)
 DataAddress					= $3000				;  4K (size for data)
-
 SoundAddress				= $4000
+CodeAddress					= $4800				; 20K (22K zone)
+
 PmgAddress					= $A000				; 40K (2K size - 768 bytes)
 GameFontAddress				= $A800				; 42K (1K size)
 TextFontAddress				= $AC00				; 39K (1K size)
@@ -200,14 +200,45 @@ JumpSound
 		
 CheckUserInput
 
-		lda m_stick0
-		ldy #40
-		jsr DisplayDebugInfoHexFF		
-			
+		ldx m_floatPlatformIdx
+		dex
+		
 		lda m_playerState
+		ldy #40
+		jsr DisplayDebugInfoHexFF
+		
+		lda m_leftBottomChar
 		ldy #43
-		jsr DisplayDebugInfoHexFF		
-			
+		jsr DisplayDebugInfoHexFF
+		
+		lda m_rightBottomChar
+		ldy #46
+		jsr DisplayDebugInfoHexFF
+		
+		lda m_playerLevelLeftX_H1
+		ldy #49
+		jsr DisplayDebugInfoHexFF	
+		
+		lda m_playerLevelLeftX_H2
+		ldy #52
+		jsr DisplayDebugInfoHexFF	
+		
+		lda PlatformLSB,x
+		ldy #55
+		jsr DisplayDebugInfoHexFF	
+		 		
+		lda PlatformMSB,x
+		ldy #58
+		jsr DisplayDebugInfoHexFF	
+		 		
+		lda PlatformBaseLSB,x
+		ldy #61
+		jsr DisplayDebugInfoHexFF	
+
+		lda PlatformBaseMSB,x
+		ldy #64
+		jsr DisplayDebugInfoHexFF	
+		
 		jsr CheckInput
 		jsr UpdateTimers
 		jmp (m_playerMethodPointer)

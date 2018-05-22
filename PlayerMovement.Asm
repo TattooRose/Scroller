@@ -551,6 +551,8 @@ CHBP_get_char_line
 		cmp m_levelCharSizeY
 		bcs CHBP_no_hole
 
+GetLevelLine
+
 		tax
 		lda TabLevelLineAddressLSB,x
 		sta m_ptrLevelLine

@@ -21,6 +21,8 @@ m_floatAnimModH					.byte $00		; used for modulus operation on horizontal animat
 m_floatPlatformV				.byte $00		; is there vertical floating platforms
 m_floatPlatformH				.byte $00		; is there horizontal floating platforms
 m_floatPlatformIdx				.byte $00		; index to platform screen array
+m_floatPlatform_X				.byte $00
+m_floatPlatform_Y				.byte $00
 
 m_verticalLaserOn				.byte $00		; is vertical laser available
 m_horizontalLaserOn				.byte $00		; is horizontal laser available

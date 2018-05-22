@@ -110,8 +110,7 @@ PMGT_check_fall
 		jsr CheckHoleBelowPlayer
 
 		lda m_playerOverPlatformFlag
-		bne PMGT_check_down
-
+		bne CheckPlatformLeft
 	
 		ldx #PS_FALLING							; start falling state
 		jsr SetPlayerMethod
@@ -121,15 +120,37 @@ PMGT_check_fall
 
 		jmp PMGT_end
 
-;************************************************
-; check down
+;*****	Check Platform Left
 ;
-PMGT_check_down
+CheckPlatformLeft
 		
+		lda m_leftBottomChar					; float Platform check
+		and #%00000111
+		cmp #CT_FLOATPLATFORMH
+		bne CheckPlatformRight
+		
+		jmp ClampPlayer
+
+;*****	Check Platform Right		
+CheckPlatformRight		
+		
+		lda m_rightBottomChar
+		and #%00000111
+		cmp #CT_FLOATPLATFORMH
+		bne PMGT_check_down	
+
+		jmp ClampPlayer
+		
+;*****	Check down
+;						
+PMGT_check_down		
 		lda m_stick0
 		and #STICK_DOWN	
-		bne PMGT_end
+		beq SearchLadder
+		
+		jmp PMGT_end
 
+SearchLadder
 		lda #0									; search for a ladder one char below (left pixel)
 		sta m_bottomPosOffsetX
 		lda #[CHAR_PIX.else_Y+1]
@@ -182,7 +203,46 @@ PMGT_snap_ladder_down
 
 		ldx #PS_CLIMBING						; start climbing state
 		jsr SetPlayerMethod
+		
+		jmp PMGT_end
+		
+;***** Clamp Player to platform
+ClampPlayer
 
+		lda m_stick0
+		cmp #$0F
+		bne PMGT_end
+		 
+		ldx m_floatPlatformIdx
+		dex
+		
+		lda PlatformTime,x
+		cmp #FLOAT_PLATFORM_TIMER
+		bne PMGT_end
+		
+		lda PlatformDirX,x
+		cmp #00
+		bne ClampLeft
+		
+		clc		
+		lda m_playerLevelLeftX_H1	
+		adc #$04
+		sta m_playerLevelLeftX_H1
+		lda m_playerLevelLeftX_H2
+		adc #00
+		sta m_playerLevelLeftX_H2		
+
+		jmp PMGT_end 
+		
+ClampLeft		
+		sec
+		lda m_playerLevelLeftX_H1
+		sbc #$04
+		sta m_playerLevelLeftX_H1
+		lda m_playerLevelLeftX_H2
+		sbc #00
+		sta m_playerLevelLeftX_H2		
+		
 ;************************************************
 ;
 PMGT_end
