@@ -214,4 +214,4 @@ PMIW_update_pos
 
 PMIW_exit
 		
-		jmp PlayerMethodReturn
+		jmp GameLoop.PlayerMethodReturn

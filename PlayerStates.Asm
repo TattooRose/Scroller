@@ -239,7 +239,7 @@ PlayerMethodInitLose
 ;**************************************************************************************************
 ;
 PlayerMethodStatic
-	jmp PlayerMethodReturn
+	jmp GameLoop.PlayerMethodReturn
 
 ;
 ;**************************************************************************************************
@@ -511,11 +511,11 @@ DSC_exit
 ;**************************************************************************************************
 ;
 PlayerMethodGravityTest
-	jmp PlayerMethodReturn
+	jmp GameLoop.PlayerMethodReturn
 ;
 ;**************************************************************************************************
 ; PlayerMethodLose
 ;**************************************************************************************************
 ;
 PlayerMethodLose
-	jmp PlayerMethodReturn
+	jmp GameLoop.PlayerMethodReturn

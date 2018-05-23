@@ -54,9 +54,8 @@ HudMemoryAddr				= $0680				; Heads up display are (80 bytes)
 
 SoundPlayerAddress			= $2400
 DataAddress					= $3000				;  4K (size for data)
-CodeAddress					= $4800				; 20K (22K zone)
-
 SoundAddress				= $4000
+CodeAddress					= $4800				; 20K (22K zone)
 
 PmgAddress					= $A000				; 40K (2K size - 768 bytes)
 GameFontAddress				= $A800				; 42K (1K size)
@@ -99,11 +98,11 @@ NO_NTSC_loop
 		SetRamTop #32							; pull memtop down 32 pages
 				
 		SetDisplayListInterrupt GameDli_01		; set the display list interrupts
-
-		VcountWait 120							; make sure to wait so the setting take effect
-
+		VcountWait 120							; make sure to wait so the setting takes effect
+		
 		lda #GameDLEnd							; length of games display list data
-		sta m_param00 							; store it for the load routine									
+		sta m_param00 							; store it for the load routine		
+							
 		SetVector m_paramW01, GameDL			; source of display list data
 		SetVector m_paramW02, GameDspLstAddr	; destination of display list data
 		
@@ -114,11 +113,10 @@ NO_NTSC_loop
 SetAddresses
 
 		SetPMBaseAddress PmgAddress				; set the player missile address
-
 		SetFontAddress GameFontAddress			; set the starting font address
 		SetDisplayListAddress GameDspLstAddr	; set the display list address	
 
-		VcountWait 120
+		VcountWait 120							; make sure to wait so the setting takes effect
 
 ;*****	Housekeeping
 ;
@@ -165,7 +163,7 @@ InitHardware
 		sta m_param01							; store it to the parameter
 		jsr LoadLevel							; load the level
 
-		VcountWait 120
+		VcountWait 120							; make sure to wait so the setting takes effect
 
 ;*****	Initialize Level
 ;
@@ -174,7 +172,7 @@ InitHardware
 		jsr InitEnemyManager					; enemy manager initialization
 		jsr InitMissileSystem					; missile system initialization
 
-		VcountWait 120
+		VcountWait 120							; make sure to wait so the setting takes effect
 		
 ;*****	Set player position and draw
 ;		
@@ -185,12 +183,30 @@ InitHardware
 		jsr SetPlayerScreenPos 					; fill in the players position
 		jsr DrawPlayer							; draw the player
 
-		VcountWait 120	
-		
-;*****	GameLoop
+		VcountWait 120							; make sure to wait so the setting takes effect	
+
+		jsr GameLoop
+
+;*****	Scroller Loop
 ;
-GameLoop
-		
+ScrollerLoop
+
+		jmp ScrollerLoop						; infinite loop
+;
+;**************************************************************************************************
+; End of Start
+;**************************************************************************************************
+;
+						
+;
+;**************************************************************************************************
+;
+;	GameLoop
+;**************************************************************************************************
+;
+.proc GameLoop
+
+Loop		
 		lda m_stick0
 		and #$0F
 		cmp #$0F
@@ -301,7 +317,7 @@ GameAnimations
 		VcountWait 120
 		
 		jsr CheckPMCollisions
-		jmp GameLoop
+		jmp Loop
 	
 ;*****	PlayerEndStates
 ;
@@ -321,7 +337,11 @@ PlayerEndStates
 		lda #0
 		sta HITCLR	
 		
-		jmp GameLoop
+		jmp Loop
+
+		rts
+		
+.endp
 
 ;*****	Includes base files
 ;
