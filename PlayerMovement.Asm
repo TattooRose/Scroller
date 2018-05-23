@@ -280,11 +280,6 @@ loop1   asl m_hldA
 		lda m_playerBaseColor1B
 		sta COLPM2
 
-;		lda m_playerScreenLeftX
-;		sta HPOSP0
-;		sta HPOSP1
-;		sta HPOSP2
-
 		lda m_redrawPlayerCounter
 		bne zdraw		
 		jmp DP_exit				

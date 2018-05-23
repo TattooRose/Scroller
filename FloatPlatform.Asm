@@ -20,7 +20,7 @@ FLOAT_PLATFORM_MAX_X	= 15
 
 FLOAT_PLATFORM_MAX_Y	= 5
 
-FLOAT_PLATFORM_TIMER	= 8
+FLOAT_PLATFORM_TIMER	= 6
 
 PlatformCharX			.byte $00, $26, $27, $28, $29, $00
 
@@ -52,141 +52,138 @@ PlatformBaseMSB			.byte $00, $00, $00, $00, $00, $00, $00, $00
 ;**************************************************************************************************
 .proc PlatformControlH
 
-	sta m_SaveRegA
-	stx m_SaveRegX
-	sty m_SaveRegY
+		sta m_SaveRegA
+		stx m_SaveRegX
+		sty m_SaveRegY
 	
-	lda m_floatPlatformH
-	bne IndexCheck
-	jmp Exit 
-	
-IndexCheck
-	
+		lda m_floatPlatformH
+		bne LoadIndex
+		jmp Exit 
 	
 LoadIndex
  
-	ldx m_floatPlatformIdx
-	dex 
-	stx m_param00
+		ldx m_floatPlatformIdx
+		dex 
+		stx m_param00
 	
-	lda PlatformTime, x
-	cmp #FLOAT_PLATFORM_TIMER
-	beq PerformAnimation
+		lda PlatformTime, x
+		cmp #FLOAT_PLATFORM_TIMER
+		beq PerformAnimation
 	
-	clc
-	adc #01
-	sta PlatformTime, x
+		clc
+		adc #01
+		sta PlatformTime, x
 
-	jmp Exit
+		jmp Exit
 	
 PerformAnimation
 	
-	lda PlatformLSB,x
-	sta m_platformLevelPointer
+		lda PlatformLSB,x
+		sta m_platformLevelPointer
 		
-	lda PlatformMSB,x
-	sta m_platformLevelPointer+1
+		lda PlatformMSB,x
+		sta m_platformLevelPointer+1
 
-	lda PlatformDirX, x
-	cmp #$00
-	beq MoveForward
+		lda PlatformDirX, x
+		cmp #$00
+		beq MoveForward
 	
-	cmp $01
-	beq MoveBack 		
+		cmp $01
+		beq MoveBack 		
 	
-	jmp Exit
+		jmp Exit
 		
 MoveForward
 	
-	ldy #$00	
-	ldx #$00	
+		ldy #$00	
+		ldx #$00	
 
 moveF
 	
-	lda PlatformCharX, x
-	sta (m_platformLevelPointer), y
-	iny
-	inx
-	cpx #FLOAT_PLATFORM_CHR_X
-	bne moveF
+		lda PlatformCharX, x
+		sta (m_platformLevelPointer), y
+		iny
+		inx
+		cpx #FLOAT_PLATFORM_CHR_X
+		bne moveF
 
-	ldx m_param00		
+		ldx m_param00		
 
-	clc
-	lda PlatformStepX, x
-	adc #$01		
-	sta PlatformStepX, x
-	cmp #FLOAT_PLATFORM_MAX_X	
-	beq SetBackDir	
+		clc
+		lda PlatformStepX, x
+		adc #$01		
+		sta PlatformStepX, x
+		cmp #FLOAT_PLATFORM_MAX_X	
+		beq SetBackDir	
 	
-	clc
-	lda PlatformLSB,x
-	adc #$01
-	sta PlatformLSB,x
-	lda PlatformMSB,x
-	adc #$00
-	sta PlatformMSB,x
+		clc
+		lda PlatformLSB,x
+		adc #$01
+		sta PlatformLSB,x
+		lda PlatformMSB,x
+		adc #$00
+		sta PlatformMSB,x
 	
-	jmp ResetTime
+		jmp ResetTime
 				 	
 MoveBack
 	
-	ldy #FLOAT_PLATFORM_CHR_X - 1	
-	ldx #FLOAT_PLATFORM_CHR_X - 1
+		ldy #FLOAT_PLATFORM_CHR_X - 1	
+		ldx #FLOAT_PLATFORM_CHR_X - 1
 	
 moveB
 	
-	lda PlatformCharX, x
-	sta (m_platformLevelPointer), y
-	dey
-	dex
-	cpx #$00
-	bne moveB
+		lda PlatformCharX, x
+		sta (m_platformLevelPointer), y
+		dey
+		dex
+		cpx #$00
+		bne moveB
 	
-	ldx m_param00	
+		ldx m_param00	
 	
-	sec
-	lda PlatformStepX, x
-	sbc #$01
-	sta PlatformStepX, x
-	cmp #$00
-	beq SetForwardDir	
+		sec
+		lda PlatformStepX, x
+		sbc #$01
+		sta PlatformStepX, x
+		cmp #$00
+		beq SetForwardDir	
 		
-	sec
-	lda PlatformLSB,x
-	sbc #$01
-	sta PlatformLSB,x
-	lda PlatformMSB,x	
-	sbc #0
-	sta PlatformMSB,x
-	
-	
-	jmp ResetTime
+		sec
+		lda PlatformLSB,x
+		sbc #$01
+		sta PlatformLSB,x
+		lda PlatformMSB,x	
+		sbc #0
+		sta PlatformMSB,x
+		
+		jmp ResetTime
 
 SetBackDir
 	
-	lda #$01
-	sta PlatformDirX, x
-	jmp ResetTime
+		lda #$01
+		sta PlatformDirX, x
+		jmp ResetTime
 
 SetForwardDir
 	
-	lda #$00
-	sta PlatformDirX, x
+		lda #$00
+		sta PlatformDirX, x
 	
 ResetTime
 
-	lda #00
-	sta PlatformTime, x
+		lda #00
+		sta PlatformTime, x
+	
 
-;************************************************
+;*****	Exit
 ;
 Exit
 
-	lda m_SaveRegA
-	ldx m_SaveRegX
-	ldy m_SaveRegY
+		lda m_SaveRegA
+		ldx m_SaveRegX
+		ldy m_SaveRegY
 	
-	rts
+		rts
 
 .endp	

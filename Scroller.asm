@@ -200,6 +200,8 @@ JumpSound
 		
 CheckUserInput
 
+.if DEBUG_ON = 1
+
 		ldx m_floatPlatformIdx
 		dex
 		
@@ -238,6 +240,8 @@ CheckUserInput
 		lda PlatformBaseMSB,x
 		ldy #64
 		jsr DisplayDebugInfoHexFF	
+
+.endif
 		
 		jsr CheckInput
 		jsr UpdateTimers

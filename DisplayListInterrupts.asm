@@ -44,14 +44,15 @@ GameDli_01
 		SetColor 2, 7, 2		; blue (water)
 
 .endif
+		
 		lda m_playerScreenLeftX
 		sta HPOSP0
 		sta HPOSP1
 		sta HPOSP2
-		
+				
 		SetFontAddress GameFontAddress
     	sta WSYNC   			; Wait off-screen
-
+		
 		SetDisplayListInterrupt TextDli 
 
 		pla

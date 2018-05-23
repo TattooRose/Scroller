@@ -24,7 +24,7 @@
 ;**************************************************************************************************
 ;
 PAL_VERSION					= 0
-DEBUG_ON					= 0
+DEBUG_ON					= 1
 STEREOMODE					= 0
 
 GAME_MEM					= GameMemoryAddress			; must set this for camera to work			

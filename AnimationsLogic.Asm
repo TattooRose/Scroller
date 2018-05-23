@@ -112,8 +112,7 @@ TabAnimLaserFrameTime			:25 .byte $01, $01
 		jsr AnimateVerticalLaser
 		jsr AnimateHorizontalLaser
 		jsr AnimateMisc		
-		
-		jsr PlatformControlH	
+		jsr PlatformControlH
 		
 		rts
 		
