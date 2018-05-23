@@ -225,6 +225,7 @@ ClampPlayer
 		bne ClampLeft
 		
 		clc		
+		
 		lda m_playerLevelLeftX_H1	
 		adc #$04
 		sta m_playerLevelLeftX_H1

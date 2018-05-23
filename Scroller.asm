@@ -50,7 +50,7 @@
 ZeroPageAddress				= $80				; 122 bytes zero page ($80 to $F9) 
 GameDspLstAddr				= $0E00				; 176 bytes for display list
 
-HudMemoryAddr				= $06B0				; Heads up display are (80 bytes)
+HudMemoryAddr				= $0680				; Heads up display are (80 bytes)
 
 SoundPlayerAddress			= $2400
 DataAddress					= $3000				;  4K (size for data)
@@ -108,28 +108,31 @@ NO_NTSC_loop
 ;
 InitHardware
 
-		lda #0									; set the player info
-		sta SIZEP0
-
-		lda #%01010101							; double width for all missiles
-		sta SIZEM
-
 		SetPMBaseAddress PmgAddress				; set the player missile address
-
-		lda #12
-		sta HSCROL
-	
-		lda #0
-		sta VSCROL
 
 		SetFontAddress GameFontAddress			; set the starting font address
 		SetDisplayListAddress GameDspLstAddr	; set the display list address	
+
 		VcountWait 120
 
 		jsr SfxOff
 		jsr InitVars							; begin initialization
 		jsr InitLevelTable						; set up the level table		
 				
+;*****	Set the Registers
+;				
+		lda #0									; set the player info
+		sta SIZEP0
+
+		lda #%01010101							; double width for all missiles
+		sta SIZEM
+
+		lda #12									; set the HSCROL value
+		sta HSCROL
+	
+		lda #0									; set the VSCROL value
+		sta VSCROL
+		
 		lda #[NMI_DLI]							; enable DLI's (but no VBI's)
 		sta NMIEN
 		
@@ -145,7 +148,7 @@ InitHardware
 		lda #0									; clear the hit register
 		sta HITCLR
 
-;*****	Load level
+;*****	Load the starting level
 ;
 		lda #$00								; set the starting level
 		sta m_currLevelNum						; store it off
@@ -157,11 +160,13 @@ InitHardware
 
 ;*****	Initialize Level
 ;
-		jsr SfxOff
+		jsr SfxOff								; make sure sound is off at first
 		jsr InitPlatforms						; initialize floating platforms if any
 		jsr InitGoldCounter						; gold initialization
 		jsr InitEnemyManager					; enemy manager initialization
 		jsr InitMissileSystem					; missile system initialization
+
+		VcountWait 120
 		
 ;*****	Set player position and draw
 ;		
@@ -278,6 +283,7 @@ MissilesStep
 ;*****	GameAnimations
 ;
 GameAnimations
+	
 		jsr DoFontAnimations
 		jsr UpdateCoinAnimations
 		jsr UpdateInfoLine
@@ -291,6 +297,7 @@ GameAnimations
 ;*****	PlayerEndStates
 ;
 PlayerEndStates
+	
 		jsr DrawPlayerExplosion
 		jsr DoFontAnimations
 		jsr UpdateCoinAnimations
@@ -304,6 +311,7 @@ PlayerEndStates
 		
 		lda #0
 		sta HITCLR	
+		
 		jmp GameLoop
 
 ;*****	Includes base files
@@ -328,17 +336,17 @@ PlayerEndStates
 ;
 END_CODE_WARNING
 	.if END_CODE_WARNING > PmgAddress 
-		.error "Code overrides fixed data area!"
+		.error "Code overrides code area!"
 	.endif
 
 ;*****	Player missle graphics address
 ;
-	org PmgAddress
+		org PmgAddress
 :768	.byte %00000000	
 	
 ;*****	Missle starting address
 ;
-	org ms_area_1
+		org ms_area_1
 :1280 .byte %00000000
 
 ;*****	Level Data definition
@@ -353,19 +361,20 @@ END_CODE_WARNING
 
 ;*****	Game font address
 ;
-	org GameFontAddress
-	ins "data/scroller.fnt"
-;	
+		org GameFontAddress
+		ins "data/scroller.fnt"
+	
 ;*****	Text font address
 ;
-	org TextFontAddress
-	ins "data/atari.fnt"
+		org TextFontAddress
+		ins "data/atari.fnt"
 	
-	org SoundAddress
-	opt h-						;RMT module is standard Atari binary file already
-	ins "Data/sfx.rmt"				;include music RMT module
-	opt h+
-
+;*****	Sound Data Address
+;
+		org SoundAddress
+		opt h-									;RMT module is standard Atari binary file already
+		ins "Data/sfx.rmt"						;include music RMT module
+		opt h+
 	
 ;*****	HUD Memory Address	
 ;
@@ -380,14 +389,14 @@ END_CODE_WARNING
 	
 ;*****	Game Memory Address 
 ;
-	org GameMemoryAddress	
-	.rept $1000-LEVEL_CHAR_SIZE_X
-		.byte $00
-	.endr
+		org GameMemoryAddress	
+		.rept $1000-LEVEL_CHAR_SIZE_X
+			.byte $00
+		.endr
 	
-; add extra line info to avoid problem with ladder in the last line	
-:LEVEL_CHAR_SIZE_X 		.byte $61
+		; add extra line info to avoid problem with ladder in the last line	
+		:LEVEL_CHAR_SIZE_X 		.byte $61
 
 ;*****	Run Address
 ;
-	run InitSystem
+		run InitSystem
