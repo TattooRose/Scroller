@@ -64,6 +64,10 @@ TextFontAddress				= $AC00				; 39K (1K size)
 
 GameMemoryAddress			= $B000				; 44K (4K size)
 
+;*****	moved here for better access
+;
+DEBUG_ON					= 1					 
+
 ;
 ;**************************************************************************************************
 ; InitSystem - Start of code
@@ -105,9 +109,9 @@ NO_NTSC_loop
 		
 		jsr LoadDisplayListData					; perform the DL data move
 
-;*****	InitHardware
+;*****	Set the addresses
 ;
-InitHardware
+SetAddresses
 
 		SetPMBaseAddress PmgAddress				; set the player missile address
 
@@ -116,12 +120,16 @@ InitHardware
 
 		VcountWait 120
 
+;*****	Housekeeping
+;
 		jsr SfxOff
 		jsr InitVars							; begin initialization
 		jsr InitLevelTable						; set up the level table		
 				
-;*****	Set the Registers
-;				
+;*****	InitHardware
+;
+InitHardware
+
 		lda #0									; set the player info
 		sta SIZEP0
 
@@ -319,7 +327,8 @@ PlayerEndStates
 ;
 		icl "/Lib/SysProcs.Asm"
 
-		icl "Initialize.Asm"				
+		icl "Initialize.Asm"
+		icl "Utilities.Asm"				
 		icl "DisplayListInterrupts.asm"
 		icl "PlayerStates.Asm"
 		icl "PlayerMovement.Asm"

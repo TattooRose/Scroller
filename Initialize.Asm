@@ -619,136 +619,57 @@ IEM_exit
 
 ;
 ;**************************************************************************************************
-; UpdateInfoLine
-;**************************************************************************************************
-;
-.proc UpdateInfoLine
-	
-		lda m_goldCounter						; assuming 99 or less
-		ldy #4
-		jsr DisplayDebugInfoBinary99
-
-		lda m_activeEnemies
-		ldy #12
-		jsr DisplayDebugInfoBinary99
-
-		lda m_healthCounter						; assuming 99 or less
-		ldy #31
-		jsr DisplayDebugInfoBinary99
-
-		lda m_disableGameTimer					; update the time here also
-		bne UIL_exit
-	
-		lda m_goldCounter
-		bne UIL_update_timer
-		
-		lda m_activeEnemies
-		bne UIL_update_timer
-	
-		lda #1
-		sta m_disableGameTimer					; my record? 1:16.1 (NTSC, lost one life)
-
-;*****	allow the final update..
-;
-UIL_update_timer
-	
-		inc m_gameTSFrameCounter
-		lda m_gameTSFrameCounter
-		cmp #TENTH_OF_SECOND_FRAMES
-		bne UIL_draw_timer
-	
-		lda #0
-		sta m_gameTSFrameCounter
-		inc m_gameTimerTSeconds
-		
-		lda m_gameTimerTSeconds
-		cmp #10
-		bne UIL_draw_timer
-	
-		lda #0
-		sta m_gameTimerTSeconds
-		inc m_gameTimerSeconds
-	
-		lda m_gameTimerSeconds
-		cmp #60
-		bne UIL_draw_timer
-	
-		lda #0
-		sta m_gameTimerSeconds
-		inc m_gameTimerMinutes
-
-		lda m_gameTimerMinutes
-		cmp #100
-		bne UIL_draw_timer
-	
-		lda #1
-		sta m_disableGameTimer
-		jmp UIL_exit							; final timer would be 99:99.9 in this case
-
-;*****	Draw Timer
-;
-UIL_draw_timer
-	
-		lda m_gameTimerMinutes
-		ldy #20
-		jsr DisplayDebugInfoBinary99
-	
-		lda m_gameTimerSeconds
-		ldy #23
-		jsr DisplayDebugInfoBinary99
-	
-		lda m_gameTimerTSeconds
-		ldy #26
-		jsr DisplayDebugInfoBinary9
-
-;*****	Exit
-;
-UIL_exit
-		
-;		lda m_playerScreenLeftX
-;		ldy #40
-;		jsr DisplayDebugInfoHexFF
-;
-;		lda m_playerScreenTopY
-;		ldy #43
-;		jsr DisplayDebugInfoHexFF
-;
-;		lda m_playerState
-;		ldy #46
-;		jsr DisplayDebugInfoHexFF
-;
-;		lda m_lastPlayerSideDirection
-;		ldy #49
-;		jsr DisplayDebugInfoHexFF
-;
-;		lda m_animFrame
-;		ldy #52
-;		jsr DisplayDebugInfoHexFF
-;
-;		lda m_animIndex
-;		ldy #55
-;		jsr DisplayDebugInfoHexFF
-				
-		rts
-	
-.endp	
-
-;
-;**************************************************************************************************
-; UpdateTimers
-;**************************************************************************************************
-;
-.proc UpdateTimers
-		
-		lda m_playerNoJumpTimer
-		beq UT_end_no_jump
-		dec m_playerNoJumpTimer
-	
-;************************************************
+; InitMissileSystem
 ;	
-UT_end_no_jump		
+; 	Right now, the missile system is using a 1-on-1 relationship between
+; 	a virtual missile and a hardware missile, so we have a max of 4 virtual
+; 	missiles. If we want more virtual missiles we can only draw 4 every frame,
+; 	so some of them can lose hardware collisions and they are going to flicker
+;
+;**************************************************************************************************
+;
+.proc InitMissileSystem
+
+.if PAL_VERSION = 0
+		lda #[32+4]		; red color, change for pal
+.else
+		lda #[16+4]
+.endif
+		sta m_missleBaseColor00
 		
+		lda #0
+		sta m_currentVirtualMissiles
+
+		ldx #0
+
+IMS_loop
+		sta TabMissileScreenLeftX,x
+		sta TabMissileScreenTopY,x
+		sta TabOldMissileScreenLeftX,x
+		sta TabOldMissileScreenTopY,x
+
+		sta TabMissileLevelLeftX_H2,x
+		sta TabMissileLevelLeftX_H1,x
+		sta TabMissileLevelLeftX_L1,x
+		sta TabMissileLevelTopY_H2,x
+		sta TabMissileLevelTopY_H1,x
+		sta TabMissileLevelTopY_L1,x
+
+		sta TabMissileSpeedX_H1,x
+		sta TabMissileSpeedX_L1,x
+
+		sta TabMissileDirection,x
+
+		sta TabMissileFrameCounter_H2,x
+		sta TabMissileFrameCounter_H1,x
+
+		sta TabMissileOwner,x
+
+		inx
+		cpx #MAX_VIRTUAL_MISSILES
+		bne IMS_loop
+
 		rts
 
 .endp	
-
+	

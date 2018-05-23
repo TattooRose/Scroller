@@ -312,10 +312,13 @@ zfill
 fill01
 		lda TabPlayerShape_01,x
 		sta p0_area_1,y		
+		
 		lda TabPlayerShape_01A,x
 		sta p1_area_1,y
+		
 		lda TabPlayerShape_01B,x
 		sta p2_area_1,y
+		
 		iny
 		inx
 		inc m_animCount
@@ -332,8 +335,8 @@ DP_exit
 ;**************************************************************************************************
 ;
 .proc DrawPlayerExplosion
-		lda m_missleBaseColor0
-		sta COLPM3
+		lda m_missleBaseColor00
+		sta COLPM0
 
 ;************************************************
 ;

@@ -125,8 +125,6 @@ m_charDef						.byte 0
 m_screenDelta_H2				.byte 0
 m_screenDelta_H1				.byte 0
 
-m_playerBaseColor				.byte $00
-
 m_hldA							.byte $00
 m_hldY							.byte $00
 m_hldX							.byte $00
@@ -201,7 +199,7 @@ TabCharDefinition
 	.byte %00000000+CT_DANGER								; blue spikes						[05]
 	.byte %00000000+CT_DANGER								; blue spikes						[06]
 	.byte %00000000+CT_WATER								; blank								[07]
-	.byte %00000000+CT_BLANK								; blank								[08]
+	.byte %00000000+CT_HEALTH								; blank								[08]
 	.byte %00000000+CT_BLANK								; blank								[09]
 	.byte %00000000+CT_BLANK								; blank								[0A]
 	.byte %00000000+CT_BLANK								; blank								[0B]
@@ -265,8 +263,8 @@ TabCharDefinition
 	.byte %00000000+CT_BLANK								; blank								[45]
 	.byte %00000000+CT_WATER								; blank								[46]
 	.byte %00000000+CT_WATER								; blank								[47]
-	.byte %00000000+CT_BLANK								; blank								[48]
-	.byte %00000000+CT_BLANK								; blank								[49]
+	.byte %00000000+CT_WATER								; blank								[48]
+	.byte %00000000+CT_WATER								; blank								[49]
 	.byte %00000000+CT_BLANK								; blank								[4A]
 	.byte %00000000+CT_BLANK								; blank								[4B]
 	.byte %11110000+CT_BLOCK								; solid platform					[4C]
@@ -336,7 +334,7 @@ TabCharDefinition
 	.byte %00000000+CT_DANGER								; blue spikes						[85]
 	.byte %00000000+CT_DANGER								; blue spikes						[86]
 	.byte %00000000+CT_WATER								; blank								[87]
-	.byte %00000000+CT_BLANK								; blank								[88]
+	.byte %00000000+CT_HEALTH								; blank								[88]
 	.byte %00000000+CT_BLANK								; blank								[89]
 	.byte %00000000+CT_BLANK								; blank								[8A]
 	.byte %00000000+CT_BLANK								; blank								[8B]
@@ -400,8 +398,8 @@ TabCharDefinition
 	.byte %00000000+CT_BLANK								; blank								[C5]
 	.byte %00000000+CT_WATER								; blank								[C6]
 	.byte %00000000+CT_WATER								; blank								[C7]
-	.byte %00000000+CT_BLANK								; blank								[C8]
-	.byte %00000000+CT_BLANK								; blank								[C9]
+	.byte %00000000+CT_WATER								; blank								[C8]
+	.byte %00000000+CT_WATER								; blank								[C9]
 	.byte %00000000+CT_BLANK								; blank								[CA]
 	.byte %00000000+CT_BLANK								; blank								[CB]
 	.byte %11110000+CT_BLOCK								; solid platform					[CC]

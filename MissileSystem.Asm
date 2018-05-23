@@ -52,73 +52,64 @@ SET_MASK_M3_L_L1 			= %01000000
 SET_MASK_M3_L_L2 			= %10000000
 SET_MASK_M3_L_L3 			= %01000000
 
-TabClearMissileMask
-	.byte CLEAR_MASK_M0, CLEAR_MASK_M1, CLEAR_MASK_M2, CLEAR_MASK_M3
-
-TabSetMissileToRightMaskL1
-	.byte SET_MASK_M0_R_L1, SET_MASK_M1_R_L1, SET_MASK_M2_R_L1, SET_MASK_M3_R_L1
-
-TabSetMissileToRightMaskL2
-	.byte SET_MASK_M0_R_L2, SET_MASK_M1_R_L2, SET_MASK_M2_R_L2, SET_MASK_M3_R_L2
-
-TabSetMissileToRightMaskL3
-	.byte SET_MASK_M0_R_L3, SET_MASK_M1_R_L3, SET_MASK_M2_R_L3, SET_MASK_M3_R_L3
-
-TabSetMissileToLeftMaskL1
-	.byte SET_MASK_M0_L_L1, SET_MASK_M1_L_L1, SET_MASK_M2_L_L1, SET_MASK_M3_L_L1
-
-TabSetMissileToLeftMaskL2
-	.byte SET_MASK_M0_L_L2, SET_MASK_M1_L_L2, SET_MASK_M2_L_L2, SET_MASK_M3_L_L2
-
-TabSetMissileToLeftMaskL3
-	.byte SET_MASK_M0_L_L3, SET_MASK_M1_L_L3, SET_MASK_M2_L_L3, SET_MASK_M3_L_L3
-
-TabDrawMissileMethodLSB
-	.byte <DrawMissileM0, <DrawMissileM1, <DrawMissileM2, <DrawMissileM3
-
-TabDrawMissileMethodMSB
-	.byte >DrawMissileM0, >DrawMissileM1, >DrawMissileM2, >DrawMissileM3
-
 ; virtual missiles tables
 MAX_VIRTUAL_MISSILES = 4
 
-m_currentVirtualMissiles .byte 0
+TabClearMissileMask			.byte CLEAR_MASK_M0, CLEAR_MASK_M1, CLEAR_MASK_M2, CLEAR_MASK_M3
 
-TabMissileScreenLeftX			:MAX_VIRTUAL_MISSILES .byte 0
+TabSetMissileToRightMaskL1	.byte SET_MASK_M0_R_L1, SET_MASK_M1_R_L1, SET_MASK_M2_R_L1, SET_MASK_M3_R_L1
 
-TabMissileScreenTopY			:MAX_VIRTUAL_MISSILES .byte 0
+TabSetMissileToRightMaskL2	.byte SET_MASK_M0_R_L2, SET_MASK_M1_R_L2, SET_MASK_M2_R_L2, SET_MASK_M3_R_L2
 
-TabOldMissileScreenLeftX		:MAX_VIRTUAL_MISSILES .byte 0
+TabSetMissileToRightMaskL3	.byte SET_MASK_M0_R_L3, SET_MASK_M1_R_L3, SET_MASK_M2_R_L3, SET_MASK_M3_R_L3
 
-TabOldMissileScreenTopY			:MAX_VIRTUAL_MISSILES .byte 0
+TabSetMissileToLeftMaskL1	.byte SET_MASK_M0_L_L1, SET_MASK_M1_L_L1, SET_MASK_M2_L_L1, SET_MASK_M3_L_L1
 
-TabMissileLevelLeftX_H2			:MAX_VIRTUAL_MISSILES .byte 0
+TabSetMissileToLeftMaskL2	.byte SET_MASK_M0_L_L2, SET_MASK_M1_L_L2, SET_MASK_M2_L_L2, SET_MASK_M3_L_L2
 
-TabMissileLevelLeftX_H1			:MAX_VIRTUAL_MISSILES .byte 0
+TabSetMissileToLeftMaskL3	.byte SET_MASK_M0_L_L3, SET_MASK_M1_L_L3, SET_MASK_M2_L_L3, SET_MASK_M3_L_L3
 
-TabMissileLevelLeftX_L1			:MAX_VIRTUAL_MISSILES .byte 0
+TabDrawMissileMethodLSB		.byte <DrawMissileM0, <DrawMissileM1, <DrawMissileM2, <DrawMissileM3
 
-TabMissileLevelTopY_H2			:MAX_VIRTUAL_MISSILES .byte 0
+TabDrawMissileMethodMSB		.byte >DrawMissileM0, >DrawMissileM1, >DrawMissileM2, >DrawMissileM3
 
-TabMissileLevelTopY_H1			:MAX_VIRTUAL_MISSILES .byte 0
+m_currentVirtualMissiles 	.byte 0
 
-TabMissileLevelTopY_L1			:MAX_VIRTUAL_MISSILES .byte 0
+TabMissileScreenLeftX		:MAX_VIRTUAL_MISSILES .byte 0
 
-TabMissileSpeedX_H1				:MAX_VIRTUAL_MISSILES .byte 0
+TabMissileScreenTopY		:MAX_VIRTUAL_MISSILES .byte 0
 
-TabMissileSpeedX_L1				:MAX_VIRTUAL_MISSILES .byte 0
+TabOldMissileScreenLeftX	:MAX_VIRTUAL_MISSILES .byte 0
 
-TabMissileDirection				:MAX_VIRTUAL_MISSILES .byte 0
+TabOldMissileScreenTopY		:MAX_VIRTUAL_MISSILES .byte 0
 
-TabMissileFrameCounter_H2		:MAX_VIRTUAL_MISSILES .byte 0
+TabMissileLevelLeftX_H2		:MAX_VIRTUAL_MISSILES .byte 0
 
-TabMissileFrameCounter_H1		:MAX_VIRTUAL_MISSILES .byte 0
+TabMissileLevelLeftX_H1		:MAX_VIRTUAL_MISSILES .byte 0
 
-TabMissileOwner					:MAX_VIRTUAL_MISSILES .byte 0
+TabMissileLevelLeftX_L1		:MAX_VIRTUAL_MISSILES .byte 0
+
+TabMissileLevelTopY_H2		:MAX_VIRTUAL_MISSILES .byte 0
+
+TabMissileLevelTopY_H1		:MAX_VIRTUAL_MISSILES .byte 0
+
+TabMissileLevelTopY_L1		:MAX_VIRTUAL_MISSILES .byte 0
+
+TabMissileSpeedX_H1			:MAX_VIRTUAL_MISSILES .byte 0
+
+TabMissileSpeedX_L1			:MAX_VIRTUAL_MISSILES .byte 0
+
+TabMissileDirection			:MAX_VIRTUAL_MISSILES .byte 0
+
+TabMissileFrameCounter_H2	:MAX_VIRTUAL_MISSILES .byte 0
+
+TabMissileFrameCounter_H1	:MAX_VIRTUAL_MISSILES .byte 0
+
+TabMissileOwner				:MAX_VIRTUAL_MISSILES .byte 0
 
 ;
 ;**************************************************************************************************
-; CheckCreatePlayerMissile
+;	CheckCreatePlayerMissile	
 ;**************************************************************************************************
 ;
 .proc CheckCreatePlayerMissile
@@ -126,51 +117,45 @@ TabMissileOwner					:MAX_VIRTUAL_MISSILES .byte 0
 		lda m_triggerState
 		cmp #2									; check just pressed
 		bne CCPM_exit
+
 		jsr GetFreeMissileIndex
-		
 		cpx #2									; only use index 0 and 1 for the player missiles
 		bcs CCPM_exit
 	
 		lda #>[PLAYER_MISSILE_SPEED_X]
 		sta TabMissileSpeedX_H1,x
-		
 		lda #<[PLAYER_MISSILE_SPEED_X]
 		sta TabMissileSpeedX_L1,x
 
 		lda m_lastPlayerShootDirection
 		cmp #PSD_RIGHT
 		beq CCPM_shoot_right
-	
-;************************************************
-;
+
 CCPM_shoot_left
-	
+
 		lda #2
 		sta TabMissileDirection,x
+
 		jmp CCPM_init_position
-	
-;************************************************
-;
+
 CCPM_shoot_right
 	
 		lda #1
 		sta TabMissileDirection,x
-	
-;************************************************
-;
+
 CCPM_init_position
 	
 		lda m_playerLevelLeftX_H1
 		sta TabMissileLevelLeftX_H1,x
-		
+	
 		lda m_playerLevelLeftX_H2
 		sta TabMissileLevelLeftX_H2,x
-		
+
 		lda m_playerLevelTopY_H1
 		clc
-		adc #[PLR_HEIGHT/2]+2
+		adc #2
 		sta TabMissileLevelTopY_H1,x
-		
+	
 		lda m_playerLevelTopY_H2
 		adc #0
 		sta TabMissileLevelTopY_H2,x
@@ -182,21 +167,22 @@ CCPM_init_position
 		lda #1									; player owner
 		sta TabMissileOwner,x
 
-		jsr CreateMissile						; before this, call GetFreeMissileIndex and then init..
-	
-;************************************************
-;
-CCPM_exit		
+		; before this, call GetFreeMissileIndex and then init..
+		jsr CreateMissile
+
+CCPM_exit
+		
 		rts
-	
-.endp	
-;	
+
+.endp
+
+;
 ;**************************************************************************************************
-; CheckCreateEnemyMissile
+;	CheckCreateEnemyMissile	
 ;**************************************************************************************************
 ;
 .proc CheckCreateEnemyMissile
-	
+
 		; check for a free missile index
 		ldx #2
 		lda TabMissileOwner,x
@@ -207,9 +193,10 @@ CCPM_exit
 		bne CCEM_exit
 	
 CCEM_found_one_free
-	
+		
 		lda #>[ENEMY_MISSILE_SPEED_X]
 		sta TabMissileSpeedX_H1,x
+		
 		lda #<[ENEMY_MISSILE_SPEED_X]
 		sta TabMissileSpeedX_L1,x
 	
@@ -219,11 +206,13 @@ CCEM_found_one_free
 		; init position
 		lda m_enemyShotLevelLeftX_H1
 		sta TabMissileLevelLeftX_H1,x
+		
 		lda m_enemyShotLevelLeftX_H2
 		sta TabMissileLevelLeftX_H2,x
 
 		lda m_enemyShotLevelTopY_H1
 		sta TabMissileLevelTopY_H1,x
+	
 		lda m_enemyShotLevelTopY_H2
 		sta TabMissileLevelTopY_H2,x
 
@@ -231,7 +220,7 @@ CCEM_found_one_free
 		sta TabMissileLevelLeftX_L1,x
 		sta TabMissileLevelTopY_L1,x
 
-		lda #2					; enemy owner
+		lda #2									; enemy owner
 		sta TabMissileOwner,x
 
 		jsr CreateMissile
@@ -239,61 +228,12 @@ CCEM_found_one_free
 CCEM_exit
 
 		rts
-
-.endp	
-
-;
-;**************************************************************************************************
-; InitMissileSystem
-;	
-; 	Right now, the missile system is using a 1-on-1 relationship between
-; 	a virtual missile and a hardware missile, so we have a max of 4 virtual
-; 	missiles. If we want more virtual missiles we can only draw 4 every frame,
-; 	so some of them can lose hardware collisions and they are going to flicker
-;
-;**************************************************************************************************
-;
-.proc InitMissileSystem
-
-		lda #0
-		sta m_currentVirtualMissiles
-
-		ldx #0
-
-IMS_loop
-		sta TabMissileScreenLeftX,x
-		sta TabMissileScreenTopY,x
-		sta TabOldMissileScreenLeftX,x
-		sta TabOldMissileScreenTopY,x
-
-		sta TabMissileLevelLeftX_H2,x
-		sta TabMissileLevelLeftX_H1,x
-		sta TabMissileLevelLeftX_L1,x
-		sta TabMissileLevelTopY_H2,x
-		sta TabMissileLevelTopY_H1,x
-		sta TabMissileLevelTopY_L1,x
-
-		sta TabMissileSpeedX_H1,x
-		sta TabMissileSpeedX_L1,x
-
-		sta TabMissileDirection,x
-
-		sta TabMissileFrameCounter_H2,x
-		sta TabMissileFrameCounter_H1,x
-
-		sta TabMissileOwner,x
-
-		inx
-		cpx #MAX_VIRTUAL_MISSILES
-		bne IMS_loop
-
-		rts
-
-.endp	
 	
+.endp
+
 ;
 ;**************************************************************************************************
-; GetFreeMissileIndex
+;	GetFreeMissileIndex	
 ;**************************************************************************************************
 ;
 .proc GetFreeMissileIndex
@@ -302,7 +242,6 @@ IMS_loop
 		ldx #0
 
 GFMI_loop
-	
 		lda TabMissileOwner,x	; if the owner is 0, the slot is free
 		beq GFMI_exit
 
@@ -316,24 +255,26 @@ GFMI_exit
 		
 		rts
 
-.endp	
-	
-;	
-;**************************************************************************************************
-; CreateMissile
+.endp
+
 ;
-; 	before this, call GetFreeMissileIndex and then init:
-; 	TabMissileLevelLeftX_H2/H1/L1, TabMissileLevelTopY_H2/H1/L1,
-; 	TabMissileSpeedX_H1/L1 (negative if going to the left)
-; 	and TabMissileOwner (different than 0)
+;**************************************************************************************************
+;	CreateMissile	
+;
+; 		before this, call GetFreeMissileIndex and then init:
+; 		TabMissileLevelLeftX_H2/H1/L1, TabMissileLevelTopY_H2/H1/L1,
+; 		TabMissileSpeedX_H1/L1 (negative if going to the left)
+; 		and TabMissileOwner (different than 0)
 ;
 ;**************************************************************************************************
 ;
 .proc CreateMissile
-	
+
+		; use X as a parameter (the index of the virtual missile)
 		lda #0
 		sta TabMissileFrameCounter_H2,x
 		sta TabMissileFrameCounter_H1,x
+
 		jsr SetMissileScreenPos
 
 		; maybe should check screen position before creating the missile
@@ -341,24 +282,23 @@ GFMI_exit
 		inc m_currentVirtualMissiles
 
 		rts
-
-.endp
 		
+.endp
+
+;
+;**************************************************************************************************
+;	UpdateMissileSystem
+;
+; 		should call this every frame, before calling CreateMissile in that frame (?)
+;
+;**************************************************************************************************
 ;	
-;**************************************************************************************************
-; UpdateMissileSystem
-;
-; 	should call this every frame, before calling CreateMissile in that frame (?)
-;
-;**************************************************************************************************
-;
 .proc UpdateMissileSystem
 
-		; should call this every frame, before calling CreateMissile in that frame (?)
 		ldx #0
 
 UMS_loop
-		lda TabMissileOwner,x					; if the owner is 0, the slot is free
+		lda TabMissileOwner,x	; if the owner is 0, the slot is free
 		bne UMS_update
 		jmp UMS_next
 
@@ -375,14 +315,15 @@ UMS_update
 UMS_check_collision
 
 		jsr GetPlayerMissileFrontChar
+
 		lda TabMissileOwner,x
 		cmp #1
 		beq UMS_player_owner
 
-;*****	the collision check is a lot simpler for enemies
+;******	the collision check is a lot simpler for enemies
 ;
 UMS_enemy_owner			
-	
+
 		lda m_charDef
 		and #15
 		cmp #CT_BLOCK
@@ -395,23 +336,24 @@ UMS_player_owner
 		and #15
 
 UMS_check_block
-	
+		
 		cmp #CT_BLOCK
 		bne UMS_check_danger
+		
 		lda #4									; gray color
 		jmp TEST_B1
 
 UMS_check_danger
-
+		
 		cmp #CT_DANGER
 		bne UMS_update_position
 
 ;*****	check for a disabed vertical laser
 ;
 UMS_check_vlaser
-
+		
 		lda m_charRaw
-		cmp #[128+16]		; danger plus vertical laser char index
+		cmp #[128+16]							; danger plus vertical laser char index
 		bne UMS_check_enemy1_left
 	
 		lda m_animLaserCurrentFrame
@@ -419,11 +361,9 @@ UMS_check_vlaser
 		beq UMS_update_position
 		jmp UMS_danger
 
-;*****	danger plus enemy 1 left char index
-;
 UMS_check_enemy1_left
 
-		cmp #[128+64]		
+		cmp #[128+64]							; danger plus enemy 1 left char index
 		bne UMS_check_enemy1_right
 	
 		lda m_charPositionX
@@ -431,15 +371,12 @@ UMS_check_enemy1_left
 		lda m_charPositionY
 		sta m_enemyCharPosY
 	
-		jsr HitEnemy
-	
+		jsr HitEnemy	
 		jmp UMS_danger
 	
-;*****	danger plus enemy 1 right char index
-;	
 UMS_check_enemy1_right
 	
-		cmp #[128+65]		
+		cmp #[128+65]							; danger plus enemy 1 right char index
 		bne UMS_danger
 	
 		lda m_charPositionX
@@ -448,21 +385,13 @@ UMS_check_enemy1_right
 		lda m_charPositionY
 		sta m_enemyCharPosY
 	
-		jsr HitEnemy	
-		
+		jsr HitEnemy
+				
 UMS_danger
-.if PAL_VERSION = 0
-		lda #[32+4]		; red color, change for pal
-.else
-		lda #[16+4]
-.endif
-
-TEST_B1
-		sta m_playerBaseColor
+TEST_B1	
 		jmp UMS_destroy
 
 ;*****	update position using the missile speed
-;
 UMS_update_position
 	
 		lda TabMissileDirection,x
@@ -470,7 +399,7 @@ UMS_update_position
 		bne UMS_move_left
 
 UMS_move_right
-
+		
 		lda TabMissileLevelLeftX_L1,x
 		clc
 		adc TabMissileSpeedX_L1,x
@@ -485,11 +414,10 @@ UMS_move_right
 		sta TabMissileLevelLeftX_H2,x
 
 		jsr SetMissileScreenPos
-
 		jmp UMS_check_screen_limits
 
 UMS_move_left
-	
+
 		lda TabMissileLevelLeftX_L1,x
 		sec
 		sbc TabMissileSpeedX_L1,x
@@ -508,7 +436,7 @@ UMS_move_left
 ;*****	check outside screen position, to destroy the missile
 ;
 UMS_check_screen_limits
-	
+
 		lda TabMissileScreenLeftX,x
 		cmp #[PM_BASE_SCREEN_X]					; screen left limit
 		bcc UMS_destroy
@@ -523,14 +451,14 @@ UMS_check_screen_limits
 		bcc UMS_draw
 
 UMS_destroy
-	
+
 		lda TabMissileOwner,x
 		cmp #2
 		bne UMS_not_from_enemy
 		dec m_enemyMissilesActive
 	
 UMS_not_from_enemy
-		
+	
 		lda #0
 		sta TabMissileOwner,x
 
@@ -544,15 +472,14 @@ UMS_not_from_enemy
 
 		jmp UMS_next
 
-
 ;*****	draw the missile
 ;
 UMS_draw
-		
+	
 		jsr DrawMissileMX
 
 UMS_next
-		
+
 		inx
 		cpx #MAX_VIRTUAL_MISSILES
 		beq UMS_exit
@@ -566,24 +493,25 @@ UMS_exit
 
 ;
 ;**************************************************************************************************
-; SetMissileScreenPos
+;	SetMissileScreenPos
 ;
-; 	use X as a parameter (the index of the virtual missile)
+; 		use X as a parameter (the index of the virtual missile)
 ;
 ;**************************************************************************************************
-;
+;	
 .proc SetMissileScreenPos
-	
+
 		; save old screen pos
 		lda TabMissileScreenLeftX,x
 		sta TabOldMissileScreenLeftX,x
+		
 		lda TabMissileScreenTopY,x
 		sta TabOldMissileScreenTopY,x
 
 		; get new screen pos
-		; this must use the "_H2" positions 
-		; for when the delta between the missile 
-		; and the camera is too big (64 chars in X, or 32 chars in Y)
+		; this must use the "_H2" positions for 
+		; when the delta between the missile and 
+		; the camera is too big (64 chars in X, or 32 chars in Y)
 		;
 		lda TabMissileLevelLeftX_H1,x
 		sec
@@ -600,8 +528,8 @@ UMS_exit
 		bcs SMSP_set_outside
 	
 		adc #PM_BASE_SCREEN_X
-		sta TabMissileScreenLeftX,x	
-
+		sta TabMissileScreenLeftX,x
+	
 		lda TabMissileLevelTopY_H1,x
 		sec
 		sbc m_levelWindowY_H1
@@ -621,223 +549,302 @@ UMS_exit
 
 		rts
 	
-		; if outside the visible range in X or Y, 
-		; just set it out of the screen (for a p/m 
-		; the screen coordinate 0 is outside the visible range)
-		;
+; if outside the visible range in X or Y, just set it out of the screen (for a p/m the screen coordinate 0 is outside the visible range)
 SMSP_set_outside
-	
+		
 		lda #0
 		sta TabMissileScreenLeftX,x
 		sta TabMissileScreenTopY,x
 	
 		rts
+	
+.endp
+	
+;
+;**************************************************************************************************
+;	DrawMissileMX
+;
+; 		draw missiles, use X as a parameter (the index of the virtual missile)
+;
+;**************************************************************************************************
+;	
+.proc DrawMissileMX
+	
+		lda TabDrawMissileMethodLSB,x
+		sta m_pageZeroTempPointer
 		
-.endp	
+		lda TabDrawMissileMethodMSB,x
+		sta m_pageZeroTempPointer+1
+
+		lda #>(Exit -1)
+		pha
+		lda #<(Exit -1)
+		pha
+
+		jmp (m_pageZeroTempPointer)
+
+Exit
+
+		rts
+
+.endp
+
 ;
 ;**************************************************************************************************
-; DrawMissileMX
-;
-; 	draw missiles, use X as a parameter (the index of the virtual missile)
-;
+;	DrawMissileM0
 ;**************************************************************************************************
-;
-DrawMissileMX
-	lda TabDrawMissileMethodLSB,x
-	sta m_pageZeroTempPointer
-	lda TabDrawMissileMethodMSB,x
-	sta m_pageZeroTempPointer+1
+;	
+.proc DrawMissileM0
+		
+		lda TabMissileScreenLeftX,x
+		sta HPOSM0
 
-	jmp (m_pageZeroTempPointer)
-	
-;
-;**************************************************************************************************
-; DrawMissileM0
-;**************************************************************************************************
-;
-DrawMissileM0
-	lda TabMissileScreenLeftX,x
-	sta HPOSM0
+		; clear old position first
+		ldy TabOldMissileScreenTopY,x
 
-	; clear old position first
-	ldy TabOldMissileScreenTopY,x
+		jsr ClearMissileLines
 
-	jsr ClearMissileLines
+		; draw shape in new position
+		ldy TabMissileScreenTopY,x
 
-	; draw shape in new position
-	ldy TabMissileScreenTopY,x
+		lda TabMissileDirection,x
+		cmp #1
+		
+		bne DMM0_left
+		
+		lda #>(Exit -1)
+		pha
+		lda #<(Exit -1)
+		pha
 
-	lda TabMissileDirection,x
-	cmp #1
-	bne DMM0_left
+		jmp SetMissileToRightLines
 
-	jmp SetMissileToRightLines
-;
-;**************************************************************************************************
-; DMM0_left
-;**************************************************************************************************
-;
 DMM0_left
-	jmp SetMissileToLeftLines
-;
-;**************************************************************************************************
-; DrawMissileM1
-;**************************************************************************************************
-;
-DrawMissileM1
-	lda TabMissileScreenLeftX,x
-	sta HPOSM1
-	; clear old position first
-	ldy TabOldMissileScreenTopY,x
-	jsr ClearMissileLines
+		
+		lda #>(Exit -1)
+		pha
+		lda #<(Exit -1)
+		pha
 
-	; draw shape in new position
-	ldy TabMissileScreenTopY,x
+		jmp SetMissileToLeftLines
 
-	lda TabMissileDirection,x
-	cmp #1
-	bne DMM1_left
+Exit
 
-	jmp SetMissileToRightLines
-;
-;**************************************************************************************************
-;
-DMM1_left
-	jmp SetMissileToLeftLines
-	rts
-;
-;**************************************************************************************************
-; DrawMissileM2
-;**************************************************************************************************
-;
-DrawMissileM2
-	lda TabMissileScreenLeftX,x
-	sta HPOSM2
+		rts
 
-	; clear old position first
-	ldy TabOldMissileScreenTopY,x
+.endp
 
-	lda ms_area_1,y
-	and #CLEAR_MASK_M2
-	sta ms_area_1,y
-	lda ms_area_1+1,y
-	and #CLEAR_MASK_M2
-	sta ms_area_1+1,y
-	lda ms_area_1+2,y
-	and #CLEAR_MASK_M2
-	sta ms_area_1+2,y
-
-	; draw shape in new position
-	ldy TabMissileScreenTopY,x
-
-	lda ms_area_1,y
-	ora #SET_MASK_M2
-	sta ms_area_1,y
-	lda ms_area_1+1,y
-	ora #SET_MASK_M2
-	sta ms_area_1+1,y
-	lda ms_area_1+2,y
-	ora #SET_MASK_M2
-	sta ms_area_1+2,y
-	rts
 ;
 ;**************************************************************************************************
-; DrawMissileM3
+;	DrawMissileM1
 ;**************************************************************************************************
-;
-DrawMissileM3
-	lda TabMissileScreenLeftX,x
-	sta HPOSM3
-
-	; clear old position first
-	ldy TabOldMissileScreenTopY,x
-
-	lda ms_area_1,y
-	and #CLEAR_MASK_M3
-	sta ms_area_1,y
-	lda ms_area_1+1,y
-	and #CLEAR_MASK_M3
-	sta ms_area_1+1,y
-	lda ms_area_1+2,y
-	and #CLEAR_MASK_M3
-	sta ms_area_1+2,y
-
-	; draw shape in new position
-	ldy TabMissileScreenTopY,x
-
-	lda ms_area_1,y
-	ora #SET_MASK_M3
-	sta ms_area_1,y
-	lda ms_area_1+1,y
-	ora #SET_MASK_M3
-	sta ms_area_1+1,y
-	lda ms_area_1+2,y
-	ora #SET_MASK_M3
-	sta ms_area_1+2,y
-
-	rts
-;
-;**************************************************************************************************
-; SetMissileToRightLines
-;**************************************************************************************************
-;
-SetMissileToRightLines
-	lda ms_area_1,y
-	ora TabSetMissileToRightMaskL1,x			; this "x" should be a hardware missile index
-	sta ms_area_1,y
-	lda ms_area_1+1,y
-	ora TabSetMissileToRightMaskL2,x			; this "x" should be a hardware missile index
-	sta ms_area_1+1,y
-	lda ms_area_1+2,y
-	ora TabSetMissileToRightMaskL3,x			; this "x" should be a hardware missile index
-	sta ms_area_1+2,y
-
-	rts
-;
-;**************************************************************************************************
-; SetMissileToLeftLines
-;**************************************************************************************************
-;
-SetMissileToLeftLines
-	lda ms_area_1,y
-	ora TabSetMissileToLeftMaskL1,x				; this "x" should be a hardware missile index
-	sta ms_area_1,y
-	lda ms_area_1+1,y
-	ora TabSetMissileToLeftMaskL2,x				; this "x" should be a hardware missile index
-	sta ms_area_1+1,y
-	lda ms_area_1+2,y
-	ora TabSetMissileToLeftMaskL3,x				; this "x" should be a hardware missile index
-	sta ms_area_1+2,y
-	rts
-;
-;**************************************************************************************************
-; ClearMissileLines
-;**************************************************************************************************
-;
-ClearMissileLines
-	lda ms_area_1,y
-	and TabClearMissileMask,x					; this "x" should be a hardware missile index
-	sta ms_area_1,y
-	lda ms_area_1+1,y
-	and TabClearMissileMask,x					; this "x" should be a hardware missile index
-	sta ms_area_1+1,y
-	lda ms_area_1+2,y
-	and TabClearMissileMask,x					; this "x" should be a hardware missile index
-	sta ms_area_1+2,y
-	rts
-;
-;**************************************************************************************************
-; ClearAllMissiles
-;**************************************************************************************************
-;
-.proc ClearAllMissiles
+;	
+.proc DrawMissileM1
 	
+		lda TabMissileScreenLeftX,x
+		sta HPOSM1
+
+		; clear old position first
+		ldy TabOldMissileScreenTopY,x
+
+		jsr ClearMissileLines
+
+		; draw shape in new position
+		ldy TabMissileScreenTopY,x
+
+		lda TabMissileDirection,x
+		cmp #1
+		bne DMM1_left
+
+		lda #>(Exit -1)
+		pha
+		lda #<(Exit -1)
+		pha
+		jmp SetMissileToRightLines
+
+DMM1_left
+
+		lda #>(Exit -1)
+		pha
+		lda #<(Exit -1)
+		pha
+		jmp SetMissileToLeftLines
+
+Exit
+
+		rts
+
+.endp
+
+;
+;**************************************************************************************************
+;	DrawMissileM2
+;**************************************************************************************************
+;	
+.proc DrawMissileM2
+		
+		lda TabMissileScreenLeftX,x
+		sta HPOSM2
+
+		; clear old position first
+		ldy TabOldMissileScreenTopY,x
+
+		lda ms_area_1,y
+		and #CLEAR_MASK_M2
+		sta ms_area_1,y
+		
+		lda ms_area_1+1,y
+		and #CLEAR_MASK_M2
+		sta ms_area_1+1,y
+		
+		lda ms_area_1+2,y
+		and #CLEAR_MASK_M2
+		sta ms_area_1+2,y
+
+		; draw shape in new position
+		ldy TabMissileScreenTopY,x
+
+		lda ms_area_1,y
+		ora #SET_MASK_M2
+		sta ms_area_1,y
+		
+		lda ms_area_1+1,y
+		ora #SET_MASK_M2
+		sta ms_area_1+1,y
+		
+		lda ms_area_1+2,y
+		ora #SET_MASK_M2
+		sta ms_area_1+2,y
+
+		rts
+
+.endp
+
+;
+;**************************************************************************************************
+;	DrawMissileM3
+;**************************************************************************************************
+;	
+.proc DrawMissileM3
+	
+		lda TabMissileScreenLeftX,x
+		sta HPOSM3
+
+		; clear old position first
+		ldy TabOldMissileScreenTopY,x
+
+		lda ms_area_1,y
+		and #CLEAR_MASK_M3
+		sta ms_area_1,y
+		
+		lda ms_area_1+1,y
+		and #CLEAR_MASK_M3
+		sta ms_area_1+1,y
+	
+		lda ms_area_1+2,y
+		and #CLEAR_MASK_M3
+		sta ms_area_1+2,y
+
+		; draw shape in new position
+		ldy TabMissileScreenTopY,x
+
+		lda ms_area_1,y
+		ora #SET_MASK_M3
+		sta ms_area_1,y
+	
+		lda ms_area_1+1,y
+		ora #SET_MASK_M3
+		sta ms_area_1+1,y
+	
+		lda ms_area_1+2,y
+		ora #SET_MASK_M3
+		sta ms_area_1+2,y
+
+		rts
+
+.endp
+
+;
+;**************************************************************************************************
+;	SetMissileToRightLines
+;**************************************************************************************************
+;	
+.proc SetMissileToRightLines
+
+		lda ms_area_1,y
+		ora TabSetMissileToRightMaskL1,x	; this "x" should be a hardware missile index
+		sta ms_area_1,y
+		
+		lda ms_area_1+1,y
+		ora TabSetMissileToRightMaskL2,x	; this "x" should be a hardware missile index
+		sta ms_area_1+1,y
+		
+		lda ms_area_1+2,y
+		ora TabSetMissileToRightMaskL3,x	; this "x" should be a hardware missile index
+		sta ms_area_1+2,y
+
+		rts
+
+.endp
+		
+;
+;**************************************************************************************************
+;	SetMissileToLeftLines
+;**************************************************************************************************
+;	
+.proc SetMissileToLeftLines
+
+		lda ms_area_1,y
+		ora TabSetMissileToLeftMaskL1,x	; this "x" should be a hardware missile index
+		sta ms_area_1,y
+		
+		lda ms_area_1+1,y
+		ora TabSetMissileToLeftMaskL2,x	; this "x" should be a hardware missile index
+		sta ms_area_1+1,y
+		
+		lda ms_area_1+2,y
+		ora TabSetMissileToLeftMaskL3,x	; this "x" should be a hardware missile index
+		sta ms_area_1+2,y
+
+		rts
+
+.endp
+
+;
+;**************************************************************************************************
+;	ClearMissileLines
+;**************************************************************************************************
+;	
+.proc ClearMissileLines
+
+		lda ms_area_1,y
+		and TabClearMissileMask,x				; this "x" should be a hardware missile index
+		sta ms_area_1,y
+		
+		lda ms_area_1+1,y
+		and TabClearMissileMask,x				; this "x" should be a hardware missile index
+		sta ms_area_1+1,y
+		
+		lda ms_area_1+2,y
+		and TabClearMissileMask,x				; this "x" should be a hardware missile index
+		sta ms_area_1+2,y
+
+		rts
+		
+.endp
+
+;
+;**************************************************************************************************
+;	ClearAllMissiles
+;**************************************************************************************************
+;	
+.proc ClearAllMissiles
+		
 		ldx #0
 		lda #0
 
-;************************************************
-;
 CAM_loop
+		
 		ldy TabMissileScreenTopY,x
 		sta ms_area_1,y
 		sta ms_area_1+1,y
@@ -849,26 +856,29 @@ CAM_loop
 
 		rts
 		
-.endp		
-
-;
-;**************************************************************************************************
-; GetPlayerMissileFrontChar
-;
-; 	use X as a parameter (the index of the virtual missile)
-; 	return in A the character definition value
+.endp
+		
 ;
 ;**************************************************************************************************
 ;
-.proc GetPlayerMissileFrontChar	
+;	GetPlayerMissileFrontChar
+;
+; 		use X as a parameter (the index of the virtual missile)
+; 		return in A the character definition value
+;
+;**************************************************************************************************
+;
+.proc GetPlayerMissileFrontChar
 
-		lda TabMissileDirection,x				; get front point char column
+		; get front point char column
+		lda TabMissileDirection,x
 		cmp #1
 		bne GMFC_left
 
-;*****	Right
+;*****	moving to the right, use right side pixel
 ;
-GMFC_right										; moving to the right, use right side pixel
+GMFC_right
+	
 		lda TabMissileLevelLeftX_H1,x
 		clc
 		adc #3									; missile X size minus one
@@ -876,59 +886,72 @@ GMFC_right										; moving to the right, use right side pixel
 		lda TabMissileLevelLeftX_H2,x
 		adc #0
 		sta m_pixelPositionX_H2
+
 		jmp GMFC_middle_line
 
-;*****	Left
+;*****	moving to the left, use left side pixel
 ;
-GMFC_left										
-		lda TabMissileLevelLeftX_H1,x			; moving to the left, use left side pixel
+GMFC_left
+		
+		lda TabMissileLevelLeftX_H1,x
 		sta m_pixelPositionX_H1
 		lda TabMissileLevelLeftX_H2,x
 		sta m_pixelPositionX_H2
 
-;***** 	Middle Line
+;*****	get middle char line
 ;
 GMFC_middle_line
-								
-		lda TabMissileLevelTopY_H1,x			; get middle char line
+	
+		lda TabMissileLevelTopY_H1,x
 		clc
 		adc #1									; because the height is 3 lines
 		sta m_pixelPositionY_H1
 		lda TabMissileLevelTopY_H2,x
 		adc #0
 		sta m_pixelPositionY_H2
-		jsr GetCharDefinitionFromPixelPos
-	
+
+		lda #>(Exit -1)
+		pha
+		lda #<(Exit -1)
+		pha
+
+		jmp GetCharDefinitionFromPixelPos
+
+Exit
 		rts
-	
-.endp
-	
+
+.endp		
+
 ;
 ;**************************************************************************************************
-; GetCharDefinitionFromPixelPos
 ;
-; 	put coord "x" in m_pixelPositionX_H2/_H1 and coord "y" in m_pixelPositionY_H2/_H1
-; 	return in A the character definition value (and also use the Y register)
-; 	(this assume that there no more than 256 chars in x or in y, in a room)
+;	GetCharDefinitionFromPixelPos
+;
+; 		put coord "x" in m_pixelPositionX_H2/_H1 and coord "y" in m_pixelPositionY_H2/_H1
+; 		return in A the character definition value (and also use the Y register)
+; 		(this assume that there no more than 256 chars in x or in y, in a room)
 ;
 ;**************************************************************************************************
 ;
 .proc GetCharDefinitionFromPixelPos
 
-		lda m_pixelPositionY_H2					; get char line, divide by 8 (put in Y)
+
+		; get char line, divide by 8 (put in Y)
+		lda m_pixelPositionY_H2
 		sta m_charBuffer_H2
-		
 		lda m_pixelPositionY_H1
 		lsr m_charBuffer_H2						; /2
 		ror
 		lsr m_charBuffer_H2						; /4
 		ror
-		lsr m_charBuffer_H2						; /8 = CHAR_PIX.else_Y
+		lsr m_charBuffer_H2						; /8 = CHAR_PIXELS_Y
 		ror
+
 		sta m_charPositionY
-		
 		tay
-		lda TabLevelLineAddressLSB,y			; init pointer to char
+
+		; init pointer to char
+		lda TabLevelLineAddressLSB,y
 		sta GCDFPP_pointer+1
 		sta m_lineAddressLSB
 	
@@ -936,26 +959,27 @@ GMFC_middle_line
 		sta GCDFPP_pointer+2
 		sta m_lineAddressMSB
 
-		lda m_pixelPositionX_H2					; get char column, divide by 4 (put in Y)
+		; get char column, divide by 4 (put in Y)
+		lda m_pixelPositionX_H2
 		sta m_charBuffer_H2
 		lda m_pixelPositionX_H1
 		lsr m_charBuffer_H2						; /2
 		ror
-		lsr m_charBuffer_H2						; /4 = CHAR_PIX.else_X
+		lsr m_charBuffer_H2						; /4 = CHAR_PIXELS_X
 		ror
+
 		sta m_charPositionX
-		
 		tay
 
-;************************************************
-;
 GCDFPP_pointer
 		
 		lda $FFFF,y
 		sta m_charRaw
+
 		tay
 		lda TabCharDefinition,y
 		sta m_charDef
+
 		rts
 
-.endp		
+.endp

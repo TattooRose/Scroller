@@ -23,8 +23,6 @@
 ;
 ;**************************************************************************************************
 ;
-DEBUG_ON					= 1
-
 GAME_MEM					= GameMemoryAddress			; used in Camera.Asm. Must set this for camera to work			
 GAME_LMS1					= GameDspLstAddr+3			; used in Camera.Asm. Must set this for camera to work
 

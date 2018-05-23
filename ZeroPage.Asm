@@ -49,7 +49,7 @@ m_animMiscHeight			org *+$01
 
 m_redrawPlayerCounter		org *+$01
 
-m_missleBaseColor0			org *+$01
+m_missleBaseColor00			org *+$01
 m_playerBaseColor00			org *+$01
 m_playerBaseColor1A			org *+$01
 m_playerBaseColor1B			org *+$01

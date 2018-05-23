@@ -166,78 +166,91 @@ Exit
 	
 ;
 ;**************************************************************************************************
-; UpdateCoinAnimations	
+; 	UpdateCoinAnimations	
+;
+;		update coin animations every frame
+;
 ;**************************************************************************************************
 ;
-UpdateCoinAnimations
+.proc UpdateCoinAnimations
 
-	lda m_currentCoinAnimations					; update coin animations every frame	
-	beq UCA_exit
-	ldx m_firstCoinAnimIndex
+		lda m_currentCoinAnimations					
+		beq UCA_exit
+		
+		ldx m_firstCoinAnimIndex
 
-;**************************************************
+;*****	UCA Loop
 ;
 UCA_loop
-	dec TabCoinAnimTimer,x
-	bne UCA_check_loop
+	
+		dec TabCoinAnimTimer,x
+		bne UCA_check_loop
 
-	inc TabCoinAnimFrame,x
-	lda TabCoinAnimFrame,x
-	cmp #ANIM_COIN_FRAMES
-	beq UCA_clear_anim
+		inc TabCoinAnimFrame,x
+		lda TabCoinAnimFrame,x
+		cmp #ANIM_COIN_FRAMES
+		beq UCA_clear_anim
 
-;**************************************************
+;*****	UCA Update Animation
 ;
 UCA_update_anim
-	tay
-	lda TabCoinAnimCharTime,y					; #ANIM_COIN_TIME
-	sta TabCoinAnimTimer,x
+	
+		tay
+		lda TabCoinAnimCharTime,y					; #ANIM_COIN_TIME
+		sta TabCoinAnimTimer,x
 
-	lda TabCoinAnimAddressLSB,x
-	sta UCA_char_pointer+1
-	lda TabCoinAnimAddressMSB,x
-	sta UCA_char_pointer+2
+		lda TabCoinAnimAddressLSB,x
+		sta UCA_char_pointer+1
+		lda TabCoinAnimAddressMSB,x
+		sta UCA_char_pointer+2
 
-;**************************************************
+;*****	UCA Character Pointer
 ;
 UCA_char_pointer
-	inc $FFFF									; update the animation frame, increment the char on screen
-	jmp UCA_check_loop
+	
+		inc $FFFF									; update the animation frame, increment the char on screen
+		jmp UCA_check_loop
 
-;**************************************************
+;*****	UCA Clear Animation
 ;
 UCA_clear_anim
-	lda TabCoinAnimAddressLSB,x
-	sta UCA_clear_char_pointer+1
-	lda TabCoinAnimAddressMSB,x
-	sta UCA_clear_char_pointer+2
-	lda #0
+	
+		lda TabCoinAnimAddressLSB,x
+		sta UCA_clear_char_pointer+1
+		lda TabCoinAnimAddressMSB,x
+		sta UCA_clear_char_pointer+2
+		lda #0
 
-;**************************************************
+;*****	UCA Clear Character Pointer
 ;
 UCA_clear_char_pointer
-	sta $FFFF									; clear the char on screen
-	dec m_currentCoinAnimations
-	ldy m_firstCoinAnimIndex
-	iny
-	tya
-	and #%111
-	sta m_firstCoinAnimIndex
+	
+		sta $FFFF									; clear the char on screen
+		dec m_currentCoinAnimations
+		ldy m_firstCoinAnimIndex
+		iny
+		tya
+		and #%111
+		sta m_firstCoinAnimIndex
 
-;**************************************************
+;*****	UCA Check Loop
 ;
 UCA_check_loop
-	inx
-	txa
-	and #%111
-	tax
-	cpx m_emptyCoinAnimIndex
-	bne UCA_loop
+		
+		inx
+		txa
+		and #%111
+		tax
+		cpx m_emptyCoinAnimIndex
+		bne UCA_loop
 
-;**************************************************
+;*****	UCA Exit
 ;
 UCA_exit
-	rts
+		
+		rts
+	
+.endp	
 
 ;
 ;***************************************************************************************************
@@ -283,8 +296,8 @@ UCA_exit
 ;*****	Exit
 ;
 Exit
-
 		rts
+
 .endp	
 
 ;
