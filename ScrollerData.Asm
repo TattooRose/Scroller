@@ -31,7 +31,6 @@ m_goldCounter 					.byte $00		; current gold counter
 m_healthCounter					.byte $00		; current health counter
 m_waterAvailable				.byte $00		; is water available
 
-
 m_disableGameTimer				.byte $00		; disable game flag
 
 m_gameTimerSeconds				.byte $00		; seconds timer
@@ -52,37 +51,37 @@ m_animHLaserCurrentFrame		.byte $00
 m_animLaserTimer				.byte $01
 m_animLaserCurrentFrame			.byte $00
 
-m_screenBaseAddress1		.word $00
-m_screenBaseAddress2		.word $00
+m_screenBaseAddress1			.word $00
+m_screenBaseAddress2			.word $00
 
-m_windowTargetPosX_H2		.byte $00
-m_windowTargetPosX_H1		.byte $00
-m_windowTargetPosY_H2		.byte $00
-m_windowTargetPosY_H1		.byte $00
+m_windowTargetPosX_H1			.byte $00
+m_windowTargetPosX_H2			.byte $00
+m_windowTargetPosY_H1			.byte $00
+m_windowTargetPosY_H2			.byte $00
 
-m_windowTargetDeltaX_H2		.byte $00
-m_windowTargetDeltaX_H1		.byte $00
-m_windowTargetDeltaY_H2		.byte $00
-m_windowTargetDeltaY_H1		.byte $00
+m_windowTargetDeltaX_H1			.byte $00
+m_windowTargetDeltaX_H2			.byte $00
+m_windowTargetDeltaY_H1			.byte $00
+m_windowTargetDeltaY_H2			.byte $00
 
-m_enemyExplosionLevelLeftX_H2	.byte $00
 m_enemyExplosionLevelLeftX_H1	.byte $00
+m_enemyExplosionLevelLeftX_H2	.byte $00
 
-m_enemyExplosionLevelTopY_H2	.byte $00
 m_enemyExplosionLevelTopY_H1	.byte $00
+m_enemyExplosionLevelTopY_H2	.byte $00
 m_enemyExplosionLevelTopY_L1	.byte $00
 
-m_enemyExplosionScreenLeftX_H1	.byte $00
 m_enemyExplosionScreenTopY_H1	.byte $00
+m_enemyExplosionScreenLeftX_H1	.byte $00
 
 m_enemyExplosionStep			.byte $00
 
-m_enemyExplosionStepIndex		.byte $00
 m_enemyCharPosX					.byte $00
 m_enemyCharPosY					.byte $00
+m_enemyExplosionStepIndex		.byte $00
 
-m_numEnemyExplosions			.byte $00
 m_hitEnemySaveX 				.byte $00
+m_numEnemyExplosions			.byte $00
 
 m_totalEnemies 					.byte $00
 m_activeEnemies 				.byte $00
@@ -109,22 +108,24 @@ m_currCol						.byte $00
 m_scrYCount						.byte $00
 m_datYCount						.byte $00
 
-m_pixelPositionX_H2			.byte 0
-m_pixelPositionX_H1			.byte 0
-m_pixelPositionY_H2			.byte 0
-m_pixelPositionY_H1			.byte 0
+m_pixelPositionX_H2				.byte 0
+m_pixelPositionX_H1				.byte 0
+m_pixelPositionY_H2				.byte 0
+m_pixelPositionY_H1				.byte 0
 
-m_charPositionX				.byte 0
-m_charPositionY				.byte 0
+m_charPositionX					.byte 0
+m_charPositionY					.byte 0
 
-m_lineAddressLSB			.byte 0
-m_lineAddressMSB			.byte 0
+m_lineAddressLSB				.byte 0
+m_lineAddressMSB				.byte 0
 
-m_charRaw					.byte 0
-m_charDef					.byte 0
+m_charRaw						.byte 0
+m_charDef						.byte 0
 
-m_screenDelta_H2			.byte 0
-m_screenDelta_H1			.byte 0
+m_screenDelta_H2				.byte 0
+m_screenDelta_H1				.byte 0
+
+m_playerBaseColor				.byte $00
 
 m_hldA							.byte $00
 m_hldY							.byte $00

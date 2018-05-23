@@ -290,7 +290,7 @@ PlayerMethodStatic
 DecrementCoins
 	
 	dec m_goldCounter
-	lda #06
+	lda #SFX_DIAMOND
 	sta m_sfxEffect
 	jmp CC_start_animation
 	
@@ -299,7 +299,7 @@ DecrementCoins
 DecrementHealth	
 	
 	dec m_healthCounter
-	lda #06
+	lda #SFX_DIAMOND
 	sta m_sfxEffect
 		
 ;*****	Start Animation

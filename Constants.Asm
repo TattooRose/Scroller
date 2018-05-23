@@ -23,15 +23,31 @@
 ;
 ;**************************************************************************************************
 ;
-PAL_VERSION					= 0
 DEBUG_ON					= 1
-STEREOMODE					= 0
 
 GAME_MEM					= GameMemoryAddress			; used in Camera.Asm. Must set this for camera to work			
 GAME_LMS1					= GameDspLstAddr+3			; used in Camera.Asm. Must set this for camera to work
 
 PLR_WIDTH					= 8							; must set this for player to work
 PLR_HEIGHT					= 21						; must set this for player to work
+
+;*****	Music and Sound constants 
+STEREOMODE					= 0
+
+MUSIC_MENU 					= 0
+MUSIC_GAME 					= $0B
+MUSIC_GAME_OVER 			= $0E
+MUSIC_DUMMY 				= $10
+
+SFX_DIAMOND 				= 1
+SFX_ALL_PICKED 				= 12
+SFX_DEATH 					= 14
+SFX_CONGRATULATIONS 		= 16
+SFX_JUMP 					= 1
+
+;*****	Open Plat constants
+;
+PAL_VERSION					= 0
 
 MAX_ROWS					= 40
 

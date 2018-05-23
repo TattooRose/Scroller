@@ -54,8 +54,9 @@ HudMemoryAddr				= $0680				; Heads up display are (80 bytes)
 
 SoundPlayerAddress			= $2400
 DataAddress					= $3000				;  4K (size for data)
-SoundAddress				= $4000
 CodeAddress					= $4800				; 20K (22K zone)
+
+SoundAddress				= $4000
 
 PmgAddress					= $A000				; 40K (2K size - 768 bytes)
 GameFontAddress				= $A800				; 42K (1K size)
@@ -160,7 +161,6 @@ InitHardware
 
 ;*****	Initialize Level
 ;
-		jsr SfxOff								; make sure sound is off at first
 		jsr InitPlatforms						; initialize floating platforms if any
 		jsr InitGoldCounter						; gold initialization
 		jsr InitEnemyManager					; enemy manager initialization
@@ -201,7 +201,8 @@ CheckState
 		jmp CheckUserInput
 		
 JumpSound
-		lda #1
+		
+		lda #SFX_JUMP
 		sta m_sfxEffect
 
 ;*****	Check User Input

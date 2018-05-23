@@ -14,8 +14,10 @@
 ; Zero Page Variables definitions
 ;**************************************************************************************************
 ;
-	org ZeroPageAddress
+		org ZeroPageAddress
 
+;*****	RMT zero page variables
+;
 p_tis						
 p_instrstable				org *+2
 p_trackslbstable			org *+2
@@ -29,6 +31,8 @@ reg2						org *+1
 reg3						org *+1
 tmp							org *+1
 
+;*****	Platform Engine zero page variables
+;
 m_param00					org *+$01
 m_param01					org *+$01
 m_param02					org *+$01

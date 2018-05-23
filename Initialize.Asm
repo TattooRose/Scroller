@@ -481,6 +481,144 @@ Exit
 
 ;
 ;**************************************************************************************************
+; InitEnemyManager
+;
+; parse every type of enemy, init its life, state, char index and position
+; update total and active enemies
+;
+;**************************************************************************************************
+;
+.proc InitEnemyManager
+
+		; parse enemy type 1 (only one for now)
+		ldx #1							; enemy type index
+		lda TabEnemyDefBaseChar,x
+		sta m_searchEnemyChar
+		lda TabEnemyDefLife,x
+		sta m_defEnemyLife
+	
+		ldx m_levelCharSizeX
+		dex										; we search in a shorter line because this enemy has a width of 2 chars
+		stx m_numberOfValidRows
+	
+		ldx #0									; line index
+;
+;************************************************
+;
+IEM_loop1
+	
+		ldy #0									; column index	
+		lda TabLevelLineAddressLSB,x
+		sta m_ptrLevelLine
+		lda TabLevelLineAddressMSB,x
+		sta m_ptrLevelLine+1
+
+;************************************************
+;
+IEM_loop2
+	
+		lda (m_ptrLevelLine),y
+		cmp m_searchEnemyChar
+		bne IEM_no_enemy
+
+		stx m_tempByte
+		ldx m_totalEnemies
+
+		; init info for this enemy
+		lda #1
+		sta TabEnemyType,x
+		
+		lda m_defEnemyLife
+		sta TabEnemyLife,x
+		
+		lda #1
+		sta TabEnemyState,x
+		
+		lda #ENEMY_INIT_TIMER					; dont allow enemy actions for the first 4 seconds
+		sta TabEnemyStateTimer,x
+		
+		lda m_searchEnemyChar
+		sta TabEnemyBaseCharIndex,x
+		tya
+		sta TabEnemyBaseCharX,x
+		
+		lda m_tempByte
+		sta TabEnemyBaseCharY,x
+
+		; init level position
+		; TabEnemyLevelTopY_H2 starts as 0, now multiply by 8 to get the line
+		asl
+		rol TabEnemyLevelTopY_H2,x
+		asl
+		rol TabEnemyLevelTopY_H2,x
+		asl
+		rol TabEnemyLevelTopY_H2,x
+		sta TabEnemyLevelTopY_H1,x
+	
+		; TabEnemyLevelLeftX_H2 starts as 0, now multiply by 4 to get the horizontal pixel
+		tya
+		asl
+		rol TabEnemyLevelLeftX_H2,x
+		asl
+		rol TabEnemyLevelLeftX_H2,x
+		sta TabEnemyLevelLeftX_H1,x
+
+		; init shot creation position (offset x: 3, offset y: 1)
+		lda TabEnemyLevelLeftX_H1,x
+		clc
+		adc #3
+		sta TabEnemyShotLevelLeftX_H1,x
+		lda TabEnemyLevelLeftX_H2,x
+		adc #0
+		sta TabEnemyShotLevelLeftX_H2,x
+	
+		lda TabEnemyLevelTopY_H1,x
+		clc
+		adc #1
+		sta TabEnemyShotLevelTopY_H1,x
+		
+		lda TabEnemyLevelTopY_H2,x
+		adc #0
+		sta TabEnemyShotLevelTopY_H2,x
+
+		; update number of enemies	
+		inc m_totalEnemies
+		inc m_activeEnemies
+
+		lda m_totalEnemies
+		cmp #MAX_ENEMIES_PER_LEVEL
+		beq IEM_exit
+	
+		ldx m_tempByte
+
+;************************************************
+;
+IEM_no_enemy
+		
+		iny
+		cpy m_numberOfValidRows
+		beq IEM_check_loop_Y
+		jmp IEM_loop2
+
+;************************************************
+;
+IEM_check_loop_Y
+
+		inx
+		cpx m_levelCharSizeY
+		beq IEM_exit
+		jmp IEM_loop1
+
+;************************************************
+;
+IEM_exit
+	
+		rts
+		
+.endp		
+
+;
+;**************************************************************************************************
 ; UpdateInfoLine
 ;**************************************************************************************************
 ;

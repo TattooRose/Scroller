@@ -197,55 +197,51 @@ CCPM_exit
 ;
 .proc CheckCreateEnemyMissile
 	
-		ldx #2									; check for a free missile index
+		; check for a free missile index
+		ldx #2
 		lda TabMissileOwner,x
 		beq CCEM_found_one_free
 	
 		ldx #3
 		lda TabMissileOwner,x
 		bne CCEM_exit
-
-;************************************************
-;	
+	
 CCEM_found_one_free
 	
 		lda #>[ENEMY_MISSILE_SPEED_X]
 		sta TabMissileSpeedX_H1,x
-		
 		lda #<[ENEMY_MISSILE_SPEED_X]
 		sta TabMissileSpeedX_L1,x
 	
 		lda m_enemyShootDirection
 		sta TabMissileDirection,x
 
-	
-		lda m_enemyShotLevelLeftX_H1			; init position
+		; init position
+		lda m_enemyShotLevelLeftX_H1
 		sta TabMissileLevelLeftX_H1,x
-		
 		lda m_enemyShotLevelLeftX_H2
 		sta TabMissileLevelLeftX_H2,x
 
 		lda m_enemyShotLevelTopY_H1
 		sta TabMissileLevelTopY_H1,x
-		
 		lda m_enemyShotLevelTopY_H2
 		sta TabMissileLevelTopY_H2,x
-		
+
 		lda #0
 		sta TabMissileLevelLeftX_L1,x
 		sta TabMissileLevelTopY_L1,x
 
-		lda #2									; enemy owner
+		lda #2					; enemy owner
 		sta TabMissileOwner,x
 
 		jsr CreateMissile
 
-;************************************************
-;	
-CCEM_exit		
+CCEM_exit
+
 		rts
-	
+
 .endp	
+
 ;
 ;**************************************************************************************************
 ; InitMissileSystem
@@ -261,12 +257,10 @@ CCEM_exit
 
 		lda #0
 		sta m_currentVirtualMissiles
+
 		ldx #0
 
-;************************************************
-;
 IMS_loop
-		
 		sta TabMissileScreenLeftX,x
 		sta TabMissileScreenTopY,x
 		sta TabOldMissileScreenLeftX,x
@@ -295,7 +289,8 @@ IMS_loop
 
 		rts
 
-.endp		
+.endp	
+	
 ;
 ;**************************************************************************************************
 ; GetFreeMissileIndex
@@ -303,27 +298,26 @@ IMS_loop
 ;
 .proc GetFreeMissileIndex
 
-	
-		ldx #0									; return in X the index of the free virtual missile
-	
-;************************************************
-;
+		; return in X the index of the free virtual missile
+		ldx #0
+
 GFMI_loop
-		lda TabMissileOwner,x					; if the owner is 0, the slot is free
+	
+		lda TabMissileOwner,x	; if the owner is 0, the slot is free
 		beq GFMI_exit
 
 		inx
 		cpx #MAX_VIRTUAL_MISSILES
 		bne GFMI_loop
 
-		ldx #255								; value for: "there is no free index"
-	
-;************************************************
-;
+		ldx #255		; value for: "there is no free index"
+
 GFMI_exit
+		
 		rts
 
-.endp		
+.endp	
+	
 ;	
 ;**************************************************************************************************
 ; CreateMissile
@@ -336,19 +330,20 @@ GFMI_exit
 ;**************************************************************************************************
 ;
 .proc CreateMissile
-
 	
-		lda #0									; use X as a parameter (the index of the virtual missile)
+		lda #0
 		sta TabMissileFrameCounter_H2,x
 		sta TabMissileFrameCounter_H1,x
 		jsr SetMissileScreenPos
-	
-		
-		jsr DrawMissileMX						; maybe should check screen position before creating the missile
+
+		; maybe should check screen position before creating the missile
+		jsr DrawMissileMX
 		inc m_currentVirtualMissiles
+
 		rts
 
-.endp		
+.endp
+		
 ;	
 ;**************************************************************************************************
 ; UpdateMissileSystem
@@ -359,77 +354,64 @@ GFMI_exit
 ;
 .proc UpdateMissileSystem
 
+		; should call this every frame, before calling CreateMissile in that frame (?)
 		ldx #0
 
-;************************************************
-; if the owner is 0, the slot is free
-;
 UMS_loop
-	
-		lda TabMissileOwner,x					
+		lda TabMissileOwner,x					; if the owner is 0, the slot is free
 		bne UMS_update
 		jmp UMS_next
 
-;************************************************
-; update frame counter (life time)
+;*****	update frame counter (life time)
 ;
-UMS_update	
+UMS_update
 		
-		inc TabMissileFrameCounter_H1,x			
+		inc TabMissileFrameCounter_H1,x
 		bne UMS_check_collision
 		inc TabMissileFrameCounter_H2,x
 
-;************************************************
-; check if we need to destroy the missile by a hardware collision
+;*****	check if we need to destroy the missile by a hardware collision
 ;
-UMS_check_collision								
-	
+UMS_check_collision
+
 		jsr GetPlayerMissileFrontChar
 		lda TabMissileOwner,x
 		cmp #1
 		beq UMS_player_owner
 
-;************************************************
-; the collision check is a lot simpler for enemies
+;*****	the collision check is a lot simpler for enemies
 ;
-UMS_enemy_owner									
+UMS_enemy_owner			
 	
 		lda m_charDef
-		and #01
+		and #15
 		cmp #CT_BLOCK
 		bne UMS_update_position
 		jmp UMS_destroy
-
-;************************************************
-;
+	
 UMS_player_owner
-		
+	
 		lda m_charDef
-		and #$01
+		and #15
 
-;************************************************
-;
 UMS_check_block
-		
+	
 		cmp #CT_BLOCK
 		bne UMS_check_danger
-		
 		lda #4									; gray color
 		jmp TEST_B1
 
-;************************************************
-;
 UMS_check_danger
-	
+
 		cmp #CT_DANGER
 		bne UMS_update_position
 
-;************************************************
+;*****	check for a disabed vertical laser
 ;
 UMS_check_vlaser
-	
-		lda m_charRaw							; check for a disabed vertical laser
-		cmp #[$80 + $15]
+
+		lda m_charRaw
+		cmp #[128+16]		; danger plus vertical laser char index
 		bne UMS_check_enemy1_left
 	
 		lda m_animLaserCurrentFrame
@@ -437,62 +419,58 @@ UMS_check_vlaser
 		beq UMS_update_position
 		jmp UMS_danger
 
-;************************************************
+;*****	danger plus enemy 1 left char index
 ;
 UMS_check_enemy1_left
-	
-		cmp #[$80 + $40]						; danger plus enemy 1 left char index
+
+		cmp #[128+64]		
 		bne UMS_check_enemy1_right
 	
 		lda m_charPositionX
 		sta m_enemyCharPosX
 		lda m_charPositionY
-		sta m_enemyCharPosY	
-		jsr HitEnemy	
+		sta m_enemyCharPosY
+	
+		jsr HitEnemy
+	
 		jmp UMS_danger
-
-;************************************************
-;
+	
+;*****	danger plus enemy 1 right char index
+;	
 UMS_check_enemy1_right
-
-		cmp #[$80 + $41]						; danger plus enemy 1 right char index
+	
+		cmp #[128+65]		
 		bne UMS_danger
+	
 		lda m_charPositionX
 		sta m_enemyCharPosX
 		dec m_enemyCharPosX
 		lda m_charPositionY
-		sta m_enemyCharPosY	
-		jsr HitEnemy
-
-;************************************************
-;
+		sta m_enemyCharPosY
+	
+		jsr HitEnemy	
+		
 UMS_danger
-
-.if PAL_VERSION = 0		
-		lda #[32+4]								; red color, change for pal
+.if PAL_VERSION = 0
+		lda #[32+4]		; red color, change for pal
 .else
 		lda #[16+4]
 .endif
 
-;************************************************
-;
 TEST_B1
-	
+		sta m_playerBaseColor
 		jmp UMS_destroy
 
-;************************************************
-; update position using the missile speed
+;*****	update position using the missile speed
 ;
-UMS_update_position								
-		
+UMS_update_position
+	
 		lda TabMissileDirection,x
 		cmp #1
 		bne UMS_move_left
 
-;************************************************
-;
 UMS_move_right
-	
+
 		lda TabMissileLevelLeftX_L1,x
 		clc
 		adc TabMissileSpeedX_L1,x
@@ -510,10 +488,8 @@ UMS_move_right
 
 		jmp UMS_check_screen_limits
 
-;************************************************
-;
 UMS_move_left
-		
+	
 		lda TabMissileLevelLeftX_L1,x
 		sec
 		sbc TabMissileSpeedX_L1,x
@@ -529,39 +505,32 @@ UMS_move_left
 
 		jsr SetMissileScreenPos
 
-;************************************************
-; check outside screen position, to destroy the missile
+;*****	check outside screen position, to destroy the missile
 ;
-UMS_check_screen_limits							
-
+UMS_check_screen_limits
+	
 		lda TabMissileScreenLeftX,x
 		cmp #[PM_BASE_SCREEN_X]					; screen left limit
 		bcc UMS_destroy
-		
 		cmp #[PM_BASE_SCREEN_X+160-3]			; screen right limit (minus width of the missile)
 		bcs UMS_destroy
 
 		lda TabMissileScreenTopY,x
 		cmp #[PM_BASE_SCREEN_Y]					; screen top limit
 		bcc UMS_destroy
-	
 		cmp #[PM_BASE_SCREEN_Y+192-2]			; screen bottom limit (minus height of the missile)
 	
 		bcc UMS_draw
 
-;************************************************
-;
 UMS_destroy
-		
+	
 		lda TabMissileOwner,x
 		cmp #2
 		bne UMS_not_from_enemy
 		dec m_enemyMissilesActive
-
-;************************************************
-;
-UMS_not_from_enemy
 	
+UMS_not_from_enemy
+		
 		lda #0
 		sta TabMissileOwner,x
 
@@ -572,29 +541,29 @@ UMS_not_from_enemy
 		jsr ClearMissileLines
 
 		dec m_currentVirtualMissiles
+
 		jmp UMS_next
 
-;************************************************
-; draw the missile
-;
-UMS_draw										
 
+;*****	draw the missile
+;
+UMS_draw
+		
 		jsr DrawMissileMX
 
-;************************************************
-;
 UMS_next
-	
+		
 		inx
 		cpx #MAX_VIRTUAL_MISSILES
 		beq UMS_exit
 		jmp UMS_loop
 
-;************************************************
-;
-UMS_exit		
+UMS_exit
+		
 		rts
+
 .endp
+
 ;
 ;**************************************************************************************************
 ; SetMissileScreenPos
@@ -605,67 +574,65 @@ UMS_exit
 ;
 .proc SetMissileScreenPos
 	
-		lda TabMissileScreenLeftX,x						; save old screen pos
+		; save old screen pos
+		lda TabMissileScreenLeftX,x
 		sta TabOldMissileScreenLeftX,x
 		lda TabMissileScreenTopY,x
 		sta TabOldMissileScreenTopY,x
-		
-		;
-		;************************************************
+
 		; get new screen pos
-		; this must use the "_H2" positions for when the
-		; delta between the missile and the camera is too
-		; big (64 chars in X, or 32 chars in Y)
-		;************************************************
+		; this must use the "_H2" positions 
+		; for when the delta between the missile 
+		; and the camera is too big (64 chars in X, or 32 chars in Y)
 		;
 		lda TabMissileLevelLeftX_H1,x
 		sec
 		sbc m_levelWindowX_H1
 		sta m_screenDelta_H1
-		
 		lda TabMissileLevelLeftX_H2,x
 		sbc m_levelWindowX_H2
-		bcc SMSP_set_outside							; this is not totally correct, because it doesn't use the width of the missile
-		sta m_screenDelta_H2							; (but if we do it correctly we should clip the missile graphics)
-		bne SMSP_set_outside							; could remove the bcc and only use this..
+		bcc SMSP_set_outside					; this is not totally correct, because it doesn't use the width of the missile
+		sta m_screenDelta_H2					; (but if we do it correctly we should clip the missile graphics)
 
+		bne SMSP_set_outside					; could remove the bcc and only use this..
 		lda m_screenDelta_H1
-		cmp #[160-1]									; 40 chars x 4 pixels, minus (missile width - 1)
+		cmp #[160-1]							; 40 chars x 4 pixels, minus (missile width - 1)
 		bcs SMSP_set_outside
-
+	
 		adc #PM_BASE_SCREEN_X
-		sta TabMissileScreenLeftX,x
+		sta TabMissileScreenLeftX,x	
+
 		lda TabMissileLevelTopY_H1,x
 		sec
 		sbc m_levelWindowY_H1
 		sta m_screenDelta_H1
-		
 		lda TabMissileLevelTopY_H2,x
 		sbc m_levelWindowY_H2
-		bcc SMSP_set_outside							; this is not totally correct, because it doesn't use the height of the missile
-		sta m_screenDelta_H2							; (but if we do it correctly we should clip the missile graphics)
-		bne SMSP_set_outside							; could remove the bcc and only use this..
+		bcc SMSP_set_outside					; this is not totally correct, because it doesn't use the height of the missile
+		sta m_screenDelta_H2					; (but if we do it correctly we should clip the missile graphics)
 
+		bne SMSP_set_outside					; could remove the bcc and only use this..
 		lda m_screenDelta_H1
-		cmp #[193-2]									; 24 chars x 8 scan lines, plus one extra scan line, minus (missile height - 1)
+		cmp #[193-2]							; 24 chars x 8 scan lines, plus one extra scan line, minus (missile height - 1)
 		bcs SMSP_set_outside
 	
 		adc #PM_BASE_SCREEN_Y
 		sta TabMissileScreenTopY,x
-		
-		rts
 
-;************************************************
-; if outside the visible range in X or Y, just set 
-; it out of the screen (for a p/m the screen 
-; coordinate 0 is outside the visible range)
-;
-SMSP_set_outside								
-		
+		rts
+	
+		; if outside the visible range in X or Y, 
+		; just set it out of the screen (for a p/m 
+		; the screen coordinate 0 is outside the visible range)
+		;
+SMSP_set_outside
+	
 		lda #0
 		sta TabMissileScreenLeftX,x
 		sta TabMissileScreenTopY,x
-		rts	
+	
+		rts
+		
 .endp	
 ;
 ;**************************************************************************************************
@@ -682,6 +649,7 @@ DrawMissileMX
 	sta m_pageZeroTempPointer+1
 
 	jmp (m_pageZeroTempPointer)
+	
 ;
 ;**************************************************************************************************
 ; DrawMissileM0
