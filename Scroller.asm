@@ -126,13 +126,13 @@ InitHardware
 		SetDisplayListAddress GameDspLstAddr	; set the display list address	
 		VcountWait 120
 
-		lda #[NMI_DLI]							; enable DLI's (but no VBI's)
-		sta NMIEN
-		
 		jsr SfxOff
 		jsr InitVars							; begin initialization
 		jsr InitLevelTable						; set up the level table		
 				
+		lda #[NMI_DLI]							; enable DLI's (but no VBI's)
+		sta NMIEN
+		
 		lda #GRACTL_OPTIONS						; apply GRACTL options
 		sta GRACTL
 
@@ -176,11 +176,15 @@ InitHardware
 		
 ;*****	GameLoop
 ;
-GameLoop		
+GameLoop
+		
 		lda m_stick0
 		and #$0F
 		cmp #$0F
-		beq NoSound
+		bne CheckState
+		jmp CheckUserInput
+
+CheckState
 		
 		lda m_playerState
 		cmp #$02		
@@ -191,13 +195,12 @@ GameLoop
 		
 		jmp CheckUserInput
 		
-NoSound	
-		jmp CheckUserInput
-		
 JumpSound
 		lda #1
 		sta m_sfxEffect
-		
+
+;*****	Check User Input
+;		
 CheckUserInput
 
 .if DEBUG_ON = 1
@@ -279,7 +282,7 @@ GameAnimations
 		jsr UpdateCoinAnimations
 		jsr UpdateInfoLine
 		jsr SfxUpdate
-		
+				
 		VcountWait 120
 		
 		jsr CheckPMCollisions
@@ -296,7 +299,7 @@ PlayerEndStates
 		jsr UpdateInfoLine
 		jsr SetSpawnPos
 		jsr SfxUpdate
-				
+								
 		VcountWait 120
 		
 		lda #0

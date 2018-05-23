@@ -49,9 +49,10 @@ GameDli_01
 		sta HPOSP0
 		sta HPOSP1
 		sta HPOSP2
-				
+
 		SetFontAddress GameFontAddress
     	sta WSYNC   			; Wait off-screen
+
 		
 		SetDisplayListInterrupt TextDli 
 

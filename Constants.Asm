@@ -27,8 +27,8 @@ PAL_VERSION					= 0
 DEBUG_ON					= 1
 STEREOMODE					= 0
 
-GAME_MEM					= GameMemoryAddress			; must set this for camera to work			
-GAME_LMS1					= GameDspLstAddr+3		; must set this for camera to work
+GAME_MEM					= GameMemoryAddress			; used in Camera.Asm. Must set this for camera to work			
+GAME_LMS1					= GameDspLstAddr+3			; used in Camera.Asm. Must set this for camera to work
 
 PLR_WIDTH					= 8							; must set this for player to work
 PLR_HEIGHT					= 21						; must set this for player to work
