@@ -50,12 +50,13 @@
 ZeroPageAddress				= $80				; 122 bytes zero page ($80 to $F9) 
 GameDspLstAddr				= $0E00				; 176 bytes for display list
 
-HudMemoryAddr				= $0680				; Heads up display are (80 bytes)
+HudMemoryAddr				= $06B0				; Heads up display are
 
 SoundPlayerAddress			= $2400
 DataAddress					= $3000				;  4K (size for data)
 SoundAddress				= $4000
-CodeAddress					= $4800				; 20K (22K zone)
+
+CodeAddress					= $4300				; 23K zone for code with new rmt file this should be adjusted
 
 PmgAddress					= $A000				; 40K (2K size - 768 bytes)
 GameFontAddress				= $A800				; 42K (1K size)
@@ -194,18 +195,32 @@ ScrollerLoop
 		jmp ScrollerLoop						; infinite loop
 ;
 ;**************************************************************************************************
-; End of Start
+; End Start of code
 ;**************************************************************************************************
 ;
+
+*;
+;**************************************************************************************************
+;	TitleScreen
+;**************************************************************************************************
+;
+.proc TitleScreen
+
+;*****	Common exit section to return
+Exit
+		rts
+		
+.endp
 						
 ;
 ;**************************************************************************************************
-;
 ;	GameLoop
 ;**************************************************************************************************
 ;
 .proc GameLoop
 
+;*****	Main target label for looping
+;
 Loop		
 		lda m_stick0
 		and #$0F
@@ -213,6 +228,8 @@ Loop
 		bne CheckState
 		jmp CheckUserInput
 
+;*****	Check th players state
+;
 CheckState
 		
 		lda m_playerState
@@ -224,6 +241,8 @@ CheckState
 		
 		jmp CheckUserInput
 		
+;*****	Set the jump sound
+;
 JumpSound
 		
 		lda #SFX_JUMP
