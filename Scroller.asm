@@ -50,6 +50,7 @@
 ZeroPageAddress				= $80				; 122 bytes zero page ($80 to $F9) 
 GameDspLstAddr				= $0E00				; 176 bytes for display list
 
+MenuDspLstAddr				= $0E00				; 176 bytes for display list
 HudMemoryAddr				= $06B0				; Heads up display are
 
 SoundPlayerAddress			= $2400
@@ -92,100 +93,17 @@ NO_NTSC_loop
 
 .endif
 
-		ClearSystem								; begin machine setup
-		DisableBasic							; disable to use memory
-		DisableOperatingSystem					; disable to use memory	
-	
 		SetRamTop #32							; pull memtop down 32 pages
+		
+		jsr TitleScreen							; Show the tile screen
+
 				
-		SetDisplayListInterrupt GameDli_01		; set the display list interrupts
-		VcountWait 120							; make sure to wait so the setting takes effect
-		
-		lda #GameDLEnd							; length of games display list data
-		sta m_param00 							; store it for the load routine		
-							
-		SetVector m_paramW01, GameDL			; source of display list data
-		SetVector m_paramW02, GameDspLstAddr	; destination of display list data
-		
-		jsr LoadDisplayListData					; perform the DL data move
-
-;*****	Set the addresses
-;
-SetAddresses
-
-		SetPMBaseAddress PmgAddress				; set the player missile address
-		SetFontAddress GameFontAddress			; set the starting font address
-		SetDisplayListAddress GameDspLstAddr	; set the display list address	
-
-		VcountWait 120							; make sure to wait so the setting takes effect
-
-;*****	Housekeeping
-;
-		jsr SfxOff
-		jsr InitVars							; begin initialization
-		jsr InitLevelTable						; set up the level table		
-				
-;*****	InitHardware
-;
-InitHardware
-
-		lda #0									; set the player info
-		sta SIZEP0
-
-		lda #%01010101							; double width for all missiles
-		sta SIZEM
-
-		lda #12									; set the HSCROL value
-		sta HSCROL
-	
-		lda #0									; set the VSCROL value
-		sta VSCROL
-		
-		lda #[NMI_DLI]							; enable DLI's (but no VBI's)
-		sta NMIEN
-		
-		lda #GRACTL_OPTIONS						; apply GRACTL options
-		sta GRACTL
-
-		lda #PRIOR_OPTIONS						; apply PRIOR options
-		sta PRIOR
-
-		lda #DMACTL_OPTIONS						; apply DMACTL options
-		sta DMACTL
-
-		lda #0									; clear the hit register
-		sta HITCLR
-
-;*****	Load the starting level
-;
+;*****	Set initial level and load
+;		
 		lda #$00								; set the starting level
 		sta m_currLevelNum						; store it off
-
-		sta m_param01							; store it to the parameter
-		jsr LoadLevel							; load the level
-
-		VcountWait 120							; make sure to wait so the setting takes effect
-
-;*****	Initialize Level
-;
-		jsr InitPlatforms						; initialize floating platforms if any
-		jsr InitGoldCounter						; gold initialization
-		jsr InitEnemyManager					; enemy manager initialization
-		jsr InitMissileSystem					; missile system initialization
-
-		VcountWait 120							; make sure to wait so the setting takes effect
 		
-;*****	Set player position and draw
-;		
-		lda m_currLevelNum						; grab the current level
-		sta m_param00							; store it in the parameter
-		jsr SetSpawnPos							; set the spawn position for this level
 		
-		jsr SetPlayerScreenPos 					; fill in the players position
-		jsr DrawPlayer							; draw the player
-
-		VcountWait 120							; make sure to wait so the setting takes effect	
-
 		jsr GameLoop
 
 ;*****	Scroller Loop
@@ -199,13 +117,150 @@ ScrollerLoop
 ;**************************************************************************************************
 ;
 
-*;
+;
+;**************************************************************************************************
+;	InitAndLoadLevel
+;**************************************************************************************************
+;
+.proc InitAndLoadLevel
+
+		ClearSystem								; begin machine setup
+		DisableBasic							; disable to use memory
+		DisableOperatingSystem					; disable to use memory	
+	
+		SetDisplayListInterrupt GameDli_01		; set the display list interrupts
+		VcountWait 120							; make sure to wait so the setting takes effect
+		
+		lda #GameDLEnd							; length of games display list data
+		sta m_param00 							; store it for the load routine		
+							
+		SetVector m_paramW01, GameDL			; source of display list data
+		SetVector m_paramW02, GameDspLstAddr	; destination of display list data
+		
+		jsr LoadDisplayListData					; perform the DL data move
+
+;*****	Housekeeping
+;
+		jsr SfxOff
+		jsr InitVars							; begin initialization
+		jsr InitLevelTable						; set up the level table		
+
+		VcountWait 120							; make sure to wait so the setting takes effect
+
+;*****	Set the addresses
+;
+SetAddresses
+
+		SetPMBaseAddress PmgAddress				; set the player missile address
+		SetFontAddress GameFontAddress			; set the starting font address
+		SetDisplayListAddress GameDspLstAddr	; set the display list address	
+
+		VcountWait 120							; make sure to wait so the setting takes effect
+				
+;*****	InitHardware
+;
+InitHardware
+
+		lda #0									; set the player size info
+		sta SIZEP0								; store it 
+		sta SIZEP1								; store it 
+		sta SIZEP2								; store it 
+		sta SIZEP3								; store it 
+
+		lda #%01010101							; double width for all missiles
+		sta SIZEM								; store it
+
+		lda #12									; set the HSCROL value
+		sta HSCROL								; store it	
+	
+		lda #0									; set the VSCROL value
+		sta VSCROL								; store it
+		
+		lda #[NMI_DLI]							; enable DLI's (but no VBI's)
+		sta NMIEN								; store it
+		
+		lda #GRACTL_OPTIONS						; apply GRACTL options
+		sta GRACTL								; store it
+
+		lda #PRIOR_OPTIONS						; apply PRIOR options
+		sta PRIOR								; store it
+
+		lda #DMACTL_OPTIONS						; apply DMACTL options
+		sta DMACTL								; store it
+
+		lda #0									; clear the hit register
+		sta HITCLR								; store it
+
+;*****	Load the starting level
+;
+		lda m_currLevelNum						; grab the current level number
+		sta m_param00							; store it to the parameter
+
+		jsr LoadLevel							; load the level
+
+;*****	Initialize Level
+;
+		jsr InitPlatforms						; initialize floating platforms if any
+		jsr InitGoldCounter						; gold initialization
+		jsr InitEnemyManager					; enemy manager initialization
+		jsr InitMissileSystem					; missile system initialization
+
+;*****	Set player position and draw
+;		
+		jsr SetSpawnPos							; set the spawn position for this level		
+		jsr SetPlayerScreenPos 					; fill in the players position
+		jsr DrawPlayer							; draw the player
+
+		VcountWait 120							; make sure to wait so the setting takes effect
+
+		rts
+
+.endp
+
+;
 ;**************************************************************************************************
 ;	TitleScreen
 ;**************************************************************************************************
 ;
 .proc TitleScreen
 
+		ClearSystem								; begin machine setup
+		DisableBasic							; disable to use memory
+		DisableOperatingSystem					; disable to use memory	
+
+		VcountWait 120							; make sure to wait so the setting takes effect
+
+		lda #<LINE06
+		sta m_hudMemoryAddress
+		lda #>LINE06
+		sta m_hudMemoryAddress+1
+
+		lda #MenuDLEnd							; length of Menu display list data
+		sta m_param00 							; store it for the load routine		
+							
+		SetVector m_paramW01, MenuDL			; source of display list data
+		SetVector m_paramW02, MenuDspLstAddr	; destination of display list data
+		
+		jsr LoadDisplayListData					; perform the DL data move
+
+		SetFontAddress TextFontAddress			; set the starting font address
+		SetDisplayListAddress MenuDspLstAddr	; set the display list address	
+
+		VcountWait 120							; make sure to wait so the setting takes effect
+
+		SetColor $00, $03, $08
+		;SetColor $01, $00, $0F
+		;SetColor $02, $0D, $04
+		;SetColor $03, $0F, $0C		
+		
+		lda #GRACTL_OPTIONS | TRIGGER_LATCH		; apply GRACTL options
+		sta GRACTL								; store it
+
+		lda #DMACTL_OPTIONS						; apply DMACTL options
+		sta DMACTL								; store it
+
+		jsr CheckMenuInput
+			
 ;*****	Common exit section to return
 Exit
 		rts
@@ -218,6 +273,13 @@ Exit
 ;**************************************************************************************************
 ;
 .proc GameLoop
+
+		lda #<HudMemoryAddr
+		sta m_hudMemoryAddress
+		lda #>HudMemoryAddr
+		sta m_hudMemoryAddress+1
+		
+		jsr InitAndLoadLevel
 
 ;*****	Main target label for looping
 ;
@@ -235,7 +297,7 @@ CheckState
 		lda m_playerState
 		cmp #$02		
 		beq JumpSound
-
+*
 		cmp #$03
 		beq JumpSound
 		
@@ -336,6 +398,7 @@ GameAnimations
 		VcountWait 120
 		
 		jsr CheckPMCollisions
+		
 		jmp Loop
 	
 ;*****	PlayerEndStates
@@ -435,6 +498,18 @@ END_CODE_WARNING
 		.sb "  G 00    E 00    T 00:00.0  H 00  PAL  "
 .endif
 		.sb "                                        "
+		
+;*****	Menu Data
+;			          1         2         3         4         5 
+;  	         1234567890123456789012345678901234567890123456789012
+LINE01	.sb "PLATFORM GAME ENGINE"
+LINE02	.sb "   FOR ATARI 8BIT   "
+LINE03	.sb "    authorer by     "
+LINE04	.sb "        NRV         "
+LINE05	.sb "    contributers    "
+LINE06	.sb "     TATTOOROSE     "	
+LINE07	.sb "    KEN JENNINGS    "	
+LINE08	.sb "    PRESS start     "	
 	
 ;*****	Game Memory Address 
 ;

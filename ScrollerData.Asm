@@ -487,3 +487,56 @@ GameDL_LMS1
 
 GameDLEnd = * - GameDL
 			
+;
+; Display List
+;
+MenuDL 
+		
+		.byte DL_BLANK_8
+		.byte DL_BLANK_8
+		.byte DL_BLANK_8
+		
+		.byte $46
+		.word LINE01		
+		
+		.byte $46
+		.word LINE02
+		.byte DL_BLANK_8
+		.byte DL_BLANK_8
+		.byte DL_BLANK_8
+		
+		.byte $46
+		.word LINE03
+		.byte DL_BLANK_8
+		.byte DL_BLANK_8
+
+		.byte $46
+		.word LINE04
+		.byte DL_BLANK_8
+		.byte DL_BLANK_8
+		.byte DL_BLANK_8
+
+		.byte $46
+		.word LINE05		
+		.byte DL_BLANK_8
+		.byte DL_BLANK_8
+		
+		.byte $46
+		.word LINE06
+		.byte DL_BLANK_8
+
+		.byte $46
+		.word LINE07		
+		.byte DL_BLANK_8
+		.byte DL_BLANK_8
+		.byte DL_BLANK_8
+		.byte DL_BLANK_8
+		
+		.byte $46
+		.word LINE08		
+		
+		.byte DL_JUMP_VB, <MenuDspLstAddr, >MenuDspLstAddr
+		
+MenuDLEnd = * - MenuDL		
+
+			

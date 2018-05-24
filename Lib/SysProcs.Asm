@@ -153,7 +153,7 @@ FINI 	rol _quitient
 		lsr
 		tax
 		lda TabHexNibbleToScreenDigit,x
-		sta HudMemoryAddr,y
+		sta (m_hudMemoryAddress),y
 
 Save_Value
 
@@ -161,7 +161,8 @@ Save_Value
 		and #15
 		tax
 		lda TabHexNibbleToScreenDigit,x
-		sta HudMemoryAddr+1,y
+		iny
+		sta (m_hudMemoryAddress),y
 		ldx m_saveRegX
 		rts
 .endp	

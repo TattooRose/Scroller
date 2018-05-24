@@ -9,6 +9,33 @@
 ;					Ken Jennings C64 to Atari MLP and also from WUDSN Tutorials.
 ;				
 ;***************************************************************************************************
+
+
+.proc CheckMenuInput
+
+		;lda #$03
+		;sta SKCTL
+		
+;***** Load Trigger
+LoadTrigger
+
+		lda m_currentTrigger0
+		sta m_oldTrigger0
+
+		lda CONSOL								; 0 - not pressed, 1 - just released, 2 - just pressed, 3 - pressed
+		sta m_param01
+		
+		VcountWait 120 
+
+		lda m_param01	
+		and #CONSOLE_START		
+
+		bne LoadTrigger
+	
+		rts
+		
+.endp
+
 ;
 ;**************************************************************************************************
 ; CheckInput

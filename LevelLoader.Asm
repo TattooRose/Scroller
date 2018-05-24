@@ -52,12 +52,12 @@ loop
 ;**************************************************************************************************
 ; LoadLevel
 ;
-;	Level index is passed in zero page PARAM01
+;	Level index is passed in zero page PARAM00
 ;
 ;**************************************************************************************************
 .proc LoadLevel
 
-		ldx m_param01
+		ldx m_param00
 				
 		lda LevelsAddr_LSB,x					; get the LSB for the requested levels data
 		sta m_ptrLevelAddr						; store it in our zero page pointer

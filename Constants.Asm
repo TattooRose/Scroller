@@ -192,7 +192,7 @@ ENEMY_SHOOT_DELTA_Y			= 32
 ;*****	Register bit settings
 ;
 GRACTL_OPTIONS				= [ENABLE_MISSILES 	| ENABLE_PLAYERS]
-PRIOR_OPTIONS				= [PM_PRIORITY_1   	| F.ifH_PLAYER        			| MULTICOLOR_PM]	
+PRIOR_OPTIONS				= [PM_PRIORITY_1   	| FIFTH_PLAYER        			| MULTICOLOR_PM]	
 DMACTL_OPTIONS				= [ENABLE_DL_DMA 	| PLAYFIELD_WIDTH_NORMAL_MASK 	| ENABLE_PM_DMA 	| PM_1LINE_RESOLUTION] 
 
 ;*****	Player missle address definitions
@@ -202,4 +202,7 @@ p0_area_1 					= PmgAddress + $0400
 p1_area_1 					= PmgAddress + $0500
 p2_area_1 					= PmgAddress + $0600
 p3_area_1 					= PmgAddress + $0700
+
+KEY							= $2fc				;keypressed code
+
 

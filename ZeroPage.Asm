@@ -159,6 +159,8 @@ m_pageZeroTempPointer		org *+$02
 m_playerMethodPointer		org *+$02
 m_platformLevelPointer		org *+$02
 
+m_hudMemoryAddress			org *+$02
+
 m_currChar					org *+$01
 m_currLevelNum				org *+$01
 

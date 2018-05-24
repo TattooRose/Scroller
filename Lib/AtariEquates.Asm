@@ -363,7 +363,7 @@ PM_PRIORITY_3				= %00000100
 PM_PRIORITY_4				= %00001000       
                  	            		
 PRIORITY_BITS 				= %00001111 		; Player/Missile, Playfield priority
-F.ifH_PLAYER 				= %00010000 		; Enable Fifth Player
+FIFTH_PLAYER 				= %00010000 		; Enable Fifth Player
 MULTICOLOR_PM 				= %00100000 		; Enable Player color mixing
                         	            		
 GTIA_MODE_DEFAULT 			= %00000000 		; Normal CTIA color interpretation
