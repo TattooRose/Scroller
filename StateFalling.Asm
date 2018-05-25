@@ -125,4 +125,4 @@ PMF_update_falling
 
 
 PMF_exit
-	jmp GameLoop.PlayerMethodReturn
+	jmp PlayLevel.PlayerMethodReturn

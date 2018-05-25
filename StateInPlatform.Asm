@@ -249,4 +249,4 @@ ClampLeft
 PMGT_end
 		
 		jsr SetPlayerInfo
-		jmp GameLoop.PlayerMethodReturn
+		jmp PlayLevel.PlayerMethodReturn

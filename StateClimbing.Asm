@@ -145,4 +145,4 @@ PMC_check_down
 PMC_exit
 
 		jsr SetPlayerInfo
-		jmp GameLoop.PlayerMethodReturn
+		jmp PlayLevel.PlayerMethodReturn

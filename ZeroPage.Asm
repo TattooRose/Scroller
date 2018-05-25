@@ -162,6 +162,7 @@ m_platformLevelPointer		org *+$02
 m_hudMemoryAddress			org *+$02
 
 m_currChar					org *+$01
+m_maxLevelNum				org *+$01
 m_currLevelNum				org *+$01
 
 .PRINT "Zero Page Start : ", ZeroPageAddress, " Zero Page Length : ", * - ZeroPageAddress, " Total : ", *  

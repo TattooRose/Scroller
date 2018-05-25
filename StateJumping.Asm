@@ -106,4 +106,4 @@ PMJ_hold_jump_speed
 	jsr SetPlayerMethod
 
 PMJ_exit
-	jmp GameLoop.PlayerMethodReturn
+	jmp PlayLevel.PlayerMethodReturn

@@ -49,8 +49,9 @@
 ;
 ZeroPageAddress				= $80				; 122 bytes zero page ($80 to $F9) 
 GameDspLstAddr				= $0E00				; 176 bytes for display list
+TitleDspLstAddr				= $0E00				; 176 bytes for display list
+CompleteDspLstAddr			= $0E00				; 176 bytes for display list
 
-MenuDspLstAddr				= $0E00				; 176 bytes for display list
 HudMemoryAddr				= $06B0				; Heads up display are
 
 SoundPlayerAddress			= $2400
@@ -67,7 +68,7 @@ GameMemoryAddress			= $B000				; 44K (4K size)
 
 ;*****	moved here for better access
 ;
-DEBUG_ON					= 1					 
+DEBUG_ON					= 0					 
 
 ;
 ;**************************************************************************************************
@@ -94,17 +95,35 @@ NO_NTSC_loop
 .endif
 
 		SetRamTop #32							; pull memtop down 32 pages
-		
-		jsr TitleScreen							; Show the tile screen
 
+		jsr TitleScreen							; Show the tile screen
 				
 ;*****	Set initial level and load
 ;		
+		lda #$01								; set number of maximum levels
+		sta m_maxLevelNum						; store it off		
+		
 		lda #$00								; set the starting level
 		sta m_currLevelNum						; store it off
 		
+;*****	Play Level Loop
+;	
+PlayLevelLoop
+	
+		jsr PlayLevel	
+
+		inc m_currLevelNum
+		lda m_currLevelNum		
+		cmp m_maxLevelNum
+		beq LevelDone
 		
-		jsr GameLoop
+		jmp PlayLevelLoop
+
+;*****	Level Done
+;
+LevelDone		
+
+		jsr LevelComplete				
 
 ;*****	Scroller Loop
 ;
@@ -162,6 +181,16 @@ SetAddresses
 InitHardware
 
 		lda #0									; set the player size info
+		sta HPOSP0
+		sta HPOSP1
+		sta HPOSP2
+		sta HPOSP3                        	
+
+		sta HPOSM0
+		sta HPOSM1
+		sta HPOSM2
+		sta HPOSM3
+
 		sta SIZEP0								; store it 
 		sta SIZEP1								; store it 
 		sta SIZEP2								; store it 
@@ -200,18 +229,18 @@ InitHardware
 
 ;*****	Initialize Level
 ;
-		jsr InitPlatforms						; initialize floating platforms if any
-		jsr InitGoldCounter						; gold initialization
-		jsr InitEnemyManager					; enemy manager initialization
-		jsr InitMissileSystem					; missile system initialization
-
+;		jsr InitPlatforms						; initialize floating platforms if any
+;		jsr InitGoldCounter						; gold initialization
+;		jsr InitEnemyManager					; enemy manager initialization
+;		jsr InitMissileSystem					; missile system initialization
+;
 ;*****	Set player position and draw
 ;		
-		jsr SetSpawnPos							; set the spawn position for this level		
-		jsr SetPlayerScreenPos 					; fill in the players position
-		jsr DrawPlayer							; draw the player
-
-		VcountWait 120							; make sure to wait so the setting takes effect
+;		jsr SetSpawnPos				; set the spawn position for this level		
+;		jsr SetPlayerScreenPos 					; fill in the players position
+;		jsr DrawPlayer							; draw the player
+;
+;		VcountWait 120							; make sure to wait so the setting takes effect
 
 		rts
 
@@ -235,21 +264,72 @@ InitHardware
 		lda #>LINE06
 		sta m_hudMemoryAddress+1
 
-		lda #MenuDLEnd							; length of Menu display list data
+		lda #TitleDLEnd							; length of Menu display list data
 		sta m_param00 							; store it for the load routine		
 							
-		SetVector m_paramW01, MenuDL			; source of display list data
-		SetVector m_paramW02, MenuDspLstAddr	; destination of display list data
+		SetVector m_paramW01, TitleDL			; source of display list data
+		SetVector m_paramW02, TitleDspLstAddr	; destination of display list data
 		
 		jsr LoadDisplayListData					; perform the DL data move
 
 		SetFontAddress TextFontAddress			; set the starting font address
-		SetDisplayListAddress MenuDspLstAddr	; set the display list address	
+		SetDisplayListAddress TitleDspLstAddr	; set the display list address	
 
 		VcountWait 120							; make sure to wait so the setting takes effect
 
 		SetColor $00, $03, $08
-		;SetColor $01, $00, $0F
+		SetColor $01, $0C, $0A
+		
+		lda #GRACTL_OPTIONS | TRIGGER_LATCH		; apply GRACTL options
+		sta GRACTL								; store it
+
+		lda #DMACTL_OPTIONS						; apply DMACTL options
+		sta DMACTL								; store it
+
+		jsr CheckMenuInput
+			
+;*****	Common exit section to return
+Exit
+		rts
+		
+.endp
+						
+;
+;
+;**************************************************************************************************
+;	TitleScreen
+;**************************************************************************************************
+;
+.proc LevelComplete
+
+		ClearSystem								; begin machine setup
+		DisableBasic							; disable to use memory
+		DisableOperatingSystem					; disable to use memory	
+
+		VcountWait 120							; make sure to wait so the setting takes effect
+
+		ClearZeroPage
+		
+		lda #<COMP02
+		sta m_hudMemoryAddress
+		lda #>COMP02
+		sta m_hudMemoryAddress+1
+
+		lda #CompleteDLEnd						; length of Menu display list data
+		sta m_param00 							; store it for the load routine		
+							
+		SetVector m_paramW01, CompleteDL		; source of display list data
+		SetVector m_paramW02, CompleteDspLstAddr	; destination of display list data
+		
+		jsr LoadDisplayListData					; perform the DL data move
+
+		SetFontAddress TextFontAddress			; set the starting font address
+		SetDisplayListAddress CompleteDspLstAddr	; set the display list address	
+
+		VcountWait 120							; make sure to wait so the setting takes effect
+
+		SetColor $00, $03, $08
+		SetColor $01, $0C, $0A
 		;SetColor $02, $0D, $04
 		;SetColor $03, $0F, $0C		
 		
@@ -269,17 +349,42 @@ Exit
 						
 ;
 ;**************************************************************************************************
-;	GameLoop
+;	PlayLevel
 ;**************************************************************************************************
 ;
-.proc GameLoop
+.proc PlayLevel
 
-		lda #<HudMemoryAddr
-		sta m_hudMemoryAddress
-		lda #>HudMemoryAddr
-		sta m_hudMemoryAddress+1
+;*****	Start Level
+;
+StartLevel
+
+		lda #$00								; reset the game timer
+		sta m_disableGameTimer					; to a zero value
 		
+		lda #<HudMemoryAddr						; set the text display address
+		sta m_hudMemoryAddress					; store the LSB
+		lda #>HudMemoryAddr						; set the text display address
+		sta m_hudMemoryAddress+1				; store the MSB
+		
+		jsr InitVars							; begin initialization		
 		jsr InitAndLoadLevel
+
+;*****	Initialize Level
+;
+		jsr InitPlatforms						; initialize floating platforms if any
+		jsr InitGoldCounter						; gold initialization
+		jsr InitEnemyManager					; enemy manager initialization
+		jsr InitMissileSystem					; missile system initialization
+
+		VcountWait 120							; make sure to wait so the setting takes effect
+
+;*****	Set player position and draw
+;		
+		jsr SetSpawnPos							; set the spawn position for this level		
+		jsr SetPlayerScreenPos 					; fill in the players position
+		jsr DrawPlayer							; draw the player
+
+		VcountWait 120							; make sure to wait so the setting takes effect
 
 ;*****	Main target label for looping
 ;
@@ -313,6 +418,118 @@ JumpSound
 ;*****	Check User Input
 ;		
 CheckUserInput
+
+		jsr CheckInput
+		jsr UpdateTimers
+		jmp (m_playerMethodPointer)
+	
+;*****	PlayerMethodReturn
+;
+PlayerMethodReturn
+		lda m_playerState
+		cmp #PS_LOSE
+		beq PlayerEndStates
+	
+;*****	PlayerNormalStates	
+;
+PlayerNormalStates
+		jsr UpdateCameraWindow
+		jsr SetPlayerScreenPos
+		jsr DrawPlayer
+			
+;*****	EnemyUpdate
+;
+EnemyUpdate
+		jsr UpdateEnemyManager
+	
+;*****	MissilesStep
+;
+MissilesStep
+		jsr UpdateMissileSystem
+		jsr DrawEnemyExplosion
+	
+;*****	GameAnimations
+;
+GameAnimations
+	
+		jsr DoFontAnimations
+		jsr UpdateCoinAnimations
+		jsr UpdateInfoLine
+		jsr SfxUpdate
+				
+		VcountWait 120
+		
+		jsr CheckPMCollisions
+		
+		jsr DebugInfo
+		
+		lda m_disableGameTimer	
+		bne Exit		
+		
+		jmp Loop
+	
+;*****	PlayerEndStates
+;
+PlayerEndStates
+	
+		jsr DrawPlayerExplosion
+		jsr DoFontAnimations
+		jsr UpdateCoinAnimations
+		jsr UpdateMissileSystem
+		jsr DrawEnemyExplosion
+		jsr UpdateInfoLine
+		jsr SetSpawnPos
+		jsr SfxUpdate
+								
+		VcountWait 120
+		
+		lda #0
+		sta HITCLR	
+
+		jsr DebugInfo
+				
+		jmp Loop		
+		
+;*****	Exit Play Level - Cleanup
+;
+Exit
+		jsr SfxOff								; turn sound and music off
+		ldx #$15
+XLoop
+		txa
+		pha
+						
+		VcountWait 120
+		
+		;jsr DrawPlayerExplosion
+		;jsr DoFontAnimations
+		;jsr UpdateCoinAnimations
+		;jsr UpdateMissileSystem
+		;jsr DrawEnemyExplosion
+		;jsr UpdateInfoLine
+		jsr UpdateCoinAnimations
+		jsr SetSpawnPos
+		jsr SetPlayerScreenPos
+		jsr DrawPlayer
+				
+		VcountWait 120
+		
+		pla
+		tax
+				
+		dex
+		bne XLoop
+		
+		rts
+		
+.endp
+
+;
+;**************************************************************************************************
+;	DebugInfo
+;**************************************************************************************************
+;
+.proc DebugInfo
 
 .if DEBUG_ON = 1
 
@@ -357,72 +574,7 @@ CheckUserInput
 
 .endif
 		
-		jsr CheckInput
-		jsr UpdateTimers
-		jmp (m_playerMethodPointer)
-	
-;*****	PlayerMethodReturn
-;
-PlayerMethodReturn
-		lda m_playerState
-		cmp #PS_LOSE
-		beq PlayerEndStates
-	
-;*****	PlayerNormalStates	
-;
-PlayerNormalStates
-		jsr UpdateCameraWindow
-		jsr SetPlayerScreenPos
-		jsr DrawPlayer
-			
-;*****	EnemyUpdate
-;
-EnemyUpdate
-		jsr UpdateEnemyManager
-	
-;*****	MissilesStep
-;
-MissilesStep
-		jsr UpdateMissileSystem
-		jsr DrawEnemyExplosion
-	
-;*****	GameAnimations
-;
-GameAnimations
-	
-		jsr DoFontAnimations
-		jsr UpdateCoinAnimations
-		jsr UpdateInfoLine
-		jsr SfxUpdate
-				
-		VcountWait 120
-		
-		jsr CheckPMCollisions
-		
-		jmp Loop
-	
-;*****	PlayerEndStates
-;
-PlayerEndStates
-	
-		jsr DrawPlayerExplosion
-		jsr DoFontAnimations
-		jsr UpdateCoinAnimations
-		jsr UpdateMissileSystem
-		jsr DrawEnemyExplosion
-		jsr UpdateInfoLine
-		jsr SetSpawnPos
-		jsr SfxUpdate
-								
-		VcountWait 120
-		
-		lda #0
-		sta HITCLR	
-		
-		jmp Loop
-
 		rts
-		
 .endp
 
 ;*****	Includes base files
@@ -499,7 +651,7 @@ END_CODE_WARNING
 .endif
 		.sb "                                        "
 		
-;*****	Menu Data
+;*****	TITLE Data
 ;			          1         2         3         4         5 
 ;  	         1234567890123456789012345678901234567890123456789012
 LINE01	.sb "PLATFORM GAME ENGINE"
@@ -511,6 +663,12 @@ LINE06	.sb "     TATTOOROSE     "
 LINE07	.sb "    KEN JENNINGS    "	
 LINE08	.sb "    PRESS start     "	
 	
+;*****	Completed Data
+;			          1         2         3         4         5 
+;  	         1234567890123456789012345678901234567890123456789012
+COMP01	.sb "ALL LEVELS COMPLETED"  	
+COMP02	.sb " thanks for playing "	
+
 ;*****	Game Memory Address 
 ;
 		org GameMemoryAddress	

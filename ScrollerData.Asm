@@ -455,7 +455,8 @@ TabCharDefinition
 	.byte %00000000+CT_BLANK								; blank								[FE]   
 	.byte %00000000+CT_BLANK								; blank								[FF]
 
-;*****	Game Dislplay List Definition
+;
+; Game Display List
 ;
 GameDL 
 		.byte DL_BLANK_8
@@ -488,55 +489,73 @@ GameDL_LMS1
 GameDLEnd = * - GameDL
 			
 ;
-; Display List
+; Title Display List
 ;
-MenuDL 
+TitleDL 
 		
-		.byte DL_BLANK_8
-		.byte DL_BLANK_8
-		.byte DL_BLANK_8
+		.rept 2
+			.byte DL_BLANK_8
+		.endr		
+		.byte DL_LMS + DL_TEXT_6
+		.byte <LINE01, >LINE01		
+		.byte DL_LMS + DL_TEXT_6
+		.byte <LINE02, >LINE02
+		.rept 5
+			.byte DL_BLANK_8
+		.endr
 		
-		.byte $46
-		.word LINE01		
+		.byte DL_LMS + DL_TEXT_6
+		.byte <LINE03, >LINE03
+		.rept 2
+			.byte DL_BLANK_8
+		.endr
+
+		.byte DL_LMS + DL_TEXT_6
+		.byte <LINE04, >LINE04
+		.rept 3
+			.byte DL_BLANK_8
+		.endr
+
+		.byte DL_LMS + DL_TEXT_6
+		.byte <LINE05, >LINE05
+		.rept 2
+			.byte DL_BLANK_8
+		.endr
 		
-		.byte $46
-		.word LINE02
-		.byte DL_BLANK_8
-		.byte DL_BLANK_8
-		.byte DL_BLANK_8
-		
-		.byte $46
-		.word LINE03
-		.byte DL_BLANK_8
+		.byte DL_LMS + DL_TEXT_6
+		.byte <LINE06, >LINE06
 		.byte DL_BLANK_8
 
-		.byte $46
-		.word LINE04
-		.byte DL_BLANK_8
-		.byte DL_BLANK_8
-		.byte DL_BLANK_8
+		.byte DL_LMS + DL_TEXT_6
+		.byte <LINE07, >LINE07
+		.rept 4
+			.byte DL_BLANK_8
+		.endr
+		
+		.byte DL_LMS + DL_TEXT_6
+		.byte <LINE08, >LINE08		
+		.byte DL_JUMP_VB, <TitleDspLstAddr, >TitleDspLstAddr
+		
+TitleDLEnd = * - TitleDL		
 
-		.byte $46
-		.word LINE05		
-		.byte DL_BLANK_8
-		.byte DL_BLANK_8
+;
+; Completee Display List
+;
+CompleteDL 
 		
-		.byte $46
-		.word LINE06
-		.byte DL_BLANK_8
-
-		.byte $46
-		.word LINE07		
-		.byte DL_BLANK_8
-		.byte DL_BLANK_8
-		.byte DL_BLANK_8
-		.byte DL_BLANK_8
+		.rept 12
+			.byte DL_BLANK_8
+		.endr		
+		.byte DL_LMS + DL_TEXT_6
+		.byte <COMP01, >COMP01
+		.byte DL_BLANK_8		
+		.byte DL_LMS + DL_TEXT_6
+		.byte <COMP02, >COMP02
+		.rept 10
+			.byte DL_BLANK_8
+		.endr		
+		.byte DL_JUMP_VB, <CompleteDspLstAddr, >CompleteDspLstAddr
 		
-		.byte $46
-		.word LINE08		
-		
-		.byte DL_JUMP_VB, <MenuDspLstAddr, >MenuDspLstAddr
-		
-MenuDLEnd = * - MenuDL		
+CompleteDLEnd = * - CompleteDL		
 
 			
