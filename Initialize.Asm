@@ -359,14 +359,15 @@ IGC_check_loop_Y
 
 		inx
 		cpx m_levelCharSizeY
-		bne IGC_loop1	
+		bne IGC_loop1
+			
 		rts
 
 .endp	
 
 ;
 ;**************************************************************************************************
-; UpdateInfoLine
+; 	InitPlatforms
 ;**************************************************************************************************
 ;
 .proc InitPlatforms
@@ -375,21 +376,22 @@ IGC_check_loop_Y
 		stx m_floatPlatformV
 		stx m_floatPlatformH
 		stx m_floatPlatformIdx		
-		
-;*****	Beging loop
-;
-loop
+
+;****	1st Loop
+; 
+Loop1
+	
 		ldy #0									; column index
 	
-		lda TabLevelLineAddressLSB,x		
+		lda TabLevelLineAddressLSB,x
 		sta m_ptrLevelLine
 		
 		lda TabLevelLineAddressMSB,x
 		sta m_ptrLevelLine+1
 
-;*****	Middle loop
+;*****	2nd Loop
 ;
-loop1
+Loop2
 
 		lda (m_ptrLevelLine),y
 		sta m_currChar	
@@ -397,85 +399,60 @@ loop1
 		tax
 		lda TabCharDefinition,x
 		ldx m_pageZeroTempValue
-
+	
 		and #15
 		cmp #CT_FLOATPLATFORMH
-		beq loopH
+		bne IGC_no_gold
 		
-		cmp #CT_FLOATPLATFORMV
-		beq loopV		
-		jmp loop2	
-
-loopH
-		lda PlatformCharH
+		lda TabPlatformIdChar_H
 		cmp m_currChar
-		beq StartH
-
-		lda PlatformCharH+1
-		cmp m_currChar
-		beq StartH
-		jmp loop2
-					
-StartH	
-							 
-		txa										; move x to a
-		pha										; store a
-
-		tya										; move y to a
-		pha										; store a
-		
-		ldy m_floatPlatformIdx					; put the current index in y
-
+		bne IGC_no_gold
+	
+		txa
 		pha
-		lda TabLevelLineAddressLSB,x
-		sta PlatformBaseLSB,y
-		lda TabLevelLineAddressMSB,x
-		sta PlatformBaseMSB,y
 		
-		pla		
-		clc										; clear the carry
-		adc TabLevelLineAddressLSB,x			; add the lsb screen address		
-		sta PlatformLSB,y						; store it by index		
+		tya
+		pha
 		
-		lda TabLevelLineAddressMSB,x			; get the msb screen address
-		adc #00									; account for carry
-		sta PlatformMSB,y						; store it by index
+		ldx	m_floatPlatformIdx
 		
-		lda #01									; type 01 is horizontal
-		sta PlatformType,y						; store it by index
+		clc		 
+		adc m_ptrLevelLine
+		sta m_platformScrnAddress
+		sta TabPlatformLSB_H,x
+		lda m_ptrLevelLine+1
+		adc #$00
+		sta m_platformScrnAddress+1
+		sta TabPlatformMSB_H,x		
 		
-		lda #$00								; initialize the step
-		sta PlatformStepX,y						; store it by index
-				
-		inc m_floatPlatformIdx					; increment the index
-		inc m_floatPlatformH
+		pla
+		tay
+		pla
+		tax
 		
-		pla										; pull y
-		tay										; restore y
+		inc m_floatPlatformIdx
+		lda #$01
+		sta m_floatPlatformH
+		
+;*****	No Gold
+;	
+IGC_no_gold
 
-		pla										; pull x
-		tax										; restore x
-
-		jmp loop2
-		
-loopV	
-		lda TabCharDefinition,x			
-		inc m_floatPlatformV
-		
-;*****	Loop on X 
-;		
-loop2	
 		iny
 		cpy m_levelCharSizeX
-		bne loop1
-		
+		bne Loop2
+
+;*****	Check Loop Y
+;
+IGC_check_loop_Y
+
 		inx
 		cpx m_levelCharSizeY
-		beq Exit
-		jmp loop
-		
-Exit		
-		rts
+		bne Loop1
+
+Exit			
+
+		rts		
 
 .endp
 

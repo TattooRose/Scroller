@@ -20,6 +20,9 @@ PlayerMethodOverPlatform
 ;
 PMGT_check_up
 		
+		lda #$00
+		sta _PlayerClamped
+
 		lda m_stick0
 		and #STICK_UP						; check up
 		bne PMGT_check_fall
@@ -213,36 +216,9 @@ ClampPlayer
 		cmp #$0F
 		bne PMGT_end
 		 
-		ldx m_floatPlatformIdx
-		dex
-		
-		lda PlatformTime,x
-		cmp #FLOAT_PLATFORM_TIMER
-		bne PMGT_end
-		
-		lda PlatformDirX,x
-		cmp #00
-		bne ClampLeft
-		
-		clc		
-		
-		lda m_playerLevelLeftX_H1	
-		adc #$04
-		sta m_playerLevelLeftX_H1
-		lda m_playerLevelLeftX_H2
-		adc #00
-		sta m_playerLevelLeftX_H2		
-
-		jmp PMGT_end 
-		
-ClampLeft		
-		sec
-		lda m_playerLevelLeftX_H1
-		sbc #$04
-		sta m_playerLevelLeftX_H1
-		lda m_playerLevelLeftX_H2
-		sbc #00
-		sta m_playerLevelLeftX_H2		
+		lda #$01
+		sta _PlayerClamped
+	
 		
 ;************************************************
 ;

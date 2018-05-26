@@ -43,16 +43,14 @@ m_saveRegX					org *+$01
 m_saveRegY					org *+$01
 
 m_sfxEffect					org *+$01
-
+m_currChar					org *+$01
+m_maxLevelNum				org *+$01
+m_currLevelNum				org *+$01
 m_animMiscWidth				org *+$01
 m_animMiscHeight			org *+$01
 
 m_redrawPlayerCounter		org *+$01
 
-m_missleBaseColor00			org *+$01
-m_playerBaseColor00			org *+$01
-m_playerBaseColor1A			org *+$01
-m_playerBaseColor1B			org *+$01
 
 m_playerLevelLeftX_H2		org *+$01			; left side coordinate
 m_playerLevelLeftX_H1		org *+$01
@@ -144,26 +142,20 @@ m_levelWindowX_H1			org *+$01
 m_levelWindowY_H2			org *+$01
 m_levelWindowY_H1			org *+$01
 
-m_stick0					org *+$01
-m_oldStick0					org *+$01
-m_oldTrigger0				org *+$01
-m_triggerState				org *+$01			; 0 - not pressed, 1 - just released, 2 - just pressed, 3 - pressed
-m_currentTrigger0			org *+$01
-
 m_paramW01					org *+$02
 m_paramW02					org *+$02
+m_paramW03					org *+$02
+m_paramW04					org *+$02
 
-m_ptrLevelAddr				org *+$02
 m_ptrLevelLine				org *+$02
 m_pageZeroTempPointer		org *+$02
 m_playerMethodPointer		org *+$02
-m_platformLevelPointer		org *+$02
 
+m_currentCharAddress		org *+$02
+m_platformScrnAddress		org *+$02
+m_platformGameCharAddr_H	org *+$02
+	
 m_hudMemoryAddress			org *+$02
-
-m_currChar					org *+$01
-m_maxLevelNum				org *+$01
-m_currLevelNum				org *+$01
 
 .PRINT "Zero Page Start : ", ZeroPageAddress, " Zero Page Length : ", * - ZeroPageAddress, " Total : ", *  
 

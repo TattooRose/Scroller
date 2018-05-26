@@ -220,7 +220,21 @@ InitHardware
 		lda #0									; clear the hit register
 		sta HITCLR								; store it
 
-;*****	Load the starting level
+;*****	Set character data address
+;
+		lda #$08
+		ldx #$26
+		jsr MultiplyAX
+		
+		clc
+		lda #<GameFontAddress
+		adc _productLo
+		sta m_platformGameCharAddr_H
+		lda #>GameFontAddress
+		adc _productHi
+		sta m_platformGameCharAddr_H+1
+		
+		;*****	Load the starting level
 ;
 		lda m_currLevelNum						; grab the current level number
 		sta m_param00							; store it to the parameter
@@ -229,18 +243,18 @@ InitHardware
 
 ;*****	Initialize Level
 ;
-;		jsr InitPlatforms						; initialize floating platforms if any
-;		jsr InitGoldCounter						; gold initialization
-;		jsr InitEnemyManager					; enemy manager initialization
-;		jsr InitMissileSystem					; missile system initialization
-;
+		jsr InitPlatforms						; initialize floating platforms if any
+		jsr InitGoldCounter						; gold initialization
+		jsr InitEnemyManager					; enemy manager initialization
+		jsr InitMissileSystem					; missile system initialization
+
 ;*****	Set player position and draw
 ;		
-;		jsr SetSpawnPos				; set the spawn position for this level		
-;		jsr SetPlayerScreenPos 					; fill in the players position
-;		jsr DrawPlayer							; draw the player
-;
-;		VcountWait 120							; make sure to wait so the setting takes effect
+		jsr SetSpawnPos							; set the spawn position for this level		
+		jsr SetPlayerScreenPos 					; fill in the players position
+		jsr DrawPlayer							; draw the player
+
+		VcountWait 120							; make sure to wait so the setting takes effect
 
 		rts
 
@@ -259,9 +273,9 @@ InitHardware
 
 		VcountWait 120							; make sure to wait so the setting takes effect
 
-		lda #<LINE06
+		lda #<TITLE06
 		sta m_hudMemoryAddress
-		lda #>LINE06
+		lda #>TITLE06
 		sta m_hudMemoryAddress+1
 
 		lda #TitleDLEnd							; length of Menu display list data
@@ -330,8 +344,6 @@ Exit
 
 		SetColor $00, $03, $08
 		SetColor $01, $0C, $0A
-		;SetColor $02, $0D, $04
-		;SetColor $03, $0F, $0C		
 		
 		lda #GRACTL_OPTIONS | TRIGGER_LATCH		; apply GRACTL options
 		sta GRACTL								; store it
@@ -453,6 +465,7 @@ MissilesStep
 GameAnimations
 	
 		jsr DoFontAnimations
+		jsr AnimatePlatformH
 		jsr UpdateCoinAnimations
 		jsr UpdateInfoLine
 		jsr SfxUpdate
@@ -486,8 +499,7 @@ PlayerEndStates
 		lda #0
 		sta HITCLR	
 
-		jsr DebugInfo
-				
+		jsr DebugInfo				
 		jmp Loop		
 		
 ;*****	Exit Play Level - Cleanup
@@ -652,20 +664,20 @@ END_CODE_WARNING
 		.sb "                                        "
 		
 ;*****	TITLE Data
-;			          1         2         3         4         5 
-;  	         1234567890123456789012345678901234567890123456789012
-LINE01	.sb "PLATFORM GAME ENGINE"
-LINE02	.sb "   FOR ATARI 8BIT   "
-LINE03	.sb "    authorer by     "
-LINE04	.sb "        NRV         "
-LINE05	.sb "    contributers    "
-LINE06	.sb "     TATTOOROSE     "	
-LINE07	.sb "    KEN JENNINGS    "	
-LINE08	.sb "    PRESS start     "	
+;			          1         2 
+;  	         12345678901234567890
+TITLE01	.sb "PLATFORM GAME ENGINE"
+TITLE02	.sb "   FOR ATARI 8BIT   "
+TITLE03	.sb "    authorer by     "
+TITLE04	.sb "        NRV         "
+TITLE05	.sb "    contributers    "
+TITLE06	.sb "     TATTOOROSE     "	
+TITLE07	.sb "    KEN JENNINGS    "	
+TITLE08	.sb "    PRESS start     "	
 	
 ;*****	Completed Data
-;			          1         2         3         4         5 
-;  	         1234567890123456789012345678901234567890123456789012
+;			          1         2 
+;  	         12345678901234567890
 COMP01	.sb "ALL LEVELS COMPLETED"  	
 COMP02	.sb " thanks for playing "	
 

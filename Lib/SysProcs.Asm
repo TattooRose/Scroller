@@ -193,12 +193,13 @@ NoOverflow
 		lsr
 		lsr
 		ora #16									; add the "0" character value
-		sta HudMemoryAddr,y
+		sta (m_hudMemoryAddress),y
 
 		txa
 		and #15
-		ora #16									; add the "0" character value
-		sta HudMemoryAddr+1,y
+		ora #16			
+		iny						
+		sta (m_hudMemoryAddress),y						; add the "0" character value
 
 		ldx m_saveRegX
 		rts
@@ -220,7 +221,7 @@ NoOverflow
 NoOverflow2
 	
 		ora #16									; display 1 digit (from 0 to 9) add the "0" character value
-		sta HudMemoryAddr,y
+		sta (m_hudMemoryAddress),y
 
 	rts
 

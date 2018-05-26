@@ -60,9 +60,9 @@ loop
 		ldx m_param00
 				
 		lda LevelsAddr_LSB,x					; get the LSB for the requested levels data
-		sta m_ptrLevelAddr						; store it in our zero page pointer
+		sta m_paramW01						; store it in our zero page pointer
 		lda LevelsAddr_MSB,x					; get the MSB for the requested levels data
-		sta m_ptrLevelAddr + 1					; store it in our zero page pointer
+		sta m_paramW01 + 1					; store it in our zero page pointer
 		
 		lda #$00								; initialize the counters
 		sta m_scrYCount		
@@ -75,7 +75,7 @@ loop
 GetNextRowCol		
 		
 		ldy m_datYCount		
-		lda (m_ptrLevelAddr), y					; make sure this level is valid (while not EOD)
+		lda (m_paramW01), y					; make sure this level is valid (while not EOD)
 		cmp #LN_EOD								; check for eof of level data
 		beq ExitLoadLevel						; true jump to exit
 
@@ -85,7 +85,7 @@ StoreRow
 
 		inc m_datYCount							; increment for COLS value
 		ldy m_datYCount							; use it
-		lda (m_ptrLevelAddr),y					; make sure this level is valid
+		lda (m_paramW01),y					; make sure this level is valid
 		sta m_currCol							; now we have the current column
 		
 		ldx m_currCol
@@ -104,7 +104,7 @@ SetCharacter
   		inc m_datYCount							; increment for next COLS value
 		ldy m_datYCount							; use the value
 
-		lda (m_ptrLevelAddr),y					; check for line break
+		lda (m_paramW01),y					; check for line break
 		cmp #LN_BRK								; did we hit it 
 		beq GetNextDataLine						; go reset the counters and test for carriage return  
 
@@ -126,7 +126,7 @@ GetNextDataLine
 		
   		inc m_datYCount							; increment for next COLS value
 		ldy m_datYCount							; use the value
-		lda (m_ptrLevelAddr), y					; load up the next level data item
+		lda (m_paramW01), y					; load up the next level data item
 		
 		cmp #LN_CRG								; check for carraige return
 		beq SetNextRowCol						; true get the next row of data
@@ -137,12 +137,12 @@ SetNextRowCol
 		inc m_datYCount		
 		
 		clc
-		lda m_ptrLevelAddr					; get the LSB for the requested levels data
+		lda m_paramW01					; get the LSB for the requested levels data
 		adc m_datYCount
-		sta m_ptrLevelAddr
-		lda m_ptrLevelAddr + 1
+		sta m_paramW01
+		lda m_paramW01 + 1
 		adc #$00
-		sta m_ptrLevelAddr + 1					; store it in our zero page pointer
+		sta m_paramW01 + 1					; store it in our zero page pointer
 
 		lda #$00
 		sta m_datYCount

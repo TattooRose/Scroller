@@ -20,6 +20,7 @@ m_floatAnimModV					.byte $00		; used for modulus operation on vertical animatio
 m_floatAnimModH					.byte $00		; used for modulus operation on horizontal animation
 m_floatPlatformV				.byte $00		; is there vertical floating platforms
 m_floatPlatformH				.byte $00		; is there horizontal floating platforms
+m_currPlatformIdx				.byte $00		; current index to platform screen array
 m_floatPlatformIdx				.byte $00		; index to platform screen array
 m_floatPlatform_X				.byte $00
 m_floatPlatform_Y				.byte $00
@@ -156,6 +157,18 @@ m_playerExplosionScreenTopY_L1	.byte $00
 m_debugSaveX					.byte 0
 
 m_currentLineAddress			.word $0000
+
+m_stick0						.byte $00
+m_oldStick0						.byte $00
+m_oldTrigger0					.byte $00
+m_triggerState					.byte $00			; 0 - not pressed, 1 - just released, 2 - just pressed, 3 - pressed
+m_currentTrigger0				.byte $00
+
+m_missleBaseColor00				.byte $00
+m_playerBaseColor00				.byte $00
+m_playerBaseColor1A				.byte $00
+m_playerBaseColor1B				.byte $00
+
 
 TabLevelLineAddressLSB			:256 .byte $00
 TabLevelLineAddressMSB			:256 .byte $00
@@ -497,43 +510,43 @@ TitleDL
 			.byte DL_BLANK_8
 		.endr		
 		.byte DL_LMS + DL_TEXT_6
-		.byte <LINE01, >LINE01		
+		.byte <TITLE01, >TITLE01		
 		.byte DL_LMS + DL_TEXT_6
-		.byte <LINE02, >LINE02
+		.byte <TITLE02, >TITLE02
 		.rept 5
 			.byte DL_BLANK_8
 		.endr
 		
 		.byte DL_LMS + DL_TEXT_6
-		.byte <LINE03, >LINE03
+		.byte <TITLE03, >TITLE03
 		.rept 2
 			.byte DL_BLANK_8
 		.endr
 
 		.byte DL_LMS + DL_TEXT_6
-		.byte <LINE04, >LINE04
+		.byte <TITLE04, >TITLE04
 		.rept 3
 			.byte DL_BLANK_8
 		.endr
 
 		.byte DL_LMS + DL_TEXT_6
-		.byte <LINE05, >LINE05
+		.byte <TITLE05, >TITLE05
 		.rept 2
 			.byte DL_BLANK_8
 		.endr
 		
 		.byte DL_LMS + DL_TEXT_6
-		.byte <LINE06, >LINE06
+		.byte <TITLE06, >TITLE06
 		.byte DL_BLANK_8
 
 		.byte DL_LMS + DL_TEXT_6
-		.byte <LINE07, >LINE07
+		.byte <TITLE07, >TITLE07
 		.rept 4
 			.byte DL_BLANK_8
 		.endr
 		
 		.byte DL_LMS + DL_TEXT_6
-		.byte <LINE08, >LINE08		
+		.byte <TITLE08, >TITLE08		
 		.byte DL_JUMP_VB, <TitleDspLstAddr, >TitleDspLstAddr
 		
 TitleDLEnd = * - TitleDL		
