@@ -68,7 +68,7 @@ CheckState
 		cmp #PS_FALLING
 		beq JumpFallIndex		
 		cmp #PS_CLIMBING
-		beq StandingIndex		
+		beq ClimbingIndex		
 		cmp #PS_IN_WATER
 		beq StandingIndex		
 		cmp #PS_LOSE
@@ -111,16 +111,33 @@ check_three
 		jmp StandingIndex		
 
 WalkingIndex
+		
 		lda #$03
 		jmp Return_Exit		
 
 WalkingIndex1
+		
 		lda #$06
 		jmp Return_Exit		
 
 JumpFallIndex
+		
 		lda #$09
 		jmp Return_Exit
+		
+ClimbingIndex		
+		inc m_floatAnimClimb
+		lda m_floatAnimClimb
+		and #$10
+		beq LeftClimb 
+		
+RightClimb		
+		lda #$0C		
+		jmp Return_Exit
+		
+LeftClimb
+		lda #$0F		
+		jmp Return_Exit				
 		
 StandingIndex
 		lda #0	

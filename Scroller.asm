@@ -220,8 +220,8 @@ InitHardware
 		adc _productHi
 		sta m_platformGameCharAddr_H+1
 		
-		;*****	Load the starting level
-;
+;*****	Load the starting level
+;	
 		lda m_currLevelNum						; grab the current level number
 		sta m_param00							; store it to the parameter
 
@@ -288,7 +288,6 @@ Exit
 		
 .endp
 						
-;
 ;
 ;**************************************************************************************************
 ;	LevelComplete
@@ -395,7 +394,7 @@ JumpSound
 		
 		lda #SFX_JUMP
 		sta m_sfxEffect
-
+		
 ;*****	Check User Input
 ;		
 CheckUserInput
@@ -452,19 +451,26 @@ GameAnimations
 	
 ;*****	PlayerEndStates
 ;
-PlayerEndStates
-	
+PlayerEndStates		
+		lda #SFX_JUMP 					
+		sta m_sfxEffect
+		jsr SfxUpdate
+		
+		lda #$00
+		sta HPOSP0
+		sta HPOSP1
+		sta HPOSP2
+		sta HPOSP3
+					
+		VcountWait 120
+
 		jsr DrawPlayerExplosion
 		jsr DoFontAnimations
 		jsr UpdateCoinAnimations
 		jsr UpdateMissileSystem
 		jsr DrawEnemyExplosion
 		jsr UpdateInfoLine
-		jsr SetSpawnPos
-		jsr SfxUpdate
-								
-		VcountWait 120
-		
+
 		lda #0
 		sta HITCLR	
 

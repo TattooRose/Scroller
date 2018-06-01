@@ -18,6 +18,7 @@ m_sfxLength						.byte $00
 
 m_floatAnimModV					.byte $00		; used for modulus operation on vertical animation
 m_floatAnimModH					.byte $00		; used for modulus operation on horizontal animation
+m_floatAnimClimb				.byte $00
 m_floatPlatformV				.byte $00		; is there vertical floating platforms
 m_floatPlatformH				.byte $00		; is there horizontal floating platforms
 m_currPlatformIdx				.byte $00		; current index to platform screen array
