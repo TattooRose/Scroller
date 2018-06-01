@@ -585,12 +585,12 @@ END_CODE_WARNING
 ;*****	Player missle graphics address
 ;
 		org PmgAddress
-:768	.byte %00000000	
+		:768	.byte %00000000	
 	
 ;*****	Missle starting address
 ;
 		org ms_area_1
-:1280 .byte %00000000
+		:1280 .byte %00000000
 
 ;*****	Level Data definition
 ;

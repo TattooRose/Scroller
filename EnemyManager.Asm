@@ -308,7 +308,7 @@ EraseExplosionFrame
 
 EEF_loop
 	lda #0
-	sta p1_area_1,y
+	sta p3_area_1,y
 
 	tya
 	clc
@@ -327,10 +327,10 @@ EEF_exit
 DrawExplosionFrame
 	ldx #0
 	ldy m_enemyExplosionScreenTopY_H1
-
+	
 DEF_loop
 	lda TabEnemyShape_01,x
-	sta p1_area_1,y
+	sta p3_area_1,y
 
 	tya
 	clc
@@ -369,7 +369,7 @@ DEE_update_frame
 
 DEE_do_update
 	lda TabEnemyExplosionColor,x
-	sta COLPM1
+	sta COLPM3
 
 ; update step and explosion starting line
 ; if step +1 --> line - 3.5
@@ -430,7 +430,7 @@ DEE_set_outside
 
 DEE_update_hpos
 	lda m_enemyExplosionScreenLeftX_H1
-	sta HPOSP1
+	sta HPOSP3
 
 ; draw new enemy explosion frame
 DEE_draw
