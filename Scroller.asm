@@ -94,7 +94,13 @@ NO_NTSC_loop
 
 .endif
 
+		ClearSystem								; begin machine setup
+		DisableBasic							; disable to use memory
+		DisableOperatingSystem					; disable to use memory	
+
 		SetRamTop #32							; pull memtop down 32 pages
+		
+;*****	Show the title screen
 
 		jsr TitleScreen							; Show the tile screen
 				
@@ -143,10 +149,6 @@ ScrollerLoop
 ;
 .proc InitAndLoadLevel
 
-		ClearSystem								; begin machine setup
-		DisableBasic							; disable to use memory
-		DisableOperatingSystem					; disable to use memory	
-	
 		SetDisplayListInterrupt GameDli_01		; set the display list interrupts
 		VcountWait 120							; make sure to wait so the setting takes effect
 		
@@ -179,22 +181,6 @@ SetAddresses
 ;*****	InitHardware
 ;
 InitHardware
-
-		lda #0									; set the player size info
-		sta HPOSP0
-		sta HPOSP1
-		sta HPOSP2
-		sta HPOSP3                        	
-
-		sta HPOSM0
-		sta HPOSM1
-		sta HPOSM2
-		sta HPOSM3
-
-		sta SIZEP0								; store it 
-		sta SIZEP1								; store it 
-		sta SIZEP2								; store it 
-		sta SIZEP3								; store it 
 
 		lda #%01010101							; double width for all missiles
 		sta SIZEM								; store it
@@ -267,12 +253,6 @@ InitHardware
 ;
 .proc TitleScreen
 
-		ClearSystem								; begin machine setup
-		DisableBasic							; disable to use memory
-		DisableOperatingSystem					; disable to use memory	
-
-		VcountWait 120							; make sure to wait so the setting takes effect
-
 		lda #<TITLE06
 		sta m_hudMemoryAddress
 		lda #>TITLE06
@@ -311,16 +291,10 @@ Exit
 ;
 ;
 ;**************************************************************************************************
-;	TitleScreen
+;	LevelComplete
 ;**************************************************************************************************
 ;
 .proc LevelComplete
-
-		ClearSystem								; begin machine setup
-		DisableBasic							; disable to use memory
-		DisableOperatingSystem					; disable to use memory	
-
-		VcountWait 120							; make sure to wait so the setting takes effect
 
 		ClearZeroPage
 		
@@ -328,6 +302,18 @@ Exit
 		sta m_hudMemoryAddress
 		lda #>COMP02
 		sta m_hudMemoryAddress+1
+		
+		lda m_gameTimerMinutes
+		ldy #12
+		jsr DisplayDebugInfoBinary99
+	
+		lda m_gameTimerSeconds
+		ldy #15
+		jsr DisplayDebugInfoBinary99
+	
+		lda m_gameTimerTSeconds
+		ldy #18
+		jsr DisplayDebugInfoBinary9
 
 		lda #CompleteDLEnd						; length of Menu display list data
 		sta m_param00 							; store it for the load routine		
@@ -380,23 +366,6 @@ StartLevel
 		
 		jsr InitVars							; begin initialization		
 		jsr InitAndLoadLevel
-
-;*****	Initialize Level
-;
-		jsr InitPlatforms						; initialize floating platforms if any
-		jsr InitGoldCounter						; gold initialization
-		jsr InitEnemyManager					; enemy manager initialization
-		jsr InitMissileSystem					; missile system initialization
-
-		VcountWait 120							; make sure to wait so the setting takes effect
-
-;*****	Set player position and draw
-;		
-		jsr SetSpawnPos							; set the spawn position for this level		
-		jsr SetPlayerScreenPos 					; fill in the players position
-		jsr DrawPlayer							; draw the player
-
-		VcountWait 120							; make sure to wait so the setting takes effect
 
 ;*****	Main target label for looping
 ;
@@ -505,24 +474,22 @@ PlayerEndStates
 ;*****	Exit Play Level - Cleanup
 ;
 Exit
-		jsr SfxOff								; turn sound and music off
+		ClearSystem
+		
 		ldx #$15
+		lda #$00
 XLoop
 		txa
 		pha
 						
-		VcountWait 120
-		
-		;jsr DrawPlayerExplosion
-		;jsr DoFontAnimations
-		;jsr UpdateCoinAnimations
-		;jsr UpdateMissileSystem
-		;jsr DrawEnemyExplosion
-		;jsr UpdateInfoLine
+		jsr SfxOff								; turn sound and music off
+		jsr DrawPlayerExplosion
+		jsr DoFontAnimations
 		jsr UpdateCoinAnimations
-		jsr SetSpawnPos
-		jsr SetPlayerScreenPos
-		jsr DrawPlayer
+		jsr UpdateMissileSystem
+		jsr DrawEnemyExplosion
+		jsr UpdateInfoLine
+		jsr UpdateCoinAnimations
 				
 		VcountWait 120
 		
@@ -671,7 +638,7 @@ TITLE02	.sb "   FOR ATARI 8BIT   "
 TITLE03	.sb "    authorer by     "
 TITLE04	.sb "        NRV         "
 TITLE05	.sb "    contributers    "
-TITLE06	.sb "     TATTOOROSE     "	
+TITLE06	.sb "    TATTOO ROSE     "	
 TITLE07	.sb "    KEN JENNINGS    "	
 TITLE08	.sb "    PRESS start     "	
 	
@@ -679,7 +646,8 @@ TITLE08	.sb "    PRESS start     "
 ;			          1         2 
 ;  	         12345678901234567890
 COMP01	.sb "ALL LEVELS COMPLETED"  	
-COMP02	.sb " thanks for playing "	
+COMP02  .sb " total time 00:00:0 "
+COMP03	.sb " thanks for playing "	
 
 ;*****	Game Memory Address 
 ;

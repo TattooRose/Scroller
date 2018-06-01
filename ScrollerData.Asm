@@ -562,9 +562,14 @@ CompleteDL
 		.byte DL_LMS + DL_TEXT_6
 		.byte <COMP01, >COMP01
 		.byte DL_BLANK_8		
+		.byte DL_BLANK_8		
 		.byte DL_LMS + DL_TEXT_6
 		.byte <COMP02, >COMP02
-		.rept 10
+		.byte DL_BLANK_8		
+		.byte DL_BLANK_8		
+		.byte DL_LMS + DL_TEXT_6
+		.byte <COMP03, >COMP03
+		.rept 6
 			.byte DL_BLANK_8
 		.endr		
 		.byte DL_JUMP_VB, <CompleteDspLstAddr, >CompleteDspLstAddr
