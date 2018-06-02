@@ -48,9 +48,7 @@
 ;*****	Memory map
 ;
 ZeroPageAddress				= $80				; 122 bytes zero page ($80 to $F9) 
-GameDspLstAddr				= $0E00				; 176 bytes for display list
-TitleDspLstAddr				= $0E00				; 176 bytes for display list
-CompleteDspLstAddr			= $0E00				; 176 bytes for display list
+CommDspListAddr				= $0E00				; 176 bytes for display list
 
 HudMemoryAddr				= $06B0				; Heads up display are
 
@@ -106,7 +104,7 @@ NO_NTSC_loop
 				
 ;*****	Set initial level and load
 ;		
-		lda #$01								; set number of maximum levels
+		lda #$02								; set number of maximum levels
 		sta m_maxLevelNum						; store it off		
 		
 		lda #$00								; set the starting level
@@ -156,7 +154,7 @@ ScrollerLoop
 		sta m_param00 							; store it for the load routine		
 							
 		SetVector m_paramW01, GameDL			; source of display list data
-		SetVector m_paramW02, GameDspLstAddr	; destination of display list data
+		SetVector m_paramW02, CommDspListAddr	; destination of display list data
 		
 		jsr LoadDisplayListData					; perform the DL data move
 
@@ -174,7 +172,7 @@ SetAddresses
 
 		SetPMBaseAddress PmgAddress				; set the player missile address
 		SetFontAddress GameFontAddress			; set the starting font address
-		SetDisplayListAddress GameDspLstAddr	; set the display list address	
+		SetDisplayListAddress CommDspListAddr	; set the display list address	
 
 		VcountWait 120							; make sure to wait so the setting takes effect
 				
@@ -206,7 +204,7 @@ InitHardware
 		lda #0									; clear the hit register
 		sta HITCLR								; store it
 
-;*****	Set character data address
+;*****	Set character data address for horizontal platforms
 ;
 		lda #$08
 		ldx #$26
@@ -262,12 +260,12 @@ InitHardware
 		sta m_param00 							; store it for the load routine		
 							
 		SetVector m_paramW01, TitleDL			; source of display list data
-		SetVector m_paramW02, TitleDspLstAddr	; destination of display list data
+		SetVector m_paramW02, CommDspListAddr	; destination of display list data
 		
 		jsr LoadDisplayListData					; perform the DL data move
 
 		SetFontAddress TextFontAddress			; set the starting font address
-		SetDisplayListAddress TitleDspLstAddr	; set the display list address	
+		SetDisplayListAddress CommDspListAddr	; set the display list address	
 
 		VcountWait 120							; make sure to wait so the setting takes effect
 
@@ -318,12 +316,12 @@ Exit
 		sta m_param00 							; store it for the load routine		
 							
 		SetVector m_paramW01, CompleteDL		; source of display list data
-		SetVector m_paramW02, CompleteDspLstAddr	; destination of display list data
+		SetVector m_paramW02, CommDspListAddr	; destination of display list data
 		
 		jsr LoadDisplayListData					; perform the DL data move
 
 		SetFontAddress TextFontAddress			; set the starting font address
-		SetDisplayListAddress CompleteDspLstAddr	; set the display list address	
+		SetDisplayListAddress CommDspListAddr	; set the display list address	
 
 		VcountWait 120							; make sure to wait so the setting takes effect
 
@@ -518,9 +516,6 @@ XLoop
 
 .if DEBUG_ON = 1
 
-		ldx m_floatPlatformIdx
-		dex
-		
 		lda m_playerState
 		ldy #40
 		jsr DisplayDebugInfoHexFF
@@ -539,8 +534,24 @@ XLoop
 		
 		lda m_playerLevelLeftX_H2
 		ldy #52
-		jsr DisplayDebugInfoHexFF	
-
+		jsr DisplayDebugInfoHexFF
+		
+		lda TabHardwareCollision
+		ldy #55
+		jsr DisplayDebugInfoHexFF
+		
+		lda TabHardwareCollision+1
+		ldy #58
+		jsr DisplayDebugInfoHexFF
+		
+		lda TabHardwareCollision+2
+		ldy #61
+		jsr DisplayDebugInfoHexFF
+					
+		lda TabHardwareCollision+3
+		ldy #64
+		jsr DisplayDebugInfoHexFF
+					
 .endif
 		
 		rts
@@ -569,7 +580,7 @@ XLoop
 ;
 END_CODE_WARNING
 	.if END_CODE_WARNING > PmgAddress 
-		.error "Code overrides code area!"
+		.error "Code overrides PMG area!"
 	.endif
 
 ;*****	Player missle graphics address

@@ -153,7 +153,7 @@ CCPM_init_position
 
 		lda m_playerLevelTopY_H1
 		clc
-		adc #2
+		adc #[PLR_HEIGHT/2]
 		sta TabMissileLevelTopY_H1,x
 	
 		lda m_playerLevelTopY_H2
@@ -169,6 +169,9 @@ CCPM_init_position
 
 		; before this, call GetFreeMissileIndex and then init..
 		jsr CreateMissile
+		
+		lda #SFX_FIRE
+		sta m_sfxEffect 
 
 CCPM_exit
 		

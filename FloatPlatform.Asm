@@ -15,7 +15,7 @@
 ;**************************************************************************************************
 ;
 _PlayerClamped			.byte $00
-_PlatformMaxStep		.byte $18
+_PlatformMaxStep		.byte $28
 _PlatformMaxTimer		.byte $02
 _PlatformCurrTimer		.byte $00
 

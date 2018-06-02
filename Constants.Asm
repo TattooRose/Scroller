@@ -24,7 +24,7 @@
 ;**************************************************************************************************
 ;
 GAME_MEM					= GameMemoryAddress			; used in Camera.Asm. Must set this for camera to work			
-GAME_LMS1					= GameDspLstAddr+3			; used in Camera.Asm. Must set this for camera to work
+GAME_LMS1					= CommDspListAddr+3			; used in Camera.Asm. Must set this for camera to work
 
 PLR_WIDTH					= 8							; must set this for player to work
 PLR_HEIGHT					= 21						; must set this for player to work
@@ -38,6 +38,7 @@ MUSIC_GAME_OVER 			= $0E
 MUSIC_DUMMY 				= $10
 
 SFX_DIAMOND 				= 1
+SFX_FIRE					= 4
 SFX_ALL_PICKED 				= 12
 SFX_DEATH 					= 14
 SFX_CONGRATULATIONS 		= 16
@@ -191,7 +192,7 @@ ENEMY_SHOOT_DELTA_Y			= 32
 
 ;*****	Register bit settings
 ;
-GRACTL_OPTIONS				= [ENABLE_MISSILES 	| ENABLE_PLAYERS]
+GRACTL_OPTIONS				= [ENABLE_MISSILES 	| ENABLE_PLAYERS				| GTIA_MODE_9_COLOR]
 PRIOR_OPTIONS				= [PM_PRIORITY_1   	| FIFTH_PLAYER        			| MULTICOLOR_PM]	
 DMACTL_OPTIONS				= [ENABLE_DL_DMA 	| PLAYFIELD_WIDTH_NORMAL_MASK 	| ENABLE_PM_DMA 	| PM_1LINE_RESOLUTION] 
 

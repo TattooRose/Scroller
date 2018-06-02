@@ -13,8 +13,8 @@
 
 .proc CheckMenuInput
 
-		;lda #$03
-		;sta SKCTL
+		lda #$03
+		sta SKCTL
 		
 ;***** Load Trigger
 LoadTrigger
@@ -106,8 +106,17 @@ CI_check_trigger
 ;
 .proc CheckPMCollisions
 	
+		lda P0PF
+		sta TabHardwareCollision
+		lda P1PF
+		sta TabHardwareCollision+1
+		lda P2PF
+		sta TabHardwareCollision+2
+		lda P3PF
+		sta TabHardwareCollision+3
+		
 ;*****	Check Player 0 Playfield 3
-;
+;		
 		lda M2PL
 		and #%1011
 		beq check_p0_pf3
@@ -121,6 +130,22 @@ CI_check_trigger
 check_p0_pf3
 		
 		lda P0PF
+		and #%1000
+		beq CPMC_check_m2_pl0
+		
+		ldx #PS_LOSE
+		jsr SetPlayerMethod
+		jmp CPMC_check_m0_pf0_3
+
+		lda P1PF
+		and #%1000
+		beq CPMC_check_m2_pl0
+
+		ldx #PS_LOSE
+		jsr SetPlayerMethod
+		jmp CPMC_check_m0_pf0_3
+
+		lda P2PF
 		and #%1000
 		beq CPMC_check_m2_pl0
 

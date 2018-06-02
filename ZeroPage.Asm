@@ -155,6 +155,7 @@ m_currentCharAddress		org *+$02
 m_platformScrnAddress		org *+$02
 m_platformGameCharAddr_H	org *+$02
 	
+m_gameScrnAddress			org *+$02	
 m_hudMemoryAddress			org *+$02
 
 .PRINT "Zero Page Start : ", ZeroPageAddress, " Zero Page Length : ", * - ZeroPageAddress, " Total : ", *  

@@ -57,6 +57,8 @@ loop
 ;**************************************************************************************************
 .proc LoadLevel
 
+		jsr ClearLevelLineMemory
+
 		ldx m_param00
 				
 		lda LevelsAddr_LSB,x					; get the LSB for the requested levels data
@@ -107,9 +109,6 @@ SetCharacter
 		lda (m_paramW01),y					; check for line break
 		cmp #LN_BRK								; did we hit it 
 		beq GetNextDataLine						; go reset the counters and test for carriage return  
-
-;		sta mm_currChar							; hold the maps character		
-;		lda mm_currChar							; get the character back
 
 		ldy m_scrYCount
 		sta (m_ptrLevelLine),y					; store it at location

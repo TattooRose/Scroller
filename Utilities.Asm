@@ -11,7 +11,7 @@
 ;***************************************************************************************************
 ;
 ;**************************************************************************************************
-; 	Clear Zero Page 
+; 	Clear Zero Page $80 to $F9 - anything above $F9 is used by SysMacros
 ;**************************************************************************************************
 ;
 .proc ClearZeroPage
@@ -24,9 +24,46 @@ Loop
 		sta (ZeroPageAddress), y
 		iny
 		dex
-		bne loop
+		bpl loop
 		
 		rts		
+.endp
+
+;
+;**************************************************************************************************
+; 	ClearLevelLineMemory
+;**************************************************************************************************
+;
+.proc ClearLevelLineMemory
+		
+		ldx #$00
+
+Loop
+
+		lda TabLevelLineAddressLSB,x
+		sta m_gameScrnAddress
+		
+		lda TabLevelLineAddressMSB,x
+		sta m_gameScrnAddress+1
+
+		ldy #$00
+		lda #$00
+
+ClearMem
+
+		sta (m_gameScrnAddress), y
+		iny					
+		cpy m_levelCharSizeX
+		bne ClearMem
+
+CheckLoop
+
+		inx
+		cpx m_levelCharSizeY
+		bne Loop
+	
+		rts
+
 .endp
 
 ;

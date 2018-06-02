@@ -174,6 +174,7 @@ m_playerBaseColor1B				.byte $00
 TabLevelLineAddressLSB			:256 .byte $00
 TabLevelLineAddressMSB			:256 .byte $00
 
+TabHardwareCollision			:8	 .byte $00
 ;
 ;**************************************************************************************************
 ; Character tile type definition
@@ -498,7 +499,7 @@ GameDL_LMS1
 			?dldata += WINDOW_CHAR_SIZE_X
 		.endr	
 	
-		.byte DL_JUMP_VB, <GameDspLstAddr, >GameDspLstAddr
+		.byte DL_JUMP_VB, <CommDspListAddr, >CommDspListAddr
 
 GameDLEnd = * - GameDL
 			
@@ -548,7 +549,7 @@ TitleDL
 		
 		.byte DL_LMS + DL_TEXT_6
 		.byte <TITLE08, >TITLE08		
-		.byte DL_JUMP_VB, <TitleDspLstAddr, >TitleDspLstAddr
+		.byte DL_JUMP_VB, <CommDspListAddr, >CommDspListAddr
 		
 TitleDLEnd = * - TitleDL		
 
@@ -573,7 +574,7 @@ CompleteDL
 		.rept 6
 			.byte DL_BLANK_8
 		.endr		
-		.byte DL_JUMP_VB, <CompleteDspLstAddr, >CompleteDspLstAddr
+		.byte DL_JUMP_VB, <CommDspListAddr, >CommDspListAddr
 		
 CompleteDLEnd = * - CompleteDL		
 
