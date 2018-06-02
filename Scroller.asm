@@ -68,7 +68,7 @@ GameMemoryAddress			= $B000				; 44K (4K size)
 
 ;*****	moved here for better access
 ;
-DEBUG_ON					= 0					 
+DEBUG_ON					= 1					 
 
 ;
 ;**************************************************************************************************
@@ -539,22 +539,6 @@ XLoop
 		
 		lda m_playerLevelLeftX_H2
 		ldy #52
-		jsr DisplayDebugInfoHexFF	
-		
-		lda PlatformLSB,x
-		ldy #55
-		jsr DisplayDebugInfoHexFF	
-		 		
-		lda PlatformMSB,x
-		ldy #58
-		jsr DisplayDebugInfoHexFF	
-		 		
-		lda PlatformBaseLSB,x
-		ldy #61
-		jsr DisplayDebugInfoHexFF	
-
-		lda PlatformBaseMSB,x
-		ldy #64
 		jsr DisplayDebugInfoHexFF	
 
 .endif
