@@ -21,28 +21,32 @@
 ;
 .proc SetSpawnPos
 
-		; set spawn position
-		ldx m_param00
 		
-		lda #0
-		sta m_playerLevelLeftX_H2
-		lda LevelsPlayer_X,x
-		sta m_playerLevelLeftX_H1
 		
 		lda #0
 		sta m_playerLevelLeftX_L1				; fractional part
+		sta m_playerLevelLeftX_H1
+		sta m_playerLevelLeftX_H2		
+		sta m_playerLevelBottomY_H1
+		sta m_playerLevelBottomY_L1				; fractional part
 		sta m_playerLevelBottomY_H2
 		
-		ldx m_currLevelNum
-		lda LevelsPlayer_Y,x
-		ldx #8 
+		; set spawn position
+		ldy m_param00
+		lda LevelsPlayer_X,y
+		ldx #$04
 		jsr MultiplyAX
+		
+		lda _productLo
+		sta m_playerLevelLeftX_H1
+		
+		lda LevelsPlayer_Y,y
+		ldx #$08
+		jsr MultiplyAX
+		
 		lda _productLo
 		adc #7		
 		sta m_playerLevelBottomY_H1
-		
-		lda #0
-		sta m_playerLevelBottomY_L1				; fractional part
 
 		jsr SetPlayerInfo						; Set the players info	
 	

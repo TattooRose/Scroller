@@ -114,9 +114,44 @@ CI_check_trigger
 		sta TabHardwareCollision+2
 		lda P3PF
 		sta TabHardwareCollision+3
+		lda M0PL
+		sta TabHardwareCollision+4
+		lda M1PL
+		sta TabHardwareCollision+5
+		lda M2PL
+		sta TabHardwareCollision+6
+		lda M3PL
+		sta TabHardwareCollision+6
 		
-;*****	Check Player 0 Playfield 3
+		
+		
+;*****	Check Missile 0 to Player 0
+;
+;		lda M0PL
+;		and #%1011
+;		beq check_m1_pl
+;				
+;		ldx #PS_LOSE
+;		jsr SetPlayerMethod
+;		jmp CPMC_check_m0_pf0_3
+		
+		
+;*****	Check Missile 1 to Player 0
+;
+;check_m1_pl
+;
+;		lda M1PL
+;		and #%1011
+;		beq check_m2_pl
+;				
+;		ldx #PS_LOSE
+;		jsr SetPlayerMethod
+;		jmp CPMC_check_m0_pf0_3
+		
+;*****	Check Missile 2 to Player 0
 ;		
+check_m2_pl
+		
 		lda M2PL
 		and #%1011
 		beq check_p0_pf3
@@ -124,6 +159,18 @@ CI_check_trigger
 		ldx #PS_LOSE
 		jsr SetPlayerMethod
 		jmp CPMC_check_m0_pf0_3
+
+;*****	Check Missile 3 to Player 0
+;		
+;check_m3_pl
+;		
+;		lda M3PL
+;		and #%1011
+;		beq check_p0_pf3
+;				
+;		ldx #PS_LOSE
+;		jsr SetPlayerMethod
+;		jmp CPMC_check_m0_pf0_3
 
 ;*****	Check Player 0 Playfield 3
 ;

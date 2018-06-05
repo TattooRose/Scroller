@@ -19,14 +19,14 @@ _PlatformMaxStep		.byte $28
 _PlatformMaxTimer		.byte $01
 _PlatformCurrTimer		.byte $00
 
+TabPlatformCharID_H		.byte $26
+TabPlatformCharH		.byte $00, $26, $27, $28, $29, $00
+
+TabPlatformDir			:8  .byte $00  
+TabPlatformStep			:8  .byte $00  
+TabPlatformCount		:8  .byte $00  
 TabPlatformLSB_H		:8	.byte $00
 TabPlatformMSB_H		:8  .byte $00
-TabPlatformIdChar_H		.byte $26
-
-TabPlatformCharH		.byte $00, $26, $27, $28, $29, $00
-TabPlatformDir			.byte $00, $00, $00, $00, $00, $00, $00, $00  
-TabPlatformStep			.byte $00, $00, $00, $00, $00, $00, $00, $00  
-TabPlatformCount		.byte $00, $00, $00, $00, $00, $00, $00, $00  
 
 HFP001
     					.byte $FF,$FF,$00,$55,$00,$00,$00,$00

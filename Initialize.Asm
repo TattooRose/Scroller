@@ -372,10 +372,23 @@ IGC_check_loop_Y
 ;
 .proc InitPlatforms
 
+		lda #$00
+		sta m_floatPlatformV
+		sta m_floatPlatformH
+		sta m_floatPlatformIdx	
+
 		ldx #$00
-		stx m_floatPlatformV
-		stx m_floatPlatformH
-		stx m_floatPlatformIdx		
+Loop		
+		sta TabPlatformDir,x  
+		sta TabPlatformStep,x  
+		sta TabPlatformCount,x  
+		sta TabPlatformLSB_H,x
+		sta TabPlatformMSB_H,x
+		inx
+		cpx #$08
+		bne Loop
+		
+		ldx #$00			
 
 ;****	1st Loop
 ; 
@@ -404,7 +417,7 @@ Loop2
 		cmp #CT_FLOATPLATFORMH
 		bne IGC_no_gold
 		
-		lda TabPlatformIdChar_H
+		lda TabPlatformCharID_H
 		cmp m_currChar
 		bne IGC_no_gold
 	

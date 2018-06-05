@@ -430,8 +430,8 @@ MissilesStep
 ;
 GameAnimations
 	
-		jsr DoFontAnimations
 		jsr AnimatePlatformH
+		jsr DoFontAnimations
 		jsr UpdateCoinAnimations
 		jsr UpdateInfoLine
 		jsr SfxUpdate
@@ -450,19 +450,15 @@ GameAnimations
 ;*****	PlayerEndStates
 ;
 PlayerEndStates		
-		lda #SFX_JUMP 					
-		sta m_sfxEffect
-		jsr SfxUpdate
-		
 		lda #$00
 		sta HPOSP0
 		sta HPOSP1
 		sta HPOSP2
 		sta HPOSP3
 					
-		VcountWait 120
 
 		jsr DrawPlayerExplosion
+		jsr AnimatePlatformH
 		jsr DoFontAnimations
 		jsr UpdateCoinAnimations
 		jsr UpdateMissileSystem
@@ -471,8 +467,9 @@ PlayerEndStates
 
 		lda #0
 		sta HITCLR	
-
 		jsr DebugInfo				
+
+		VcountWait 120
 		jmp Loop		
 		
 ;*****	Exit Play Level - Cleanup
@@ -480,14 +477,9 @@ PlayerEndStates
 Exit
 		ClearSystem
 		
-		ldx #$15
-		lda #$00
-XLoop
-		txa
-		pha
-						
 		jsr SfxOff								; turn sound and music off
 		jsr DrawPlayerExplosion
+		jsr AnimatePlatformH
 		jsr DoFontAnimations
 		jsr UpdateCoinAnimations
 		jsr UpdateMissileSystem
@@ -496,13 +488,7 @@ XLoop
 		jsr UpdateCoinAnimations
 				
 		VcountWait 120
-		
-		pla
-		tax
-				
-		dex
-		bne XLoop
-		
+	
 		rts
 		
 .endp
@@ -550,6 +536,22 @@ XLoop
 					
 		lda TabHardwareCollision+3
 		ldy #64
+		jsr DisplayDebugInfoHexFF
+
+		lda TabHardwareCollision+4
+		ldy #67
+		jsr DisplayDebugInfoHexFF
+		
+		lda TabHardwareCollision+5
+		ldy #70
+		jsr DisplayDebugInfoHexFF
+		
+		lda TabHardwareCollision+6
+		ldy #73
+		jsr DisplayDebugInfoHexFF
+					
+		lda TabHardwareCollision+7
+		ldy #76
 		jsr DisplayDebugInfoHexFF
 					
 .endif
