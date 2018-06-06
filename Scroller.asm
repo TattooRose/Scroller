@@ -98,10 +98,6 @@ NO_NTSC_loop
 
 		SetRamTop #32							; pull memtop down 32 pages
 		
-;*****	Show the title screen
-
-		jsr TitleScreen							; Show the tile screen
-				
 ;*****	Set initial level and load
 ;		
 		lda #$02								; set number of maximum levels
@@ -110,18 +106,30 @@ NO_NTSC_loop
 		lda #$00								; set the starting level
 		sta m_currLevelNum						; store it off
 		
+;*****	Show the title screen
+;
+ShowTitle
+
+		jsr TitleScreen							; Show the tile screen
+				
+
+;*****	Set player spawn
+;		
+		jsr SetSpawnPos							; set the spawn position for this level		
+
 ;*****	Play Level Loop
 ;	
 PlayLevelLoop
 	
 		jsr PlayLevel	
-
+		
 		inc m_currLevelNum
 		lda m_currLevelNum		
 		cmp m_maxLevelNum
+		
 		beq LevelDone
 		
-		jmp PlayLevelLoop
+		jmp ShowTitle
 
 ;*****	Level Done
 ;
@@ -147,6 +155,10 @@ ScrollerLoop
 ;
 .proc InitAndLoadLevel
 
+		ClearZeroPage
+		ClearPlatformMemory
+		ClearLevelLineMemory
+
 		SetDisplayListInterrupt GameDli_01		; set the display list interrupts
 		VcountWait 120							; make sure to wait so the setting takes effect
 		
@@ -162,7 +174,6 @@ ScrollerLoop
 ;
 		jsr SfxOff
 		jsr InitVars							; begin initialization
-		jsr InitLevelTable						; set up the level table		
 
 		VcountWait 120							; make sure to wait so the setting takes effect
 
@@ -231,12 +242,6 @@ InitHardware
 		jsr InitGoldCounter						; gold initialization
 		jsr InitEnemyManager					; enemy manager initialization
 		jsr InitMissileSystem					; missile system initialization
-
-;*****	Set player position and draw
-;		
-		jsr SetSpawnPos							; set the spawn position for this level		
-		jsr SetPlayerScreenPos 					; fill in the players position
-		jsr DrawPlayer							; draw the player
 
 		VcountWait 120							; make sure to wait so the setting takes effect
 
@@ -361,9 +366,9 @@ StartLevel
 		lda #>HudMemoryAddr						; set the text display address
 		sta m_hudMemoryAddress+1				; store the MSB
 		
-		jsr InitVars							; begin initialization		
 		jsr InitAndLoadLevel
-
+		jsr SetSpawnPos							; set the spawn position for this level		
+		
 ;*****	Main target label for looping
 ;
 Loop		
@@ -430,6 +435,7 @@ MissilesStep
 ;
 GameAnimations
 	
+		jsr AnimatePlatformH		
 		jsr DoFontAnimations
 		jsr UpdateCoinAnimations
 		jsr UpdateInfoLine
@@ -437,8 +443,7 @@ GameAnimations
 				
 		VcountWait 120
 		
-		jsr CheckPMCollisions
-		
+		jsr CheckPMCollisions		
 		jsr DebugInfo
 		
 		lda m_disableGameTimer	
@@ -449,42 +454,29 @@ GameAnimations
 ;*****	PlayerEndStates
 ;
 PlayerEndStates		
-		lda #$00
-		sta HPOSP0
-		sta HPOSP1
-		sta HPOSP2
-		sta HPOSP3				
-
 		jsr SfxOff
+		jsr AnimatePlatformH		
 		jsr DrawPlayerExplosion
 		jsr DoFontAnimations
 		jsr UpdateCoinAnimations
 		jsr UpdateMissileSystem
 		jsr DrawEnemyExplosion
 		jsr UpdateInfoLine
-
-		lda #0
-		sta HITCLR	
 		jsr DebugInfo				
 
 		VcountWait 120
+
+		lda #0
+		sta HITCLR	
+
 		jmp Loop		
 		
 ;*****	Exit Play Level - Cleanup
 ;
 Exit
-		ClearSystem
-		
+		ClearSystem		
 		jsr SfxOff								; turn sound and music off
-;		jsr DrawPlayerExplosion
-;		jsr AnimatePlatformH
-;		jsr DoFontAnimations
-;		jsr UpdateCoinAnimations
-;		jsr UpdateMissileSystem
-;		jsr DrawEnemyExplosion
-;		jsr UpdateInfoLine
-;		jsr UpdateCoinAnimations
-				
+
 		VcountWait 120
 	
 		rts

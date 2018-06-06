@@ -356,6 +356,7 @@ DP_exit
 ;**************************************************************************************************
 ;
 .proc DrawPlayerExplosion
+
 		lda m_missleBaseColor00
 		sta COLPM0
 
@@ -398,7 +399,16 @@ DPE_update_frame
 		sbc #$03
 		bcs DPE_do_update
 
+		lda #$00
+		sta HPOSP0
+		sta HPOSP1
+		sta HPOSP2
+		
+		VcountWait 120
+		
+		jsr SetSpawnPos
 		jsr InitPlayerInfo						; reached top of the screen, end explosion, respawn player
+		
 		jmp DPE_exit
 	
 ;************************************************

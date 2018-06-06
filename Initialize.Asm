@@ -62,6 +62,8 @@
 		
 		lda #>GameMemoryAddress
 		sta m_currentLineAddress+1
+
+		jsr InitLevelTable						; set up the level table		
 			
 		;************************************************
 		;
@@ -185,28 +187,25 @@
 		ldx #PS_OVER_PLATFORM
 		jsr SetPlayerMethod
 
-
 		lda #0
 		sta m_playerSideSpeed_H1
 		sta m_playerSideSpeed_L1
 		
-		; set uo spawn position
-		jsr SetSpawnPos
-		lda #PSD_LEFT	
-		sta m_lastPlayerSideDirection
-		sta m_lastPlayerShootDirection
-		lda #1
-		sta m_redrawPlayerCounter
-		jsr DrawPlayer
+;		lda #PSD_NONE
+;		sta m_lastPlayerSideDirection
+;		lda #PSD_RIGHT
+;		sta m_lastPlayerShootDirection
 		
+		; set uo spawn position
 		lda #PSD_RIGHT	
 		sta m_lastPlayerSideDirection
 		sta m_lastPlayerShootDirection
-		lda #1
-		sta m_redrawPlayerCounter
-		jsr DrawPlayer	
+;		
+		
+		jsr SetPlayerInfo
+		;jsr DrawPlayer	
 
-		jsr SetPlayerInfo	
+			
 		
 		rts
 

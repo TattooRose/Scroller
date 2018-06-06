@@ -178,28 +178,30 @@ check_p0_pf3
 		
 		lda P0PF
 		and #%1000
-		beq CPMC_check_m2_pl0
+		beq CPMC_check_m3_pl0
 		
 		ldx #PS_LOSE
 		jsr SetPlayerMethod
 		jmp CPMC_check_m0_pf0_3
 
-		lda P1PF
-		and #%1000
-		beq CPMC_check_m2_pl0
-
-		ldx #PS_LOSE
-		jsr SetPlayerMethod
-		jmp CPMC_check_m0_pf0_3
-
-		lda P2PF
-		and #%1000
-		beq CPMC_check_m2_pl0
-
-		ldx #PS_LOSE
-		jsr SetPlayerMethod
-		jmp CPMC_check_m0_pf0_3
-		
+;Check_P1
+;		lda P1PF
+;		and #%0100
+;		beq Check_P2
+;
+;		ldx #PS_LOSE
+;		jsr SetPlayerMethod
+;		jmp CPMC_check_m0_pf0_3
+;
+;Check_P2
+;		lda P2PF
+;		and #%0100
+;		beq CPMC_check_m2_pl0
+;
+;		ldx #PS_LOSE
+;		jsr SetPlayerMethod
+;		jmp CPMC_check_m0_pf0_3
+;
 ;*****	Check Missile 2 Player 0
 ;
 CPMC_check_m2_pl0
