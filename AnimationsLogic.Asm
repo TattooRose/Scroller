@@ -112,6 +112,7 @@ TabAnimVLaserFrameTime			:25 .byte $01, $01
 		jsr AnimateVerticalLaser
 		jsr AnimateHorizontalLaser
 		jsr AnimateMisc		
+		jsr AnimatePlatformH
 		
 		rts
 		
@@ -346,7 +347,7 @@ CopyFrame
 	
 		lda $FFFF,y
 		sta GameFontAddress+8*20,y
-		sta GameFontAddress+8*148,y
+		;sta GameFontAddress+8*148,y
 		dey
 		bpl CopyFrame
 
@@ -404,7 +405,7 @@ CopyFrame
 	
 		lda $FFFF,y
 		sta GameFontAddress+8*21+2,y
-		sta GameFontAddress+8*149+2,y
+		;sta GameFontAddress+8*149+2,y
 		dey
 		bpl CopyFrame
 

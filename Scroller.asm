@@ -430,7 +430,6 @@ MissilesStep
 ;
 GameAnimations
 	
-		jsr AnimatePlatformH
 		jsr DoFontAnimations
 		jsr UpdateCoinAnimations
 		jsr UpdateInfoLine
@@ -456,8 +455,8 @@ PlayerEndStates
 		sta HPOSP2
 		sta HPOSP3				
 
+		jsr SfxOff
 		jsr DrawPlayerExplosion
-		jsr AnimatePlatformH
 		jsr DoFontAnimations
 		jsr UpdateCoinAnimations
 		jsr UpdateMissileSystem
@@ -477,14 +476,14 @@ Exit
 		ClearSystem
 		
 		jsr SfxOff								; turn sound and music off
-		jsr DrawPlayerExplosion
-		jsr AnimatePlatformH
-		jsr DoFontAnimations
-		jsr UpdateCoinAnimations
-		jsr UpdateMissileSystem
-		jsr DrawEnemyExplosion
-		jsr UpdateInfoLine
-		jsr UpdateCoinAnimations
+;		jsr DrawPlayerExplosion
+;		jsr AnimatePlatformH
+;		jsr DoFontAnimations
+;		jsr UpdateCoinAnimations
+;		jsr UpdateMissileSystem
+;		jsr DrawEnemyExplosion
+;		jsr UpdateInfoLine
+;		jsr UpdateCoinAnimations
 				
 		VcountWait 120
 	
