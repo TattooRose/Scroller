@@ -454,8 +454,7 @@ PlayerEndStates
 		sta HPOSP0
 		sta HPOSP1
 		sta HPOSP2
-		sta HPOSP3
-					
+		sta HPOSP3				
 
 		jsr DrawPlayerExplosion
 		jsr AnimatePlatformH

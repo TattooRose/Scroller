@@ -14,13 +14,15 @@
 ; Local Storage
 ;***************************************************************************************************
 ;
-_PlayerClamped			.byte $00
+PLATFORMH_MAX_SIZE		= $06
+
+_PlayerClamped			.byte $00				
 _PlatformMaxStep		.byte $28
 _PlatformMaxTimer		.byte $01
 _PlatformCurrTimer		.byte $00
 
 TabPlatformCharID_H		.byte $26
-TabPlatformCharH		.byte $00, $26, $27, $28, $29, $00
+TabPlatformCharH		.byte $00,$26,$27,$28,$29,$00
 
 TabPlatformDir			:8  .byte $00  
 TabPlatformStep			:8  .byte $00  
@@ -103,7 +105,7 @@ DrawChar
 		lda (m_currentCharAddress),y			; Load this character
 		sta (m_platformScrnAddress),y			; store it to the screen
 		iny										; increment the index 
-		cpy #$06								; six in total
+		cpy #PLATFORMH_MAX_SIZE					; number of characters to draw
 		bne DrawChar							; get next character
 		
 		ldx #$00

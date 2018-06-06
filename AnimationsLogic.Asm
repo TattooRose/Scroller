@@ -29,14 +29,14 @@ TabCoinAnimAddressLSB		.byte $00, $00, $00, $00, $00, $00, $00, $00
 TabCoinAnimAddressMSB		.byte $00, $00, $00, $00, $00, $00, $00, $00
 
 ; vertical line, dither (red)
-TabAnimLaserFrame_01		.byte %00110000,%00001100,%00110000,%00001100,%00110000,%00001100,%00110000,%00001100
-TabAnimLaserFrame_02		.byte %00001100,%00110000,%00001100,%00110000,%00001100,%00110000,%00001100,%00110000
-TabAnimLaserFrame_03		.byte %00000000,%00000000,%00000000,%00000000,%00000000,%00000000,%00000000,%00000000
+TabAnimVLaserFrame_01		.byte %00110000,%00001100,%00110000,%00001100,%00110000,%00001100,%00110000,%00001100
+TabAnimVLaserFrame_02		.byte %00001100,%00110000,%00001100,%00110000,%00001100,%00110000,%00001100,%00110000
+TabAnimVLaserFrame_03		.byte %00000000,%00000000,%00000000,%00000000,%00000000,%00000000,%00000000,%00000000
 
 ; hoizontal line, dither (red)
-TabAnimHLaserFrame_01		.byte %00110011, %11001100, %00110011
-TabAnimHLaserFrame_02		.byte %11001100, %00110011, %11001100
-TabAnimHLaserFrame_03		.byte %00000000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000
+TabAnimHLaserFrame_01		.byte %00110011,%11001100,%00110011,%11001100,%00110011,%11001100,%00110011,%11001100
+TabAnimHLaserFrame_02		.byte %11001100,%00110011,%11001100,%00110011,%11001100,%00110011,%11001100,%00110011
+TabAnimHLaserFrame_03		.byte %00000000,%00000000,%00000000,%00000000,%00000000,%00000000,%00000000,%00000000
 
 ; sea top (blue)
 TabAnimSeaTopLeftFrame_01	.byte %00001111
@@ -51,14 +51,14 @@ TabAnimSeaTopRightFrame_01	.byte %00000000
 
 .if PAL_VERSION = 0
 	
-	ANIM_LASER_FRAMES 		= $3D
+	ANIM_VLASER_FRAMES 		= $3D
 	ANIM_HLASER_FRAMES 		= $3D
 	
-TabAnimLaserFrameAddressLSB		:30 .byte <TabAnimLaserFrame_01, <TabAnimLaserFrame_02
-									.byte <TabAnimLaserFrame_03
+TabAnimVLaserFrameAddressLSB	:30 .byte <TabAnimVLaserFrame_01, <TabAnimVLaserFrame_02
+									.byte <TabAnimVLaserFrame_03
 						
-TabAnimLaserFrameAddressMSB		:30 .byte >TabAnimLaserFrame_01, >TabAnimLaserFrame_02
-									.byte >TabAnimLaserFrame_03
+TabAnimVLaserFrameAddressMSB	:30 .byte >TabAnimVLaserFrame_01, >TabAnimVLaserFrame_02
+									.byte >TabAnimVLaserFrame_03
 
 TabAnimHLaserFrameAddressLSB	:30 .byte <TabAnimHLaserFrame_01, <TabAnimHLaserFrame_02
 									.byte <TabAnimHLaserFrame_03
@@ -71,18 +71,18 @@ TabAnimHLaserFrameTime			:30 .byte $01, $01
 									.byte $5A
 
 ; right now, if the index to these tables is 60, then we are in the "disabled" state
-TabAnimLaserFrameTime			:30 .byte $01, $01
+TabAnimVLaserFrameTime			:30 .byte $01, $01
 									.byte $3C
 
 .else
 
-	ANIM_LASER_FRAMES 		= $33
+	ANIM_VLASER_FRAMES 		= $33
 	ANIM_HLASER_FRAMES 		= $33
 
-TabAnimLaserFrameAddressLSB		:25 .byte <TabAnimLaserFrame_01, <TabAnimLaserFrame_02
+TabAnimVLaserFrameAddressLSB	:25 .byte <TabAnimLaserFrame_01, <TabAnimLaserFrame_02
 									.byte <TabAnimLaserFrame_03
 							
-TabAnimLaserFrameAddressMSB		:25 .byte >TabAnimLaserFrame_01, >TabAnimLaserFrame_02
+TabAnimVLaserFrameAddressMSB	:25 .byte >TabAnimLaserFrame_01, >TabAnimLaserFrame_02
 									.byte >TabAnimLaserFrame_03
 
 TabAnimHLaserFrameAddressLSB	:25 .byte <TabAnimHLaserFrame_01, <TabAnimHLaserFrame_02
@@ -96,7 +96,7 @@ TabAnimHLaserFrameTime			:25 .byte $01, $01
 									.byte $4B
 
 ; right now, if the index to these tables is 60, then we are in the "disabled" state
-TabAnimLaserFrameTime			:25 .byte $01, $01
+TabAnimVLaserFrameTime			:25 .byte $01, $01
 									.byte $32
 
 .endif
@@ -318,7 +318,7 @@ Exit
 
 		ldx m_animLaserCurrentFrame
 		inx
-		cpx #ANIM_LASER_FRAMES
+		cpx #ANIM_VLASER_FRAMES
 		bne NextFrame
 		
 		ldx #0
@@ -329,13 +329,13 @@ NextFrame
 
 		stx m_animLaserCurrentFrame
 
-		lda TabAnimLaserFrameTime,x
+		lda TabAnimVLaserFrameTime,x
 		sta m_animLaserTimer
 
-		lda TabAnimLaserFrameAddressLSB,x
+		lda TabAnimVLaserFrameAddressLSB,x
 		sta CopyFrame+1
 
-		lda TabAnimLaserFrameAddressMSB,x
+		lda TabAnimVLaserFrameAddressMSB,x
 		sta CopyFrame+2
 
 		ldy #7
@@ -345,7 +345,8 @@ NextFrame
 CopyFrame
 	
 		lda $FFFF,y
-		sta GameFontAddress+8*21,y
+		sta GameFontAddress+8*20,y
+		sta GameFontAddress+8*148,y
 		dey
 		bpl CopyFrame
 
@@ -395,14 +396,15 @@ NextFrame
 		lda TabAnimHLaserFrameAddressMSB,x
 		sta CopyFrame+2
 
-		ldy #2
+		ldy #3
 
 ;*****	Animate Horizontal Laser Copy Frame
 ;
 CopyFrame
 	
 		lda $FFFF,y
-		sta GameFontAddress+8*25+2,y
+		sta GameFontAddress+8*21+2,y
+		sta GameFontAddress+8*149+2,y
 		dey
 		bpl CopyFrame
 
