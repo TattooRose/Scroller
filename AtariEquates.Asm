@@ -623,10 +623,9 @@ POKMSK 						= $10 				; IRQEN
 SSKCTL 						= $0232 			; SKCTL
 
 ;**************************************************
-; Important Bit Positions
-
-;**************************************************
-; AUDC 
+; AUDC
+;
+; 	Important Bit Positions 
 ;
 MASK_AUD_NOISE  			= %00011111
 MASK_AUD_FORCE  			= %11101111
