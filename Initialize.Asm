@@ -191,21 +191,17 @@
 		sta m_playerSideSpeed_H1
 		sta m_playerSideSpeed_L1
 		
-;		lda #PSD_NONE
-;		sta m_lastPlayerSideDirection
-;		lda #PSD_RIGHT
-;		sta m_lastPlayerShootDirection
-		
+		; set uo spawn position
+		lda #PSD_LEFT	
+		sta m_lastPlayerSideDirection
+		sta m_lastPlayerShootDirection
+
 		; set uo spawn position
 		lda #PSD_RIGHT	
 		sta m_lastPlayerSideDirection
 		sta m_lastPlayerShootDirection
-;		
 		
 		jsr SetPlayerInfo
-		;jsr DrawPlayer	
-
-			
 		
 		rts
 

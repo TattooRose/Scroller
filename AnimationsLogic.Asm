@@ -1,4 +1,4 @@
-;
+
 ;***************************************************************************************************
 ;
 ;	Filename:		AnimationsLogic.Asm
@@ -29,14 +29,14 @@ TabCoinAnimAddressLSB		.byte $00, $00, $00, $00, $00, $00, $00, $00
 TabCoinAnimAddressMSB		.byte $00, $00, $00, $00, $00, $00, $00, $00
 
 ; vertical line, dither (red)
-TabAnimVLaserFrame_01		.byte %00110000,%00001100,%00110000,%00001100,%00110000,%00001100,%00110000,%00001100
-TabAnimVLaserFrame_02		.byte %00001100,%00110000,%00001100,%00110000,%00001100,%00110000,%00001100,%00110000
-TabAnimVLaserFrame_03		.byte %00000000,%00000000,%00000000,%00000000,%00000000,%00000000,%00000000,%00000000
+TabAnimLaserFrame_01		.byte %00110000,%00001100,%00110000,%00001100,%00110000,%00001100,%00110000,%00001100
+TabAnimLaserFrame_02		.byte %00001100,%00110000,%00001100,%00110000,%00001100,%00110000,%00001100,%00110000
+TabAnimLaserFrame_03		.byte %00000000,%00000000,%00000000,%00000000,%00000000,%00000000,%00000000,%00000000
 
 ; hoizontal line, dither (red)
-TabAnimHLaserFrame_01		.byte %00110011,%11001100,%00110011,%11001100,%00110011,%11001100,%00110011,%11001100
-TabAnimHLaserFrame_02		.byte %11001100,%00110011,%11001100,%00110011,%11001100,%00110011,%11001100,%00110011
-TabAnimHLaserFrame_03		.byte %00000000,%00000000,%00000000,%00000000,%00000000,%00000000,%00000000,%00000000
+TabAnimHLaserFrame_01		.byte %00110011, %11001100, %00110011, %11001100,%00110011, %11001100, %00110011, %11001100 
+TabAnimHLaserFrame_02		.byte %11001100, %00110011, %11001100, %00110011, %11001100, %00110011, %11001100, %00110011 
+TabAnimHLaserFrame_03		.byte %00000000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000
 
 ; sea top (blue)
 TabAnimSeaTopLeftFrame_01	.byte %00001111
@@ -51,14 +51,14 @@ TabAnimSeaTopRightFrame_01	.byte %00000000
 
 .if PAL_VERSION = 0
 	
-	ANIM_VLASER_FRAMES 		= $3D
+	ANIM_LASER_FRAMES 		= $3D
 	ANIM_HLASER_FRAMES 		= $3D
 	
-TabAnimVLaserFrameAddressLSB	:30 .byte <TabAnimVLaserFrame_01, <TabAnimVLaserFrame_02
-									.byte <TabAnimVLaserFrame_03
+TabAnimLaserFrameAddressLSB		:30 .byte <TabAnimLaserFrame_01, <TabAnimLaserFrame_02
+									.byte <TabAnimLaserFrame_03
 						
-TabAnimVLaserFrameAddressMSB	:30 .byte >TabAnimVLaserFrame_01, >TabAnimVLaserFrame_02
-									.byte >TabAnimVLaserFrame_03
+TabAnimLaserFrameAddressMSB		:30 .byte >TabAnimLaserFrame_01, >TabAnimLaserFrame_02
+									.byte >TabAnimLaserFrame_03
 
 TabAnimHLaserFrameAddressLSB	:30 .byte <TabAnimHLaserFrame_01, <TabAnimHLaserFrame_02
 									.byte <TabAnimHLaserFrame_03
@@ -71,18 +71,18 @@ TabAnimHLaserFrameTime			:30 .byte $01, $01
 									.byte $5A
 
 ; right now, if the index to these tables is 60, then we are in the "disabled" state
-TabAnimVLaserFrameTime			:30 .byte $01, $01
+TabAnimLaserFrameTime			:30 .byte $01, $01
 									.byte $3C
 
 .else
 
-	ANIM_VLASER_FRAMES 		= $33
+	ANIM_LASER_FRAMES 		= $33
 	ANIM_HLASER_FRAMES 		= $33
 
-TabAnimVLaserFrameAddressLSB	:25 .byte <TabAnimLaserFrame_01, <TabAnimLaserFrame_02
+TabAnimLaserFrameAddressLSB		:25 .byte <TabAnimLaserFrame_01, <TabAnimLaserFrame_02
 									.byte <TabAnimLaserFrame_03
 							
-TabAnimVLaserFrameAddressMSB	:25 .byte >TabAnimLaserFrame_01, >TabAnimLaserFrame_02
+TabAnimLaserFrameAddressMSB		:25 .byte >TabAnimLaserFrame_01, >TabAnimLaserFrame_02
 									.byte >TabAnimLaserFrame_03
 
 TabAnimHLaserFrameAddressLSB	:25 .byte <TabAnimHLaserFrame_01, <TabAnimHLaserFrame_02
@@ -96,7 +96,7 @@ TabAnimHLaserFrameTime			:25 .byte $01, $01
 									.byte $4B
 
 ; right now, if the index to these tables is 60, then we are in the "disabled" state
-TabAnimVLaserFrameTime			:25 .byte $01, $01
+TabAnimLaserFrameTime			:25 .byte $01, $01
 									.byte $32
 
 .endif
@@ -112,6 +112,8 @@ TabAnimVLaserFrameTime			:25 .byte $01, $01
 		jsr AnimateVerticalLaser
 		jsr AnimateHorizontalLaser
 		jsr AnimateMisc		
+		
+		jsr AnimatePlatformH	
 		
 		rts
 		
@@ -165,91 +167,78 @@ Exit
 	
 ;
 ;**************************************************************************************************
-; 	UpdateCoinAnimations	
-;
-;		update coin animations every frame
-;
+; UpdateCoinAnimations	
 ;**************************************************************************************************
 ;
-.proc UpdateCoinAnimations
+UpdateCoinAnimations
 
-		lda m_currentCoinAnimations					
-		beq UCA_exit
-		
-		ldx m_firstCoinAnimIndex
+	lda m_currentCoinAnimations					; update coin animations every frame	
+	beq UCA_exit
+	ldx m_firstCoinAnimIndex
 
-;*****	UCA Loop
+;**************************************************
 ;
 UCA_loop
-	
-		dec TabCoinAnimTimer,x
-		bne UCA_check_loop
+	dec TabCoinAnimTimer,x
+	bne UCA_check_loop
 
-		inc TabCoinAnimFrame,x
-		lda TabCoinAnimFrame,x
-		cmp #ANIM_COIN_FRAMES
-		beq UCA_clear_anim
+	inc TabCoinAnimFrame,x
+	lda TabCoinAnimFrame,x
+	cmp #ANIM_COIN_FRAMES
+	beq UCA_clear_anim
 
-;*****	UCA Update Animation
+;**************************************************
 ;
 UCA_update_anim
-	
-		tay
-		lda TabCoinAnimCharTime,y					; #ANIM_COIN_TIME
-		sta TabCoinAnimTimer,x
+	tay
+	lda TabCoinAnimCharTime,y					; #ANIM_COIN_TIME
+	sta TabCoinAnimTimer,x
 
-		lda TabCoinAnimAddressLSB,x
-		sta UCA_char_pointer+1
-		lda TabCoinAnimAddressMSB,x
-		sta UCA_char_pointer+2
+	lda TabCoinAnimAddressLSB,x
+	sta UCA_char_pointer+1
+	lda TabCoinAnimAddressMSB,x
+	sta UCA_char_pointer+2
 
-;*****	UCA Character Pointer
+;**************************************************
 ;
 UCA_char_pointer
-	
-		inc $FFFF									; update the animation frame, increment the char on screen
-		jmp UCA_check_loop
+	inc $FFFF									; update the animation frame, increment the char on screen
+	jmp UCA_check_loop
 
-;*****	UCA Clear Animation
+;**************************************************
 ;
 UCA_clear_anim
-	
-		lda TabCoinAnimAddressLSB,x
-		sta UCA_clear_char_pointer+1
-		lda TabCoinAnimAddressMSB,x
-		sta UCA_clear_char_pointer+2
-		lda #0
+	lda TabCoinAnimAddressLSB,x
+	sta UCA_clear_char_pointer+1
+	lda TabCoinAnimAddressMSB,x
+	sta UCA_clear_char_pointer+2
+	lda #0
 
-;*****	UCA Clear Character Pointer
+;**************************************************
 ;
 UCA_clear_char_pointer
-	
-		sta $FFFF									; clear the char on screen
-		dec m_currentCoinAnimations
-		ldy m_firstCoinAnimIndex
-		iny
-		tya
-		and #%111
-		sta m_firstCoinAnimIndex
+	sta $FFFF									; clear the char on screen
+	dec m_currentCoinAnimations
+	ldy m_firstCoinAnimIndex
+	iny
+	tya
+	and #%111
+	sta m_firstCoinAnimIndex
 
-;*****	UCA Check Loop
+;**************************************************
 ;
 UCA_check_loop
-		
-		inx
-		txa
-		and #%111
-		tax
-		cpx m_emptyCoinAnimIndex
-		bne UCA_loop
+	inx
+	txa
+	and #%111
+	tax
+	cpx m_emptyCoinAnimIndex
+	bne UCA_loop
 
-;*****	UCA Exit
+;**************************************************
 ;
 UCA_exit
-		
-		rts
-	
-.endp	
+	rts
 
 ;
 ;***************************************************************************************************
@@ -295,8 +284,8 @@ UCA_exit
 ;*****	Exit
 ;
 Exit
-		rts
 
+		rts
 .endp	
 
 ;
@@ -313,12 +302,12 @@ Exit
 		lda m_verticalLaserOn
 		beq Exit
 		
-		dec m_animLaserTimer						
+		dec m_animVLaserTimer						
 		bne Exit
 
-		ldx m_animLaserCurrentFrame
+		ldx m_animVLaserCurrentFrame
 		inx
-		cpx #ANIM_VLASER_FRAMES
+		cpx #ANIM_LASER_FRAMES
 		bne NextFrame
 		
 		ldx #0
@@ -327,15 +316,15 @@ Exit
 ;
 NextFrame
 
-		stx m_animLaserCurrentFrame
+		stx m_animVLaserCurrentFrame
 
-		lda TabAnimVLaserFrameTime,x
-		sta m_animLaserTimer
+		lda TabAnimLaserFrameTime,x
+		sta m_animVLaserTimer
 
-		lda TabAnimVLaserFrameAddressLSB,x
+		lda TabAnimLaserFrameAddressLSB,x
 		sta CopyFrame+1
 
-		lda TabAnimVLaserFrameAddressMSB,x
+		lda TabAnimLaserFrameAddressMSB,x
 		sta CopyFrame+2
 
 		ldy #7
@@ -346,7 +335,6 @@ CopyFrame
 	
 		lda $FFFF,y
 		sta GameFontAddress+8*20,y
-		;sta GameFontAddress+8*148,y
 		dey
 		bpl CopyFrame
 
@@ -404,7 +392,6 @@ CopyFrame
 	
 		lda $FFFF,y
 		sta GameFontAddress+8*21+2,y
-		;sta GameFontAddress+8*149+2,y
 		dey
 		bpl CopyFrame
 

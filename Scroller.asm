@@ -37,8 +37,8 @@
 ;
 ;***** Include Library Files
 ;
-		icl "/Lib/AtariEquates.Asm"				; Atari hardware DOS,OS,ANTIC,GITA,POKEY,PIA equates
-		icl "/Lib/SysMacros.Asm"				; General purpose macros used by system
+		icl "AtariEquates.Asm"					; Atari hardware DOS,OS,ANTIC,GITA,POKEY,PIA equates
+		icl "SysMacros.Asm"						; General purpose macros used by system
 	
 ;***** Include Variable Files
 ;
@@ -50,7 +50,7 @@
 ZeroPageAddress				= $80				; 122 bytes zero page ($80 to $F9) 
 CommDspListAddr				= $0E00				; 176 bytes for display list
 
-HudMemoryAddr				= $06B0				; Heads up display are
+HudMemoryAddress			= $06B0				; Heads up display are
 
 SoundPlayerAddress			= $2400
 DataAddress					= $3000				;  4K (size for data)
@@ -92,17 +92,15 @@ NO_NTSC_loop
 
 .endif
 
+
 		ClearSystem								; begin machine setup
 		DisableBasic							; disable to use memory
 		DisableOperatingSystem					; disable to use memory	
 
 		SetRamTop #32							; pull memtop down 32 pages
-		
-;*****	Set initial level and load
+
+;*****	Set initial level
 ;		
-		lda #$02								; set number of maximum levels
-		sta m_maxLevelNum						; store it off		
-		
 		lda #$00								; set the starting level
 		sta m_currLevelNum						; store it off
 		
@@ -111,7 +109,6 @@ NO_NTSC_loop
 ShowTitle
 
 		jsr TitleScreen							; Show the tile screen
-				
 
 ;*****	Set player spawn
 ;		
@@ -125,17 +122,18 @@ PlayLevelLoop
 		
 		inc m_currLevelNum
 		lda m_currLevelNum		
-		cmp m_maxLevelNum
+		cmp #MAX_GAME_LEVELS		
+		bcs LevelDone
 		
-		beq LevelDone
+		jsr NextLevelScreen
 		
-		jmp ShowTitle
-
+		jmp PlayLevelLoop	
+		
 ;*****	Level Done
 ;
 LevelDone		
-
-		jsr LevelComplete				
+		
+		jsr GameOver				
 
 ;*****	Scroller Loop
 ;
@@ -155,9 +153,13 @@ ScrollerLoop
 ;
 .proc InitAndLoadLevel
 
-		ClearZeroPage
 		ClearPlatformMemory
 		ClearLevelLineMemory
+
+		lda #<HudMemoryAddress					; set the text display address
+		sta m_hudMemoryAddress					; store the LSB
+		lda #>HudMemoryAddress					; set the text display address
+		sta m_hudMemoryAddress+1				; store the MSB
 
 		SetDisplayListInterrupt GameDli_01		; set the display list interrupts
 		VcountWait 120							; make sure to wait so the setting takes effect
@@ -174,7 +176,7 @@ ScrollerLoop
 ;
 		jsr SfxOff
 		jsr InitVars							; begin initialization
-
+		
 		VcountWait 120							; make sure to wait so the setting takes effect
 
 ;*****	Set the addresses
@@ -256,6 +258,8 @@ InitHardware
 ;
 .proc TitleScreen
 
+		jsr SfxOff
+
 		lda #<TITLE06
 		sta m_hudMemoryAddress
 		lda #>TITLE06
@@ -287,19 +291,81 @@ InitHardware
 			
 ;*****	Common exit section to return
 Exit
+		jsr SfxOff
+		rts
+		
+.endp
+
+;
+;**************************************************************************************************
+;	TitleScreen
+;**************************************************************************************************
+;
+.proc NextLevelScreen
+		
+		jsr SfxOff
+		jsr ClearPlatformMemory
+		jsr ClearLevelLineMemory
+		
+		lda #<NEXT02
+		sta m_hudMemoryAddress
+		lda #>NEXT02
+		sta m_hudMemoryAddress+1
+
+		lda m_gameTimerMinutes
+		ldy #12
+		jsr DisplayDebugInfoBinary99
+	
+		lda m_gameTimerSeconds
+		ldy #15
+		jsr DisplayDebugInfoBinary99
+	
+		lda m_gameTimerTSeconds
+		ldy #18
+		jsr DisplayDebugInfoBinary9
+
+		lda #NextLevelDLEnd						; length of Menu display list data
+		sta m_param00 							; store it for the load routine		
+							
+		SetVector m_paramW01, NextLevelDL		; source of display list data
+		SetVector m_paramW02, CommDspListAddr	; destination of display list data
+		
+		jsr LoadDisplayListData					; perform the DL data move
+
+		SetFontAddress TextFontAddress			; set the starting font address
+		SetDisplayListAddress CommDspListAddr	; set the display list address	
+
+		VcountWait 120							; make sure to wait so the setting takes effect
+
+		SetColor $00, $03, $08
+		SetColor $01, $0C, $0A
+		
+		lda #GRACTL_OPTIONS | TRIGGER_LATCH		; apply GRACTL options
+		sta GRACTL								; store it
+
+		lda #DMACTL_OPTIONS						; apply DMACTL options
+		sta DMACTL								; store it
+
+		jsr CheckMenuInput
+			
+;*****	Common exit section to return
+Exit
+		jsr SfxOff
 		rts
 		
 .endp
 						
 ;
 ;**************************************************************************************************
-;	LevelComplete
+;	GameOver
 ;**************************************************************************************************
 ;
-.proc LevelComplete
+.proc GameOver
 
-		ClearZeroPage
-		
+		jsr SfxOff
+		jsr ClearPlatformMemory
+		jsr ClearLevelLineMemory
+
 		lda #<COMP02
 		sta m_hudMemoryAddress
 		lda #>COMP02
@@ -343,6 +409,7 @@ Exit
 			
 ;*****	Common exit section to return
 Exit
+		jsr SfxOff
 		rts
 		
 .endp
@@ -361,14 +428,11 @@ StartLevel
 		lda #$00								; reset the game timer
 		sta m_disableGameTimer					; to a zero value
 		
-		lda #<HudMemoryAddr						; set the text display address
-		sta m_hudMemoryAddress					; store the LSB
-		lda #>HudMemoryAddr						; set the text display address
-		sta m_hudMemoryAddress+1				; store the MSB
-		
 		jsr InitAndLoadLevel
 		jsr SetSpawnPos							; set the spawn position for this level		
 		
+		VcountWait 120
+
 ;*****	Main target label for looping
 ;
 Loop		
@@ -409,6 +473,7 @@ CheckUserInput
 ;*****	PlayerMethodReturn
 ;
 PlayerMethodReturn
+
 		lda m_playerState
 		cmp #PS_LOSE
 		beq PlayerEndStates
@@ -416,6 +481,7 @@ PlayerMethodReturn
 ;*****	PlayerNormalStates	
 ;
 PlayerNormalStates
+
 		jsr UpdateCameraWindow
 		jsr SetPlayerScreenPos
 		jsr DrawPlayer
@@ -423,11 +489,13 @@ PlayerNormalStates
 ;*****	EnemyUpdate
 ;
 EnemyUpdate
+
 		jsr UpdateEnemyManager
 	
 ;*****	MissilesStep
 ;
 MissilesStep
+
 		jsr UpdateMissileSystem
 		jsr DrawEnemyExplosion
 	
@@ -454,7 +522,7 @@ GameAnimations
 ;*****	PlayerEndStates
 ;
 PlayerEndStates		
-		jsr SfxOff
+
 		jsr AnimatePlatformH		
 		jsr DrawPlayerExplosion
 		jsr DoFontAnimations
@@ -462,6 +530,7 @@ PlayerEndStates
 		jsr UpdateMissileSystem
 		jsr DrawEnemyExplosion
 		jsr UpdateInfoLine
+		jsr SfxUpdate
 		jsr DebugInfo				
 
 		VcountWait 120
@@ -474,11 +543,7 @@ PlayerEndStates
 ;*****	Exit Play Level - Cleanup
 ;
 Exit
-		ClearSystem		
-		jsr SfxOff								; turn sound and music off
-
-		VcountWait 120
-	
+		jsr SfxOff
 		rts
 		
 .endp
@@ -492,56 +557,52 @@ Exit
 
 .if DEBUG_ON = 1
 
-		lda m_playerState
+		lda TabHardwareCollision
 		ldy #40
 		jsr DisplayDebugInfoHexFF
 		
-		lda m_leftBottomChar
+		lda TabHardwareCollision+1
 		ldy #43
 		jsr DisplayDebugInfoHexFF
 		
-		lda m_rightBottomChar
-		ldy #46
-		jsr DisplayDebugInfoHexFF
-		
-		lda m_playerLevelLeftX_H1
-		ldy #49
-		jsr DisplayDebugInfoHexFF	
-		
-		lda m_playerLevelLeftX_H2
-		ldy #52
-		jsr DisplayDebugInfoHexFF
-		
-		lda TabHardwareCollision
-		ldy #55
-		jsr DisplayDebugInfoHexFF
-		
-		lda TabHardwareCollision+1
-		ldy #58
-		jsr DisplayDebugInfoHexFF
-		
 		lda TabHardwareCollision+2
-		ldy #61
+		ldy #46
 		jsr DisplayDebugInfoHexFF
 					
 		lda TabHardwareCollision+3
-		ldy #64
+		ldy #49
 		jsr DisplayDebugInfoHexFF
 
 		lda TabHardwareCollision+4
-		ldy #67
+		ldy #52
 		jsr DisplayDebugInfoHexFF
 		
 		lda TabHardwareCollision+5
-		ldy #70
+		ldy #55
 		jsr DisplayDebugInfoHexFF
 		
 		lda TabHardwareCollision+6
-		ldy #73
+		ldy #58
 		jsr DisplayDebugInfoHexFF
 					
 		lda TabHardwareCollision+7
-		ldy #76
+		ldy #61
+		jsr DisplayDebugInfoHexFF
+					
+		lda TabHardwareCollision+8
+		ldy #64
+		jsr DisplayDebugInfoHexFF
+					
+		lda TabHardwareCollision+9
+		ldy #67
+		jsr DisplayDebugInfoHexFF
+					
+		lda TabHardwareCollision+10
+		ldy #70
+		jsr DisplayDebugInfoHexFF
+					
+		lda TabHardwareCollision+11
+		ldy #73
 		jsr DisplayDebugInfoHexFF
 					
 .endif
@@ -551,8 +612,7 @@ Exit
 
 ;*****	Includes base files
 ;
-		icl "/Lib/SysProcs.Asm"
-
+		icl "SysProcs.Asm"
 		icl "Initialize.Asm"
 		icl "Utilities.Asm"				
 		icl "DisplayListInterrupts.asm"
@@ -614,7 +674,7 @@ END_CODE_WARNING
 	
 ;*****	HUD Memory Address	
 ;
-		org HudMemoryAddr							
+		org HudMemoryAddress							
 		 
 .if PAL_VERSION = 0
 		.sb "  G 00    E 00    T 00:00.0  H 00 NTSC  "
@@ -627,7 +687,7 @@ END_CODE_WARNING
 ;			          1         2 
 ;  	         12345678901234567890
 TITLE01	.sb "PLATFORM GAME ENGINE"
-TITLE02	.sb "   FOR ATARI 8BIT   "
+TITLE02	.sb "  FOR atari (8BIT)  "
 TITLE03	.sb "    authorer by     "
 TITLE04	.sb "        NRV         "
 TITLE05	.sb "    contributers    "
@@ -635,6 +695,13 @@ TITLE06	.sb "    TATTOO ROSE     "
 TITLE07	.sb "    KEN JENNINGS    "	
 TITLE08	.sb "    PRESS start     "	
 	
+;*****	Next Level Data
+;			          1         2 
+;  	         12345678901234567890
+NEXT01	.sb "  LEVEL  COMPLETE   "  	
+NEXT02  .sb " total time 00:00:0 "
+NEXT03	.sb "    PRESS start     "	
+
 ;*****	Completed Data
 ;			          1         2 
 ;  	         12345678901234567890

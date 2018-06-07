@@ -359,7 +359,7 @@ UMS_check_vlaser
 		cmp #[128+16]							; danger plus vertical laser char index
 		bne UMS_check_enemy1_left
 	
-		lda m_animLaserCurrentFrame
+		lda m_animVLaserCurrentFrame
 		cmp #VLASER_DISABLED_INDEX				; disabled state index
 		beq UMS_update_position
 		jmp UMS_danger

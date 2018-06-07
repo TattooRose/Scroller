@@ -19,9 +19,7 @@
 ;
 ;**************************************************************************************************
 ;
-.proc SetSpawnPos
-
-		
+.proc SetSpawnPos		
 		
 		lda #0
 		sta m_playerLevelLeftX_L1				; fractional part

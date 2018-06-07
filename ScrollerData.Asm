@@ -50,8 +50,8 @@ m_currentCoinAnimations			.byte $00
 m_animHLaserTimer				.byte $01
 m_animHLaserCurrentFrame		.byte $00
 
-m_animLaserTimer				.byte $01
-m_animLaserCurrentFrame			.byte $00
+m_animVLaserTimer				.byte $01
+m_animVLaserCurrentFrame		.byte $00
 
 m_screenBaseAddress1			.word $00
 m_screenBaseAddress2			.word $00
@@ -174,7 +174,7 @@ m_playerBaseColor1B				.byte $00
 TabLevelLineAddressLSB			:256 .byte $00
 TabLevelLineAddressMSB			:256 .byte $00
 
-TabHardwareCollision			:8	 .byte $00
+TabHardwareCollision			:16	 .byte $00
 ;
 ;**************************************************************************************************
 ; Character tile type definition
@@ -274,7 +274,7 @@ TabCharDefinition
 	.byte %00010000+CT_DANGER								; enemy 1 left side (red)           [40]
 	.byte %00010000+CT_DANGER								; enemy 1 left side (red)           [41]
 	.byte %00000000+CT_BLANK								; blank								[42]
-	.byte %00000000+CT_BLANK								; blank								[43]
+	.byte %00000000+CT_DANGER								; creater							[43]
 	.byte %00000000+CT_BLANK								; blank								[44]
 	.byte %00000000+CT_BLANK								; blank								[45]
 	.byte %00000000+CT_WATER								; blank								[46]
@@ -409,7 +409,7 @@ TabCharDefinition
 	.byte %00010000+CT_DANGER								; enemy 1 left side (red)           [C0]
 	.byte %00010000+CT_DANGER								; enemy 1 left side (red)           [C1]
 	.byte %00000000+CT_BLANK								; blank								[C2]
-	.byte %00000000+CT_BLANK								; blank								[C3]
+	.byte %00000000+CT_DANGER								; creater							[C3]
 	.byte %00000000+CT_BLANK								; blank								[C4]
 	.byte %00000000+CT_BLANK								; blank								[C5]
 	.byte %00000000+CT_WATER								; blank								[C6]
@@ -493,7 +493,7 @@ GameDL_LMS1
 	
 		.byte DL_BLANK_3 + DL_DLI
 
-		?dldata = HudMemoryAddr
+		?dldata = HudMemoryAddress
 		.rept 2
 			.byte DL_TEXT_2 + DL_LMS
 			.byte <?dldata, >?dldata
@@ -553,6 +553,31 @@ TitleDL
 		.byte DL_JUMP_VB, <CommDspListAddr, >CommDspListAddr
 		
 TitleDLEnd = * - TitleDL		
+
+;
+; Next Level Display List
+;
+NextLevelDL 
+		
+		.rept 12
+			.byte DL_BLANK_8
+		.endr		
+		.byte DL_LMS + DL_TEXT_6
+		.byte <NEXT01, >NEXT01
+		.byte DL_BLANK_8		
+		.byte DL_BLANK_8		
+		.byte DL_LMS + DL_TEXT_6
+		.byte <NEXT02, >NEXT02
+		.byte DL_BLANK_8		
+		.byte DL_BLANK_8		
+		.byte DL_LMS + DL_TEXT_6
+		.byte <NEXT03, >NEXT03
+		.rept 5
+			.byte DL_BLANK_8
+		.endr		
+		.byte DL_JUMP_VB, <CommDspListAddr, >CommDspListAddr
+		
+NextLevelDLEnd = * - NextLevelDL		
 
 ;
 ; Completee Display List

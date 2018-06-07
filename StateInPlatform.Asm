@@ -31,7 +31,6 @@ PMGT_check_up
 		and #STICK_UP						; check old up (looking for "just pressed")
 		beq PMGT_check_fall
 
-
 		lda #0									; check bottom of a stair (left pixel)
 		sta m_bottomPosOffsetX
 	

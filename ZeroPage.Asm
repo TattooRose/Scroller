@@ -44,7 +44,7 @@ m_saveRegY					org *+$01
 
 m_sfxEffect					org *+$01
 m_currChar					org *+$01
-m_maxLevelNum				org *+$01
+
 m_currLevelNum				org *+$01
 m_animMiscWidth				org *+$01
 m_animMiscHeight			org *+$01

@@ -35,7 +35,7 @@ GameDli_01
 
 		SetColor $00, $03, $04
 		SetColor $01, $00, $0F
-		SetColor $02, $0D, $04
+		SetColor $02, $08, $08
 		SetColor $03, $0F, $0C		
 		
 .else

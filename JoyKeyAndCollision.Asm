@@ -9,8 +9,11 @@
 ;					Ken Jennings C64 to Atari MLP and also from WUDSN Tutorials.
 ;				
 ;***************************************************************************************************
-
-
+;
+;**************************************************************************************************
+; 	CheckMenuInput
+;**************************************************************************************************
+;
 .proc CheckMenuInput
 
 		lda #$03
@@ -18,6 +21,8 @@
 		
 ;***** Load Trigger
 LoadTrigger
+
+		jsr SfxUpdate
 
 		lda m_currentTrigger0
 		sta m_oldTrigger0
@@ -30,6 +35,7 @@ LoadTrigger
 		lda m_param01	
 		and #CONSOLE_START		
 
+		
 		bne LoadTrigger
 	
 		rts
@@ -121,7 +127,15 @@ CI_check_trigger
 		lda M2PL
 		sta TabHardwareCollision+6
 		lda M3PL
-		sta TabHardwareCollision+6
+		sta TabHardwareCollision+7
+		lda M0PF
+		sta TabHardwareCollision+8
+		lda M1PF
+		sta TabHardwareCollision+9
+		lda M2PF
+		sta TabHardwareCollision+10
+		lda M3PF
+		sta TabHardwareCollision+11
 		
 		
 		
