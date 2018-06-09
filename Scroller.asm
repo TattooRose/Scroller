@@ -460,6 +460,7 @@ CheckState
 JumpSound
 		
 		lda #SFX_JUMP
+		and #$0f
 		sta m_sfxEffect
 		
 ;*****	Check User Input
@@ -522,6 +523,10 @@ GameAnimations
 ;*****	PlayerEndStates
 ;
 PlayerEndStates		
+
+		lda SFX_DEATH
+		and #$0F
+		sta m_sfxEffect
 
 		jsr AnimatePlatformH		
 		jsr DrawPlayerExplosion

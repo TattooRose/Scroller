@@ -291,6 +291,7 @@ DecrementCoins
 	
 	dec m_goldCounter
 	lda #SFX_DIAMOND
+	and #$0f
 	sta m_sfxEffect
 	jmp CC_start_animation
 	
@@ -300,6 +301,7 @@ DecrementHealth
 	
 	dec m_healthCounter
 	lda #SFX_DIAMOND
+	and #$0f
 	sta m_sfxEffect
 		
 ;*****	Start Animation

@@ -177,7 +177,8 @@ VSync2	cmp VCOUNT
 		.error "VcountWait error"
    	.else
 		lda #:1
-VWait1	cmp VCOUNT
+VWait1	
+		cmp VCOUNT
 	    bne VWait1
 	.endif
 .endm

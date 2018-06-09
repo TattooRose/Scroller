@@ -82,11 +82,9 @@ TextDli
 		SetColor 2, 7, 2		; blue (water)
 
 .endif
-		
 		SetFontAddress TextFontAddress
 		STA WSYNC 				;Wait off-screen
 
-		
 		SetDisplayListInterrupt GameDli_01 
 
 		pla

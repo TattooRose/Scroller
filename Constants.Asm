@@ -40,9 +40,9 @@ MUSIC_DUMMY 				= $10
 SFX_DIAMOND 				= 1
 SFX_FIRE					= 4
 SFX_ALL_PICKED 				= 12
-SFX_DEATH 					= 14
+SFX_DEATH 					= 3
 SFX_CONGRATULATIONS 		= 16
-SFX_JUMP 					= 1
+SFX_JUMP 					= 4
 
 ;*****	Open Plat constants
 ;

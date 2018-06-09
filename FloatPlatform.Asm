@@ -18,7 +18,7 @@ PLATFORMH_MAX_SIZE		= $06
 
 _PlayerClamped			.byte $00				
 _PlatformMaxStep		.byte $28
-_PlatformMaxTimer		.byte $01
+_PlatformMaxTimer		.byte $02
 _PlatformCurrTimer		.byte $00
 
 TabPlatformCharID_H		.byte $26
