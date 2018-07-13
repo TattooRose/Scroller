@@ -48,25 +48,87 @@ GameDli_01
 		lda m_playerScreenLeftX
 		sta HPOSP0
 		sta HPOSP1
-		sta HPOSP2
 
+		lda VilScreenLeftX
+		sta HPOSP2
+		
 		SetFontAddress GameFontAddress
     	sta WSYNC   			; Wait off-screen
-
 		
-		SetDisplayListInterrupt TextDli 
+		SetDisplayListInterrupt TextDli_01 
 
 		pla
 		tay
 		pla
 		
 		rti
+
 ;
 ;**************************************************************************************************
 ; Display list 2 interruptions code
 ;**************************************************************************************************
 ;
-TextDli
+GameDli_02
+		
+		pha
+		tya
+		pha
+		
+		STA WSYNC 				;Wait off-screen
+		SetDisplayListInterrupt GameDli_03 
+
+		pla
+		tay
+		pla
+		
+		rti
+
+;
+;**************************************************************************************************
+; Display list 3 interruptions code
+;**************************************************************************************************
+;
+GameDli_03
+		
+		pha
+		tya
+		pha
+		
+		STA WSYNC 				;Wait off-screen
+		SetDisplayListInterrupt GameDli_04 
+
+		pla
+		tay
+		pla
+		
+		rti
+
+;
+;**************************************************************************************************
+; Display list 4 interruptions code
+;**************************************************************************************************
+;
+GameDli_04
+		
+		pha
+		tya
+		pha
+		
+		STA WSYNC 				;Wait off-screen
+		SetDisplayListInterrupt TextDli_01 
+
+		pla
+		tay
+		pla
+		
+		rti
+
+;
+;**************************************************************************************************
+; Display list 5 interruptions code
+;**************************************************************************************************
+;
+TextDli_01
 
 		pha
 		tya

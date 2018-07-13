@@ -35,38 +35,59 @@
 ;	$E000-$E3FF 		OS character set, standard
 ;	$E000-$FFFF 		OS part 2
 ;
-;***** Include Library Files
-;
-		icl "AtariEquates.Asm"					; Atari hardware DOS,OS,ANTIC,GITA,POKEY,PIA equates
-		icl "SysMacros.Asm"						; General purpose macros used by system
-	
-;***** Include Variable Files
-;
-		icl "ZeroPage.Asm"
-		icl "Constants.Asm"
-
 ;*****	Memory map
 ;
 ZeroPageAddress				= $80				; 122 bytes zero page ($80 to $F9) 
-CommDspListAddr				= $0E00				; 176 bytes for display list
-
+CommDspListAddr				= $0600				; 176 bytes for display list
 HudMemoryAddress			= $06B0				; Heads up display are
 
-SoundPlayerAddress			= $2400
-DataAddress					= $3000				;  4K (size for data)
-SoundAddress				= $4000
+SoundPlayerAddress			= $2400				; RMT player address
+LibAndVariablesAddr			= $2500
+SoundDataAddress			= $4000				; RMT music and sound area
 
 CodeAddress					= $4300				; 23K zone for code with new rmt file this should be adjusted
 
+DataAddress					= $9000				;  4K (size for data)
 PmgAddress					= $A000				; 40K (2K size - 768 bytes)
 GameFontAddress				= $A800				; 42K (1K size)
 TextFontAddress				= $AC00				; 39K (1K size)
 
 GameMemoryAddress			= $B000				; 44K (4K size)
 
+;***** Include Library Files
+;
+		org LibAndVariablesAddr
+		
+		icl "Framework/FW_SysEquates.Asm"		; Atari hardware DOS,OS,ANTIC,GITA,POKEY,PIA equates
+		icl "Framework/FW_SysMacros.Asm"		; General purpose macros used by system
+	
+;***** Include Variable Files
+;
+		icl "Framework/FW_ZeroPage.Asm"
+		icl "Framework/FW_Constants.Asm"
+
 ;*****	moved here for better access
 ;
-DEBUG_ON					= 1					 
+PAL_VERSION					= 0
+DEBUG_ON					= 1		
+STEREOMODE					= 0
+
+MAX_ROWS					= 40
+
+CHAR_PIXELS_X				= 4
+CHAR_PIXELS_Y				= 8
+
+LEVEL_CHAR_SIZE_X			= 82				; max level size now should be 256 x 255 lines	
+LEVEL_CHAR_SIZE_Y			= 24
+
+WINDOW_CHAR_SIZE_X			= 40
+WINDOW_CHAR_SIZE_Y			= 24
+
+PM_BASE_SCREEN_X			= 48
+PM_BASE_SCREEN_Y			= 32
+
+GAME_MEM					= GameMemoryAddress			; used in Camera.Asm. Must set this for camera to work			
+GAME_LMS1					= CommDspListAddr+3			; used in Camera.Asm. Must set this for camera to work
 
 ;
 ;**************************************************************************************************
@@ -91,7 +112,6 @@ NO_NTSC_loop
 		beq NO_NTSC_loop
 
 .endif
-
 
 		ClearSystem								; begin machine setup
 		DisableBasic							; disable to use memory
@@ -148,117 +168,12 @@ ScrollerLoop
 
 ;
 ;**************************************************************************************************
-;	InitAndLoadLevel
-;**************************************************************************************************
-;
-.proc InitAndLoadLevel
-
-		ClearPlatformMemory
-		ClearLevelLineMemory
-
-		lda #<HudMemoryAddress					; set the text display address
-		sta m_hudMemoryAddress					; store the LSB
-		lda #>HudMemoryAddress					; set the text display address
-		sta m_hudMemoryAddress+1				; store the MSB
-
-		SetDisplayListInterrupt GameDli_01		; set the display list interrupts
-		VcountWait 120							; make sure to wait so the setting takes effect
-		
-		lda #GameDLEnd							; length of games display list data
-		sta m_param00 							; store it for the load routine		
-							
-		SetVector m_paramW01, GameDL			; source of display list data
-		SetVector m_paramW02, CommDspListAddr	; destination of display list data
-		
-		jsr LoadDisplayListData					; perform the DL data move
-
-;*****	Housekeeping
-;
-		jsr SfxOff
-		jsr InitVars							; begin initialization
-		
-		VcountWait 120							; make sure to wait so the setting takes effect
-
-;*****	Set the addresses
-;
-SetAddresses
-
-		SetPMBaseAddress PmgAddress				; set the player missile address
-		SetFontAddress GameFontAddress			; set the starting font address
-		SetDisplayListAddress CommDspListAddr	; set the display list address	
-
-		VcountWait 120							; make sure to wait so the setting takes effect
-				
-;*****	InitHardware
-;
-InitHardware
-
-		lda #%01010101							; double width for all missiles
-		sta SIZEM								; store it
-
-		lda #12									; set the HSCROL value
-		sta HSCROL								; store it	
-	
-		lda #0									; set the VSCROL value
-		sta VSCROL								; store it
-		
-		lda #[NMI_DLI]							; enable DLI's (but no VBI's)
-		sta NMIEN								; store it
-		
-		lda #GRACTL_OPTIONS						; apply GRACTL options
-		sta GRACTL								; store it
-
-		lda #PRIOR_OPTIONS						; apply PRIOR options
-		sta PRIOR								; store it
-
-		lda #DMACTL_OPTIONS						; apply DMACTL options
-		sta DMACTL								; store it
-
-		lda #0									; clear the hit register
-		sta HITCLR								; store it
-
-;*****	Set character data address for horizontal platforms
-;
-		lda #$08
-		ldx #$26
-		jsr MultiplyAX
-		
-		clc
-		lda #<GameFontAddress
-		adc _productLo
-		sta m_platformGameCharAddr_H
-		lda #>GameFontAddress
-		adc _productHi
-		sta m_platformGameCharAddr_H+1
-		
-;*****	Load the starting level
-;	
-		lda m_currLevelNum						; grab the current level number
-		sta m_param00							; store it to the parameter
-
-		jsr LoadLevel							; load the level
-
-;*****	Initialize Level
-;
-		jsr InitPlatforms						; initialize floating platforms if any
-		jsr InitGoldCounter						; gold initialization
-		jsr InitEnemyManager					; enemy manager initialization
-		jsr InitMissileSystem					; missile system initialization
-
-		VcountWait 120							; make sure to wait so the setting takes effect
-
-		rts
-
-.endp
-
-;
-;**************************************************************************************************
 ;	TitleScreen
 ;**************************************************************************************************
 ;
 .proc TitleScreen
 
-		jsr SfxOff
+		jsr SfxInit
 
 		lda #<TITLE06
 		sta m_hudMemoryAddress
@@ -291,7 +206,7 @@ InitHardware
 			
 ;*****	Common exit section to return
 Exit
-		jsr SfxOff
+		jsr SfxInit
 		rts
 		
 .endp
@@ -303,7 +218,7 @@ Exit
 ;
 .proc NextLevelScreen
 		
-		jsr SfxOff
+		jsr SfxInit
 		jsr ClearPlatformMemory
 		jsr ClearLevelLineMemory
 		
@@ -350,7 +265,7 @@ Exit
 			
 ;*****	Common exit section to return
 Exit
-		jsr SfxOff
+		jsr SfxInit
 		rts
 		
 .endp
@@ -362,7 +277,7 @@ Exit
 ;
 .proc GameOver
 
-		jsr SfxOff
+		jsr SfxInit
 		jsr ClearPlatformMemory
 		jsr ClearLevelLineMemory
 
@@ -409,7 +324,7 @@ Exit
 			
 ;*****	Common exit section to return
 Exit
-		jsr SfxOff
+		jsr SfxInit
 		rts
 		
 .endp
@@ -507,6 +422,9 @@ GameAnimations
 		jsr AnimatePlatformH		
 		jsr DoFontAnimations
 		jsr UpdateCoinAnimations
+
+		jsr VilliansUpdate
+
 		jsr UpdateInfoLine
 		jsr SfxUpdate
 				
@@ -548,9 +466,118 @@ PlayerEndStates
 ;*****	Exit Play Level - Cleanup
 ;
 Exit
-		jsr SfxOff
+		jsr SfxInit
 		rts
 		
+.endp
+
+;
+;**************************************************************************************************
+;	InitAndLoadLevel
+;**************************************************************************************************
+;
+.proc InitAndLoadLevel
+
+		ClearPlatformMemory
+		ClearLevelLineMemory
+
+		lda #<HudMemoryAddress					; set the text display address
+		sta m_hudMemoryAddress					; store the LSB
+		lda #>HudMemoryAddress					; set the text display address
+		sta m_hudMemoryAddress+1				; store the MSB
+
+		SetDisplayListInterrupt GameDli_01		; set the display list interrupts
+		VcountWait 120							; make sure to wait so the setting takes effect
+		
+		lda #GameDLEnd							; length of games display list data
+		sta m_param00 							; store it for the load routine		
+							
+		SetVector m_paramW01, GameDL			; source of display list data
+		SetVector m_paramW02, CommDspListAddr	; destination of display list data
+		
+		jsr LoadDisplayListData					; perform the DL data move
+
+;*****	Housekeeping
+;
+		jsr SfxInit
+		jsr InitVars							; begin initialization
+		
+		VcountWait 120							; make sure to wait so the setting takes effect
+
+;*****	Set the addresses
+;
+SetAddresses
+
+		SetPMBaseAddress PmgAddress				; set the player missile address
+		SetFontAddress GameFontAddress			; set the starting font address
+		SetDisplayListAddress CommDspListAddr	; set the display list address	
+
+		VcountWait 120							; make sure to wait so the setting takes effect
+				
+;*****	InitHardware
+;
+InitHardware
+
+		lda #%01010101							; double width for all missiles
+		sta SIZEM								; store it
+
+		lda #12									; set the HSCROL value
+		sta HSCROL								; store it	
+	
+		lda #0									; set the VSCROL value
+		sta VSCROL								; store it
+		
+		lda #[NMI_DLI]							; enable DLI's (but no VBI's)
+		sta NMIEN								; store it
+		
+		lda #GRACTL_OPTIONS						; apply GRACTL options
+		sta GRACTL								; store it
+
+		lda #PRIOR_OPTIONS						; apply PRIOR options
+		sta PRIOR								; store it
+
+		lda #DMACTL_OPTIONS						; apply DMACTL options
+		sta DMACTL								; store it
+
+		lda #0									; clear the hit register
+		sta HITCLR								; store it
+
+;*****	Set character data address for horizontal platforms
+;
+		lda #$08
+		ldx #$26
+		jsr MultiplyAX
+		
+		clc
+		lda #<GameFontAddress
+		adc _productLo
+		sta m_platformGameCharAddr_H
+		lda #>GameFontAddress
+		adc _productHi
+		sta m_platformGameCharAddr_H+1
+		
+;*****	Load the starting level
+;	
+		lda m_currLevelNum						; grab the current level number
+		sta m_param00							; store it to the parameter
+
+		jsr LoadLevel							; load the level
+
+;*****	Initialize Level
+;
+
+		jsr InitPlatforms						; initialize floating platforms if any
+		jsr InitGoldCounter						; gold initialization
+		jsr InitEnemyManager					; enemy manager initialization
+		jsr InitMissileSystem					; missile system initialization
+
+		jsr VillianSystemInit
+		jsr VilliansInit							
+		
+		VcountWait 120							; make sure to wait so the setting takes effect
+
+		rts
+
 .endp
 
 ;
@@ -617,28 +644,48 @@ Exit
 
 ;*****	Includes base files
 ;
-		icl "SysProcs.Asm"
-		icl "Initialize.Asm"
-		icl "Utilities.Asm"				
 		icl "DisplayListInterrupts.asm"
-		icl "PlayerStates.Asm"
-		icl "PlayerMovement.Asm"
-		icl "MissileSystem.Asm"	
-		icl "AnimationsLogic.Asm"	
-		icl "CameraLogic.Asm"
-		icl "EnemyManager.Asm"
-		icl "FloatPlatform.Asm"
-		icl "LevelLoader.Asm"
-		icl "JoyKeyAndCollision.Asm"
-		icl "AudioManager.Asm"
-		icl "rmtplayr.asm"
+		icl "DrawPlayer.Asm"
+		icl "DrawCreepy.Asm"
+
+		icl "Framework/FW_SysProcs.Asm"
+		icl "Framework/FW_Initialize.Asm"
+		icl "Framework/FW_Utilities.Asm"				
+		icl "Framework/FW_PlayerStates.Asm"
+		icl "Framework/FW_PlayerMovement.Asm"
+		icl "Framework/FW_MissileSystem.Asm"	
+		icl "Framework/FW_AnimationsLogic.Asm"	
+		icl "Framework/FW_CameraLogic.Asm"
+		icl "Framework/FW_EnemyManager.Asm"
+		icl "Framework/FW_FloatPlatform.Asm"
+		icl "Framework/FW_LevelLoader.Asm"
+		icl "Framework/FW_JoyKeyAndCollision.Asm"
+		icl "Framework/FW_AudioManager.Asm"
+		icl "Framework/FW_RmtPlayer.Asm"
+		icl "Framework/FW_VillianSystem.Asm"
 		
 ;*****	End of code test
 ;
 END_CODE_WARNING
-	.if END_CODE_WARNING > PmgAddress 
-		.error "Code overrides PMG area!"
+.PRINT "Code Size : ", END_CODE_WARNING
+
+	.if END_CODE_WARNING > DataAddress 
+		.error "Code overrides Data area!"
 	.endif
+
+;*****	Level Data definition
+;
+		org DataAddress
+		
+		icl "DataScroller.Asm"
+		icl "DataPlayer.Asm"
+		icl "DataCreepy.Asm"
+
+		icl "Data/Levels.Asm"
+		icl "Framework/FW_FrameworkData.Asm"
+		icl "Framework/FW_VillianSystemData.Asm"
+		
+.PRINT "Data Size : ", * - DataAddress		
 
 ;*****	Player missle graphics address
 ;
@@ -649,16 +696,6 @@ END_CODE_WARNING
 ;
 		org ms_area_1
 		:1280 .byte %00000000
-
-;*****	Level Data definition
-;
-		org DataAddress
-		
-		icl "Data/Levels.Asm"
-		icl "ScrollerData.Asm"
-		icl "PlayerData.Asm"
-		
-.PRINT "Data Size : ", * - DataAddress		
 
 ;*****	Game font address
 ;
@@ -672,7 +709,7 @@ END_CODE_WARNING
 	
 ;*****	Sound Data Address
 ;
-		org SoundAddress
+		org SoundDataAddress
 		opt h-									;RMT module is standard Atari binary file already
 		ins "Data/sfx.rmt"						;include music RMT module
 		opt h+
@@ -687,37 +724,11 @@ END_CODE_WARNING
 		.sb "  G 00    E 00    T 00:00.0  H 00  PAL  "
 .endif
 		.sb "                                        "
-		
-;*****	TITLE Data
-;			          1         2 
-;  	         12345678901234567890
-TITLE01	.sb "PLATFORM GAME ENGINE"
-TITLE02	.sb "  FOR atari (8BIT)  "
-TITLE03	.sb "    authorer by     "
-TITLE04	.sb "        NRV         "
-TITLE05	.sb "    contributers    "
-TITLE06	.sb "    TATTOO ROSE     "	
-TITLE07	.sb "    KEN JENNINGS    "	
-TITLE08	.sb "    PRESS start     "	
-	
-;*****	Next Level Data
-;			          1         2 
-;  	         12345678901234567890
-NEXT01	.sb "  LEVEL  COMPLETE   "  	
-NEXT02  .sb " total time 00:00:0 "
-NEXT03	.sb "    PRESS start     "	
-
-;*****	Completed Data
-;			          1         2 
-;  	         12345678901234567890
-COMP01	.sb "ALL LEVELS COMPLETED"  	
-COMP02  .sb " total time 00:00:0 "
-COMP03	.sb " thanks for playing "	
 
 ;*****	Game Memory Address 
 ;
 		org GameMemoryAddress	
-		.rept $1000-LEVEL_CHAR_SIZE_X
+		.rept [LEVEL_CHAR_SIZE_Y*LEVEL_CHAR_SIZE_X]
 			.byte $00
 		.endr
 	

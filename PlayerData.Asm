@@ -10,6 +10,9 @@
 ;				
 ;***************************************************************************************************
 ;
+PLR_WIDTH					= 8							; must set this for player to work
+PLR_HEIGHT					= 21						; must set this for player to work
+
 .array TabAnimationMap [18] .byte
 	000, 021, 01 			
 	021, 021, 01
